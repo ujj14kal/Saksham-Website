@@ -18,6 +18,15 @@ const TUNING = {
   titleContainsStem: 6,
   /** supervisor/manager titles: this app serves the worker, not their boss */
   seniorTitlePenalty: 8,
+  /** Office/support functions attached to a trade rather than the trade.
+   *  Deliberately larger than titleNamesTrade: a procurement or documentation
+   *  role is never the right answer for someone describing manual work, even
+   *  when its title happens to contain their trade word. Sector names like
+   *  "agriculture" appear in administrative titles far more often than in the
+   *  titles of the people who actually do the work. */
+  deskTitlePenalty: 12,
+  /** titles naming someone who does the work by hand */
+  handsOnTitleBonus: 5,
   /** qualifications above this NSQF level are progressively deprioritised */
   preferredMaxLevel: 3,
   /** base confidence for a keyword match, before per-hit bonuses */
@@ -82,6 +91,21 @@ export function tradeStems(token: string): string[] {
  *  is a far better mapping than "Project Coordinator (Construction)". */
 const SENIOR_TITLE = /\b(manager|supervisor|coordinator|engineer|executive|officer|specialist|analyst|architect|consultant|instructor|teacher|trainer)\b/i;
 
+/** Office and support functions attached to a trade rather than the trade
+ *  itself. "Purchase Assistant-Food and Agriculture Commodity" reads as junior
+ *  — "Assistant" dodges the seniority penalty — but it is a procurement desk
+ *  job, and it was being returned as the representative qualification for
+ *  every farming skill. */
+const DESK_TITLE =
+  /\b(purchase|procurement|sales|marketing|clerk|clerical|data|documentation|promoter|extension|auditor|inspector|surveyor)\b/i;
+
+/** Words naming someone who does the work with their hands. A title matching
+ *  the trade word is not enough on its own: "agriculture" appears in a
+ *  purchasing role, while the qualification an actual farmer wants says
+ *  "Farmer" and never says "agriculture" at all. */
+const HANDS_ON_TITLE =
+  /\b(farmer|artisan|craftsman|craftsperson|worker|maker|operator|technician|mechanic|fitter|weaver|potter|mason|tailor|carpenter|welder|electrician|plumber|helper|practitioner)\b/i;
+
 /** Pick the qualification/course whose title most directly names the trade.
  *  Falls back to the first candidate so behaviour never regresses to "no match". */
 export function pickBestByTitle<T>(candidates: T[], token: string, titleOf: (item: T) => string, levelOf?: (item: T) => number | null): T | undefined {
@@ -97,6 +121,8 @@ export function pickBestByTitle<T>(candidates: T[], token: string, titleOf: (ite
     for (const stem of stems) if (new RegExp(`\\b${stem}`, "i").test(title)) score += TUNING.titleContainsStem;
     // prefer the worker over the manager of the worker
     if (SENIOR_TITLE.test(title)) score -= TUNING.seniorTitlePenalty;
+    if (DESK_TITLE.test(title)) score -= TUNING.deskTitlePenalty;
+    if (HANDS_ON_TITLE.test(title)) score += TUNING.handsOnTitleBonus;
     // prefer entry-level qualifications, which is who this app serves
     const level = levelOf?.(candidate);
     if (typeof level === "number") score -= Math.max(0, level - TUNING.preferredMaxLevel);

@@ -53,6 +53,18 @@ export const SKILL_LEXICON: LexiconEntry[] = [
     titleTerms: ["tailor", "darzi", "sewing"],
   },
   {
+    normalized: "cotton-spinning",
+    patterns: [
+      "kapas", "rui", "cotton", "charkha", "sut katna", "dhaaga banana",
+      "dhaga banana", "ginning", "spinning", "cotton mill", "kapas se dhaaga",
+      "कपास", "रुई", "चरखा", "सूत", "धागा बनाना",
+      "তুলা", "সুতা", "பருத்தி", "நூல்", "పత్తి", "నూలు",
+      "कापूस", "सूत कातणे", "ಹತ್ತಿ", "ನೂಲು", "કપાસ", "સૂતર",
+      "ਕਪਾਹ", "ਸੂਤ", "କପା", "ସୂତା",
+    ],
+    titleTerms: ["spinning", "hand spinning", "ginning", "yarn", "cotton"],
+  },
+  {
     normalized: "handloom-weaving",
     patterns: [
       "bunkar", "kapda bunna", "handloom", "weaving", "julaha", "loom",

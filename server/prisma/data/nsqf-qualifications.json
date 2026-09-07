@@ -974,7 +974,7 @@
     "ssc": "Agriculture Skill Council of India (ASCI)",
     "notionalHours": 30,
     "keywords": [
-      "fundamentals of accounting and financial management practices for fpo"
+      "accounting"
     ],
     "nqrId": 11682
   },
@@ -5163,7 +5163,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 240,
     "keywords": [
-      "foundation course in healthcare"
+      "medical-care"
     ],
     "nqrId": 4155
   },
@@ -5215,7 +5215,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 570,
     "keywords": [
-      "healthcare quality assurance manager"
+      "medical-care"
     ],
     "nqrId": 4273
   },
@@ -5228,7 +5228,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 720,
     "keywords": [
-      "geriatric caregiver institutional home care options palliative care dementia care"
+      "teaching"
     ],
     "nqrId": 4272
   },
@@ -5241,7 +5241,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 450,
     "keywords": [
-      "emergency medical technician basic hss q 2301"
+      "medical-care"
     ],
     "nqrId": 4298
   },
@@ -5449,7 +5449,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 1500,
     "keywords": [
-      "medical records"
+      "medical-care"
     ],
     "nqrId": 10163
   },
@@ -5553,7 +5553,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 15,
     "keywords": [
-      "basic infection control at healthcare setup"
+      "medical-care"
     ],
     "nqrId": 10273
   },
@@ -5579,7 +5579,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 750,
     "keywords": [
-      "frontline health caregiving associate elective emergency care elective sample collection elective medical equipment care"
+      "medical-care"
     ],
     "nqrId": 10282
   },
@@ -5764,7 +5764,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 900,
     "keywords": [
-      "dresser medical"
+      "medical-care"
     ],
     "nqrId": 12822
   },
@@ -5816,7 +5816,7 @@
     "ssc": "Indira Gandhi National Open University (IGNOU)",
     "notionalHours": 1080,
     "keywords": [
-      "executive emergency healthcare"
+      "medical-care"
     ],
     "nqrId": 12969
   },
@@ -6167,7 +6167,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 90,
     "keywords": [
-      "medical software services"
+      "medical-care"
     ],
     "nqrId": 13548
   },
@@ -6284,7 +6284,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 120,
     "keywords": [
-      "psa based oxygen plants medical gas pipeline systems services"
+      "medical-care"
     ],
     "nqrId": 13574
   },
@@ -6375,7 +6375,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 660,
     "keywords": [
-      "geriatric caregiver institutional homecare"
+      "teaching"
     ],
     "nqrId": 13941
   },
@@ -6557,7 +6557,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 570,
     "keywords": [
-      "healthcare quality assurance manager"
+      "medical-care"
     ],
     "nqrId": 14249
   },
@@ -6635,7 +6635,7 @@
     "ssc": "Healthcare Sector Skill Council (HSSC)",
     "notionalHours": 270,
     "keywords": [
-      "child health worker early child development ecd services"
+      "medical-care"
     ],
     "nqrId": 14841
   },
@@ -6674,7 +6674,7 @@
     "ssc": "Home Management and Care Givers Sector Skill Counil (HMCGSSC)",
     "notionalHours": 510,
     "keywords": [
-      "baby caregiver non clinical household care homes"
+      "teaching"
     ],
     "nqrId": 3511
   },
@@ -6713,7 +6713,7 @@
     "ssc": "Home Management and Care Givers Sector Skill Counil (HMCGSSC)",
     "notionalHours": 510,
     "keywords": [
-      "caregiver mother and newborn non clinical household care homes"
+      "teaching"
     ],
     "nqrId": 3512
   },
@@ -6778,7 +6778,7 @@
     "ssc": "Home Management and Care Givers Sector Skill Counil (HMCGSSC)",
     "notionalHours": 540,
     "keywords": [
-      "play school facilitator cum caregiver"
+      "teaching"
     ],
     "nqrId": 9688
   },
@@ -7077,7 +7077,7 @@
     "ssc": "Home Management and Care Givers Sector Skill Counil (HMCGSSC)",
     "notionalHours": 600,
     "keywords": [
-      "caregiver persons with disabilities non clinical"
+      "teaching"
     ],
     "nqrId": 14612
   },
@@ -7311,7 +7311,7 @@
     "ssc": "Textile Sector Skill Council (TSC)",
     "notionalHours": 330,
     "keywords": [
-      "open end spinning tenter"
+      "cotton-spinning"
     ],
     "nqrId": 11001
   },
@@ -7337,7 +7337,7 @@
     "ssc": "Textile Sector Skill Council (TSC)",
     "notionalHours": 390,
     "keywords": [
-      "finished package checker cum packer spinning"
+      "cotton-spinning"
     ],
     "nqrId": 11002
   },
@@ -7454,7 +7454,7 @@
     "ssc": "Textile Sector Skill Council (TSC)",
     "notionalHours": 570,
     "keywords": [
-      "hand spinning operator"
+      "cotton-spinning"
     ],
     "nqrId": 11027
   },
@@ -7675,7 +7675,7 @@
     "ssc": "Directorate General of Training (DGT)",
     "notionalHours": 1350,
     "keywords": [
-      "spinning technician"
+      "cotton-spinning"
     ],
     "nqrId": 12740
   },
@@ -7727,7 +7727,7 @@
     "ssc": "Indian Jute Industries&#039; Research Association (IJIRA)",
     "notionalHours": 720,
     "keywords": [
-      "jute manufacturing technician elective jute yarn elective jute fabric"
+      "cotton-spinning"
     ],
     "nqrId": 12925
   },
@@ -7766,6 +7766,7 @@
     "ssc": "Indian Jute Industries&#039; Research Association (IJIRA)",
     "notionalHours": 720,
     "keywords": [
+      "cotton-spinning",
       "handloom-weaving"
     ],
     "nqrId": 12931
@@ -8528,7 +8529,7 @@
     "ssc": "Tourism and Hospitality Skill Council (THSC)",
     "notionalHours": 300,
     "keywords": [
-      "front office"
+      "clerk-office-assistant"
     ],
     "nqrId": 10831
   },
@@ -9465,7 +9466,7 @@
     "ssc": "Logistics Sector Skill Council (LSC)",
     "notionalHours": 570,
     "keywords": [
-      "key accounts management executive courier"
+      "accounting"
     ],
     "nqrId": 13261
   },
@@ -9647,7 +9648,7 @@
     "ssc": "National Institute of Electronics and Information Technology (NIELIT)",
     "notionalHours": 450,
     "keywords": [
-      "certified office automation and it"
+      "clerk-office-assistant"
     ],
     "nqrId": 3405
   },
@@ -9673,7 +9674,7 @@
     "ssc": "National Institute of Electronics and Information Technology (NIELIT)",
     "notionalHours": 360,
     "keywords": [
-      "certified computer application accounting and publishing"
+      "accounting"
     ],
     "nqrId": 3406
   },
@@ -9712,7 +9713,8 @@
     "ssc": "National Institute of Electronics and Information Technology (NIELIT)",
     "notionalHours": 210,
     "keywords": [
-      "computer-operator"
+      "computer-operator",
+      "clerk-office-assistant"
     ],
     "nqrId": 3407
   },
@@ -9868,7 +9870,7 @@
     "ssc": "National Institute of Electronics and Information Technology (NIELIT)",
     "notionalHours": 990,
     "keywords": [
-      "computer applications and business accounting associate"
+      "accounting"
     ],
     "nqrId": 4133
   },
@@ -9894,7 +9896,8 @@
     "ssc": "National Institute of Electronics and Information Technology (NIELIT)",
     "notionalHours": 690,
     "keywords": [
-      "office automation accounting and publishing"
+      "clerk-office-assistant",
+      "accounting"
     ],
     "nqrId": 4135
   },
@@ -10076,7 +10079,7 @@
     "ssc": "Medhavi Skill University",
     "notionalHours": 570,
     "keywords": [
-      "web video production and editing"
+      "video-editing"
     ],
     "nqrId": 9702
   },
@@ -10623,7 +10626,7 @@
     "ssc": "Banking financial services and insurance sector skill council (BFSISSC)",
     "notionalHours": 480,
     "keywords": [
-      "accounts"
+      "accounting"
     ],
     "nqrId": 11243
   },
@@ -10649,7 +10652,7 @@
     "ssc": "The Institute of Cost Accountants of India (ICAI)",
     "notionalHours": 480,
     "keywords": [
-      "certified executive in financial planning and cost management accounting defence"
+      "accounting"
     ],
     "nqrId": 11370
   },
@@ -10662,7 +10665,7 @@
     "ssc": "The Institute of Cost Accountants of India (ICAI)",
     "notionalHours": 480,
     "keywords": [
-      "certificate in accounting technicians cat"
+      "accounting"
     ],
     "nqrId": 11376
   },
@@ -10779,7 +10782,7 @@
     "ssc": "Vidya Bharti Akhil Bhartiya Shiksha Sansthan",
     "notionalHours": 120,
     "keywords": [
-      "introduction to tally operations gst calculations"
+      "accounting"
     ],
     "nqrId": 13128
   },
@@ -10792,7 +10795,7 @@
     "ssc": "Vidya Bharti Akhil Bhartiya Shiksha Sansthan",
     "notionalHours": 120,
     "keywords": [
-      "accounting operations gst compliances"
+      "accounting"
     ],
     "nqrId": 13132
   },
@@ -12457,7 +12460,7 @@
     "ssc": "Electronics Sector Skills Council Of India (ESSCI)",
     "notionalHours": 600,
     "keywords": [
-      "field technician air conditioner"
+      "ac-repair"
     ],
     "nqrId": 2269
   },
@@ -12873,7 +12876,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 450,
     "keywords": [
-      "account executive"
+      "accounting"
     ],
     "nqrId": 2530
   },
@@ -13029,7 +13032,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 450,
     "keywords": [
-      "editor"
+      "video-editing"
     ],
     "nqrId": 2542
   },
@@ -13289,7 +13292,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 510,
     "keywords": [
-      "sound editor"
+      "video-editing"
     ],
     "nqrId": 2564
   },
@@ -13380,7 +13383,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 450,
     "keywords": [
-      "vfx editor"
+      "video-editing"
     ],
     "nqrId": 2570
   },
@@ -13419,7 +13422,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 840,
     "keywords": [
-      "account director"
+      "accounting"
     ],
     "nqrId": 2663
   },
@@ -13523,7 +13526,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 840,
     "keywords": [
-      "script editor"
+      "video-editing"
     ],
     "nqrId": 2687
   },
@@ -13679,7 +13682,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 840,
     "keywords": [
-      "desk editor"
+      "video-editing"
     ],
     "nqrId": 2906
   },
@@ -13887,7 +13890,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 900,
     "keywords": [
-      "editor in chief print media"
+      "video-editing"
     ],
     "nqrId": 3132
   },
@@ -13900,7 +13903,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 900,
     "keywords": [
-      "dance teacher"
+      "teaching"
     ],
     "nqrId": 3131
   },
@@ -13913,7 +13916,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 900,
     "keywords": [
-      "fine arts teacher"
+      "teaching"
     ],
     "nqrId": 3133
   },
@@ -13952,7 +13955,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 900,
     "keywords": [
-      "music teacher"
+      "teaching"
     ],
     "nqrId": 3135
   },
@@ -13991,7 +13994,7 @@
     "ssc": "Media &amp; Entertainment Skill Council (MESC)",
     "notionalHours": 510,
     "keywords": [
-      "video blogger"
+      "video-editing"
     ],
     "nqrId": 3139
   },
@@ -16217,6 +16220,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 600,
     "keywords": [
+      "medical-care",
       "pharmacy-assistant",
       "warehouse-operations"
     ],
@@ -16309,7 +16313,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 30,
     "keywords": [
-      "product promotion with registered medical practitioners"
+      "medical-care"
     ],
     "nqrId": 9962
   },
@@ -16362,7 +16366,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 1470,
     "keywords": [
-      "specialist quality assurance pharma biological products and medical devices"
+      "medical-care"
     ],
     "nqrId": 9958
   },
@@ -16492,7 +16496,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 540,
     "keywords": [
-      "engineer emi emc testing for medical devices and ivd"
+      "medical-care"
     ],
     "nqrId": 9984
   },
@@ -16505,6 +16509,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 480,
     "keywords": [
+      "medical-care",
       "ecommerce-logistics"
     ],
     "nqrId": 9985
@@ -16531,7 +16536,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 1200,
     "keywords": [
-      "production technician medical device stents"
+      "medical-care"
     ],
     "nqrId": 9988
   },
@@ -16544,7 +16549,8 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 510,
     "keywords": [
-      "electrical"
+      "electrical",
+      "medical-care"
     ],
     "nqrId": 9989
   },
@@ -16557,7 +16563,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 480,
     "keywords": [
-      "technician automation maintenance for medical device plant"
+      "medical-care"
     ],
     "nqrId": 9990
   },
@@ -16635,7 +16641,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 210,
     "keywords": [
-      "beginner s guide to life sciences pharmaceutical medical devices biotechnology"
+      "medical-care"
     ],
     "nqrId": 12269
   },
@@ -16648,7 +16654,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 210,
     "keywords": [
-      "life sciences pharmaceutical medical devices biotechnology fundamentals"
+      "medical-care"
     ],
     "nqrId": 12271
   },
@@ -16674,6 +16680,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 450,
     "keywords": [
+      "medical-care",
       "retail"
     ],
     "nqrId": 12797
@@ -16687,7 +16694,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 390,
     "keywords": [
-      "manufacturing and packaging pharma biologics and medical device"
+      "medical-care"
     ],
     "nqrId": 12806
   },
@@ -16713,7 +16720,7 @@
     "ssc": "Life Sciences Sector Skill Development Council (LSSSDC)",
     "notionalHours": 300,
     "keywords": [
-      "secondary and tertiary packaging pharma biologics and medical devices"
+      "medical-care"
     ],
     "nqrId": 12809
   }

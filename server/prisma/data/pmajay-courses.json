@@ -51,7 +51,9 @@
     "courseName": "Computer Application Accounting and Publishing Assistant",
     "subCourseCode": "NIE/SSC/Q0201",
     "subCourseName": "Computer Application Accounting and Publishing Assistant",
-    "keywords": []
+    "keywords": [
+      "accounting"
+    ]
   },
   {
     "srNo": 6,
@@ -93,7 +95,9 @@
     "courseName": "Biomedical Waste Management Nursing and Paramedical Staff",
     "subCourseCode": "NM-4.5-ES-02106-2024-V1-SCGJ",
     "subCourseName": "Biomedical Waste Management Nursing and Paramedical Staff",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 10,
@@ -233,7 +237,9 @@
     "courseName": "Biomedical Equipment Maintenance Assistant",
     "subCourseCode": "NIE/ELE/Q0802",
     "subCourseName": "Biomedical Equipment Maintenance Assistant",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 24,
@@ -673,7 +679,9 @@
     "courseName": "Geriatric Caregiver (Institutional & Home Care)",
     "subCourseCode": "HSS/Q6002",
     "subCourseName": "Geriatric Caregiver (Institutional & Home Care)",
-    "keywords": []
+    "keywords": [
+      "teaching"
+    ]
   },
   {
     "srNo": 65,
@@ -1057,7 +1065,9 @@
     "courseName": "Play School Facilitator cum Caregiver",
     "subCourseCode": "DWC/Q0206",
     "subCourseName": "Play School Facilitator cum Caregiver",
-    "keywords": []
+    "keywords": [
+      "teaching"
+    ]
   },
   {
     "srNo": 103,
@@ -1119,7 +1129,9 @@
     "courseName": "Certified Computer Application, Accounting and Publishing Assistant",
     "subCourseCode": "NIELIT/OA/4/40",
     "subCourseName": "Certified Computer Application, Accounting and Publishing Assistant",
-    "keywords": []
+    "keywords": [
+      "accounting"
+    ]
   },
   {
     "srNo": 109,
@@ -1191,7 +1203,9 @@
     "courseName": "Other",
     "subCourseCode": "CLAT",
     "subCourseName": "CLAT",
-    "keywords": []
+    "keywords": [
+      "teaching"
+    ]
   },
   {
     "srNo": 116,
@@ -1201,7 +1215,9 @@
     "courseName": "Other",
     "subCourseCode": "AIEEE",
     "subCourseName": "AIEEE",
-    "keywords": []
+    "keywords": [
+      "teaching"
+    ]
   },
   {
     "srNo": 117,
@@ -1211,7 +1227,9 @@
     "courseName": "Other",
     "subCourseCode": "ITI",
     "subCourseName": "ITI",
-    "keywords": []
+    "keywords": [
+      "teaching"
+    ]
   },
   {
     "srNo": 118,
@@ -1221,7 +1239,9 @@
     "courseName": "Other",
     "subCourseCode": "JEE",
     "subCourseName": "JEE",
-    "keywords": []
+    "keywords": [
+      "teaching"
+    ]
   },
   {
     "srNo": 119,
@@ -1231,7 +1251,9 @@
     "courseName": "Other",
     "subCourseCode": "UPSC",
     "subCourseName": "UPSC",
-    "keywords": []
+    "keywords": [
+      "teaching"
+    ]
   },
   {
     "srNo": 120,
@@ -1241,7 +1263,9 @@
     "courseName": "Other",
     "subCourseCode": "NEET",
     "subCourseName": "NEET",
-    "keywords": []
+    "keywords": [
+      "teaching"
+    ]
   },
   {
     "srNo": 121,
@@ -1251,7 +1275,9 @@
     "courseName": "Stenography and Typing",
     "subCourseCode": "PUN/0001",
     "subCourseName": "Stenography and Typing",
-    "keywords": []
+    "keywords": [
+      "clerk-office-assistant"
+    ]
   },
   {
     "srNo": 122,
@@ -1261,7 +1287,9 @@
     "courseName": "IT Consulting",
     "subCourseCode": "2022/ITES/NIELIT/06336",
     "subCourseName": "Certified Computer Application Accounting and Publishing Assistant",
-    "keywords": []
+    "keywords": [
+      "accounting"
+    ]
   },
   {
     "srNo": 123,
@@ -1272,7 +1300,8 @@
     "subCourseCode": "2022/ITES/NIELIT/06337",
     "subCourseName": "Certified Data Entry and Office Assistant (Upskilling)",
     "keywords": [
-      "computer-operator"
+      "computer-operator",
+      "clerk-office-assistant"
     ]
   },
   {
@@ -1396,7 +1425,9 @@
     "courseName": "Air Conditioning and Refrigeration Electronics",
     "subCourseCode": "Odisha/WSC/0003",
     "subCourseName": "Air Conditioning and Refrigeration Electronics",
-    "keywords": []
+    "keywords": [
+      "ac-repair"
+    ]
   },
   {
     "srNo": 135,
@@ -1560,7 +1591,9 @@
     "courseName": "Video Editing",
     "subCourseCode": "RSETI/613",
     "subCourseName": "Video Editing",
-    "keywords": []
+    "keywords": [
+      "video-editing"
+    ]
   },
   {
     "srNo": 151,
@@ -1721,7 +1754,9 @@
     "courseName": "Refrigeration and Air-conditioning Course (RAC)",
     "subCourseCode": "RSETI/203",
     "subCourseName": "Refrigeration and Air-conditioning Course (RAC)",
-    "keywords": []
+    "keywords": [
+      "ac-repair"
+    ]
   },
   {
     "srNo": 166,
@@ -2080,6 +2115,7 @@
     "subCourseCode": "RSETI/243",
     "subCourseName": "Cotton Ginning Mill Fitter Training",
     "keywords": [
+      "cotton-spinning",
       "fitter"
     ]
   },
@@ -2467,7 +2503,9 @@
     "courseName": "Computer-Tally",
     "subCourseCode": "RSETI/319",
     "subCourseName": "Computer-Tally",
-    "keywords": []
+    "keywords": [
+      "accounting"
+    ]
   },
   {
     "srNo": 235,
@@ -2477,7 +2515,9 @@
     "courseName": "Computerized Financial Accounting (Wage Employment)",
     "subCourseCode": "RSETI/320",
     "subCourseName": "Computerized Financial Accounting (Wage Employment)",
-    "keywords": []
+    "keywords": [
+      "accounting"
+    ]
   },
   {
     "srNo": 236,
@@ -3086,7 +3126,9 @@
     "courseName": "IT Support Services/Help Desk",
     "subCourseCode": "2020/ITES/NIELIT/038888",
     "subCourseName": "Advance diploma in Computer Application Accounting and Publishing",
-    "keywords": []
+    "keywords": [
+      "accounting"
+    ]
   },
   {
     "srNo": 293,
@@ -3118,7 +3160,9 @@
     "courseName": "STENOGRAPHER SECRETARIAL ASSISTANT (ENGLISH)",
     "subCourseCode": "DGT/1021",
     "subCourseName": "STENOGRAPHER SECRETARIAL ASSISTANT (ENGLISH)",
-    "keywords": []
+    "keywords": [
+      "clerk-office-assistant"
+    ]
   },
   {
     "srNo": 296,
@@ -3138,7 +3182,9 @@
     "courseName": "Mechanic Refrigeration and Air Conditioner (CTS)",
     "subCourseCode": "DGT/1010",
     "subCourseName": "Mechanic Refrigeration and Air Conditioner (CTS)",
-    "keywords": []
+    "keywords": [
+      "ac-repair"
+    ]
   },
   {
     "srNo": 298,
@@ -5163,7 +5209,9 @@
     "courseName": "Spinning",
     "subCourseCode": "TSC/Q0204",
     "subCourseName": "Jute spinning Sardar (Jobber) cum Jr. Supervisor",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 480,
@@ -5173,7 +5221,9 @@
     "courseName": "Spinning",
     "subCourseCode": "TSC/Q0205",
     "subCourseName": "Ring Frame Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 481,
@@ -5183,7 +5233,9 @@
     "courseName": "Post Spinning - Technical Textiles",
     "subCourseCode": "TSC/Q8301",
     "subCourseName": "Tape Winder",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 482,
@@ -5193,7 +5245,9 @@
     "courseName": "Spinning - Technical Textiles",
     "subCourseCode": "TSC/Q8201",
     "subCourseName": "Tape Plant Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 483,
@@ -5223,7 +5277,9 @@
     "courseName": "Post Spinning Operations",
     "subCourseCode": "TSC/Q0303",
     "subCourseName": "TFO Tenter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 486,
@@ -5233,7 +5289,9 @@
     "courseName": "Post Spinning Operations",
     "subCourseCode": "TSC/Q0304",
     "subCourseName": "Jute Weft Winding Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 487,
@@ -5243,7 +5301,9 @@
     "courseName": "Post Spinning Operations",
     "subCourseCode": "TSC/Q0305",
     "subCourseName": "Winding Tenter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 488,
@@ -5253,7 +5313,9 @@
     "courseName": "Post Spinning Operations",
     "subCourseCode": "TSC/Q0306",
     "subCourseName": "Finished Package Checker-cum-Packer - Spinning",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 489,
@@ -5263,7 +5325,9 @@
     "courseName": "Pre Spinning Operations",
     "subCourseCode": "TSC/Q0101",
     "subCourseName": "Blowroom Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 490,
@@ -5273,7 +5337,9 @@
     "courseName": "Pre Spinning Operations",
     "subCourseCode": "TSC/Q0102",
     "subCourseName": "Carding Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 491,
@@ -5283,7 +5349,9 @@
     "courseName": "Pre Spinning Operations",
     "subCourseCode": "TSC/Q0103",
     "subCourseName": "Combing Preparatory Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 492,
@@ -5293,7 +5361,9 @@
     "courseName": "Pre Spinning Operations",
     "subCourseCode": "TSC/Q0104",
     "subCourseName": "Combing Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 493,
@@ -5303,7 +5373,9 @@
     "courseName": "Pre Spinning Operations",
     "subCourseCode": "TSC/Q0105",
     "subCourseName": "Draw Frame Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 494,
@@ -5313,7 +5385,9 @@
     "courseName": "Pre Spinning Operations",
     "subCourseCode": "TSC/Q0106",
     "subCourseName": "Speed Frame Operator - Tenter and Doffer",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 495,
@@ -5323,7 +5397,9 @@
     "courseName": "Pre Spinning Operations",
     "subCourseCode": "TSC/Q0108",
     "subCourseName": "Jute Carding Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 496,
@@ -5333,7 +5409,9 @@
     "courseName": "Spinning",
     "subCourseCode": "TSC/Q0201",
     "subCourseName": "Ring Frame Tenter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 497,
@@ -5343,7 +5421,9 @@
     "courseName": "Spinning",
     "subCourseCode": "TSC/Q0202",
     "subCourseName": "Ring Frame Doffer",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 498,
@@ -5353,7 +5433,9 @@
     "courseName": "Spinning",
     "subCourseCode": "TSC/Q0203",
     "subCourseName": "Open-End Spinning Tenter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 499,
@@ -5363,7 +5445,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0102",
     "subCourseName": "Carding Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 500,
@@ -5373,7 +5457,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0103",
     "subCourseName": "Combing Preparatory operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 501,
@@ -5383,7 +5469,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0104",
     "subCourseName": "Combing Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 502,
@@ -5393,7 +5481,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0105",
     "subCourseName": "Drawframe Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 503,
@@ -5403,7 +5493,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0106",
     "subCourseName": "Speed Frame Operator Tenter & Doffer",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 504,
@@ -5413,7 +5505,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0109",
     "subCourseName": "Gill box draw frame machineoperator - Jute/ Wool",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 505,
@@ -5423,7 +5517,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0901",
     "subCourseName": "Ginning Helper",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 506,
@@ -5433,7 +5529,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0902",
     "subCourseName": "Assistant Cotton Grader (Ginning)",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 507,
@@ -5444,6 +5542,7 @@
     "subCourseCode": "TSC/Q0903",
     "subCourseName": "Assistant Ginning Fitter",
     "keywords": [
+      "cotton-spinning",
       "fitter"
     ]
   },
@@ -5455,7 +5554,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0904",
     "subCourseName": "Traditional Bale Press Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 509,
@@ -5465,7 +5566,9 @@
     "courseName": "Spinning Preparatory - Jute",
     "subCourseCode": "TSC/Q0107",
     "subCourseName": "Jute Selector cum Assorter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 510,
@@ -5475,7 +5578,9 @@
     "courseName": "Spinning Preparatory - Jute",
     "subCourseCode": "TSC/Q0108",
     "subCourseName": "Jute Carding Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 511,
@@ -5485,7 +5590,9 @@
     "courseName": "Ginning",
     "subCourseCode": "TSC/Q0901",
     "subCourseName": "Ginning Helper",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 512,
@@ -5495,7 +5602,9 @@
     "courseName": "Ginning",
     "subCourseCode": "TSC/Q0902",
     "subCourseName": "Assistant Cotton Grader (Ginning)",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 513,
@@ -5506,6 +5615,7 @@
     "subCourseCode": "TSC/Q0903",
     "subCourseName": "Assistant Ginning Fitter",
     "keywords": [
+      "cotton-spinning",
       "fitter"
     ]
   },
@@ -5517,7 +5627,9 @@
     "courseName": "Ginning",
     "subCourseCode": "TSC/Q0904",
     "subCourseName": "Bale Press Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 515,
@@ -5528,6 +5640,7 @@
     "subCourseCode": "TSC/Q0401",
     "subCourseName": "Fitter Spinning Preparatory",
     "keywords": [
+      "cotton-spinning",
       "fitter"
     ]
   },
@@ -5540,6 +5653,7 @@
     "subCourseCode": "TSC/Q0402",
     "subCourseName": "Fitter - Ring Spinning",
     "keywords": [
+      "cotton-spinning",
       "fitter"
     ]
   },
@@ -5552,6 +5666,7 @@
     "subCourseCode": "TSC/Q0403",
     "subCourseName": "Fitter - Post Spinning",
     "keywords": [
+      "cotton-spinning",
       "fitter"
     ]
   },
@@ -5563,7 +5678,9 @@
     "courseName": "Post Spinning Operations",
     "subCourseCode": "TSC/Q0301",
     "subCourseName": "Autoconer Tenter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 519,
@@ -5573,7 +5690,9 @@
     "courseName": "Post Spinning",
     "subCourseCode": "TSC/Q0301",
     "subCourseName": "Autoconer Tenter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 520,
@@ -5583,7 +5702,9 @@
     "courseName": "Post Spinning",
     "subCourseCode": "TSC/Q0302",
     "subCourseName": "Cone Winding Operator-Manual & Assembly Winding",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 521,
@@ -5593,7 +5714,9 @@
     "courseName": "Post Spinning",
     "subCourseCode": "TSC/Q0303",
     "subCourseName": "TFO Tenter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 522,
@@ -5603,7 +5726,9 @@
     "courseName": "Post Spinning",
     "subCourseCode": "TSC/Q0501",
     "subCourseName": "Packing Checker",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 523,
@@ -5613,7 +5738,9 @@
     "courseName": "Post Spinning - Jute",
     "subCourseCode": "TSC/Q0304",
     "subCourseName": "Jute Weft Winding Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 524,
@@ -5623,7 +5750,9 @@
     "courseName": "Post Spinning Operations",
     "subCourseCode": "TSC/Q0302",
     "subCourseName": "Cone Winding Operator-Manual & Assembly Winding",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 525,
@@ -5633,7 +5762,9 @@
     "courseName": "Pre Spinning Operations",
     "subCourseCode": "TSC/Q0107",
     "subCourseName": "Jute Selector cum Assorter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 526,
@@ -5643,7 +5774,9 @@
     "courseName": "Spinning - Jute",
     "subCourseCode": "TSC/Q0204",
     "subCourseName": "Jute spinning Sardar (Jobber) cum Jr. Supervisor",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 527,
@@ -5654,6 +5787,7 @@
     "subCourseCode": "TSC/Q0401",
     "subCourseName": "Fitter Spinning Preparatory",
     "keywords": [
+      "cotton-spinning",
       "fitter"
     ]
   },
@@ -5666,6 +5800,7 @@
     "subCourseCode": "TSC/Q0402",
     "subCourseName": "Fitter - Ring Spinning",
     "keywords": [
+      "cotton-spinning",
       "fitter"
     ]
   },
@@ -5678,6 +5813,7 @@
     "subCourseCode": "TSC/Q0403",
     "subCourseName": "Fitter - Post Spinning",
     "keywords": [
+      "cotton-spinning",
       "fitter"
     ]
   },
@@ -5689,7 +5825,9 @@
     "courseName": "Spinning Preparatory",
     "subCourseCode": "TSC/Q0101",
     "subCourseName": "Blowroom Operator",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 531,
@@ -5721,7 +5859,9 @@
     "courseName": "Post Spinning",
     "subCourseCode": "TSC/Q0203",
     "subCourseName": "Open-End Spinning Tenter",
-    "keywords": []
+    "keywords": [
+      "cotton-spinning"
+    ]
   },
   {
     "srNo": 534,
@@ -5800,6 +5940,7 @@
     "subCourseCode": "TSC/Q7901",
     "subCourseName": "Hand Spinning Operator",
     "keywords": [
+      "cotton-spinning",
       "handloom-weaving"
     ]
   },
@@ -9743,7 +9884,8 @@
     "subCourseCode": "MES/Q0204",
     "subCourseName": "Sales Coordinator (Media Org.)",
     "keywords": [
-      "retail"
+      "retail",
+      "accounting"
     ]
   },
   {
@@ -9755,7 +9897,8 @@
     "subCourseCode": "MES/Q0206",
     "subCourseName": "Advertising Operations Coordinator (Digital)",
     "keywords": [
-      "retail"
+      "retail",
+      "accounting"
     ]
   },
   {
@@ -9767,7 +9910,8 @@
     "subCourseCode": "MES/Q0205",
     "subCourseName": "Traffic Coordinator (Media Org.)",
     "keywords": [
-      "retail"
+      "retail",
+      "accounting"
     ]
   },
   {
@@ -9933,7 +10077,8 @@
     "subCourseCode": "MES/Q0201",
     "subCourseName": "Sales Director (Media Org.)",
     "keywords": [
-      "retail"
+      "retail",
+      "accounting"
     ]
   },
   {
@@ -9945,7 +10090,8 @@
     "subCourseCode": "MES/Q0202",
     "subCourseName": "Sales Manager (Media Org.)",
     "keywords": [
-      "retail"
+      "retail",
+      "accounting"
     ]
   },
   {
@@ -9957,7 +10103,8 @@
     "subCourseCode": "MES/Q0203",
     "subCourseName": "Sales Executive (Media Org)",
     "keywords": [
-      "retail"
+      "retail",
+      "accounting"
     ]
   },
   {
@@ -10058,7 +10205,9 @@
     "courseName": "Editing",
     "subCourseCode": "MES/Q1401",
     "subCourseName": "Editor",
-    "keywords": []
+    "keywords": [
+      "video-editing"
+    ]
   },
   {
     "srNo": 925,
@@ -10068,7 +10217,9 @@
     "courseName": "Vfx And Di",
     "subCourseCode": "MES/Q3501",
     "subCourseName": "Vfx Editor",
-    "keywords": []
+    "keywords": [
+      "video-editing"
+    ]
   },
   {
     "srNo": 926,
@@ -10108,7 +10259,9 @@
     "courseName": "Screen/Script Writing",
     "subCourseCode": "MES/Q3001",
     "subCourseName": "Script Editor",
-    "keywords": []
+    "keywords": [
+      "video-editing"
+    ]
   },
   {
     "srNo": 930,
@@ -10138,7 +10291,9 @@
     "courseName": "Sound Creation",
     "subCourseCode": "MES/Q3404",
     "subCourseName": "Sound Editor",
-    "keywords": []
+    "keywords": [
+      "video-editing"
+    ]
   },
   {
     "srNo": 933,
@@ -10335,7 +10490,8 @@
     "subCourseCode": "MES/Q0207",
     "subCourseName": "Account Director (Advertising Agency)",
     "keywords": [
-      "retail"
+      "retail",
+      "accounting"
     ]
   },
   {
@@ -10347,7 +10503,8 @@
     "subCourseCode": "MES/Q0208",
     "subCourseName": "Account Executive (Advertising Agency)",
     "keywords": [
-      "retail"
+      "retail",
+      "accounting"
     ]
   },
   {
@@ -10499,7 +10656,8 @@
     "subCourseCode": "MES/Q0705",
     "subCourseName": "Search Engine Marketing Executive",
     "keywords": [
-      "retail"
+      "retail",
+      "accounting"
     ]
   },
   {
@@ -10918,7 +11076,9 @@
     "courseName": "Documentation and Reporting",
     "subCourseCode": "LSC/Q2108",
     "subCourseName": "Inventory Clerk",
-    "keywords": []
+    "keywords": [
+      "clerk-office-assistant"
+    ]
   },
   {
     "srNo": 1007,
@@ -11180,7 +11340,9 @@
     "courseName": "Office Support",
     "subCourseCode": "MEP/Q0202",
     "subCourseName": "Office Assistant",
-    "keywords": []
+    "keywords": [
+      "clerk-office-assistant"
+    ]
   },
   {
     "srNo": 1031,
@@ -11636,7 +11798,9 @@
     "courseName": "Manufacturing",
     "subCourseCode": "LFS/Q0214",
     "subCourseName": "Manager-EHS (Manufacturing or Research facility for Pharma/ Biological Products/ Medical Device)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1075,
@@ -11666,7 +11830,9 @@
     "courseName": "Quality",
     "subCourseCode": "LFS/Q0302",
     "subCourseName": "Chemist- In-process Quality Assurance (Pharma, Biologics and Medical Device)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1078,
@@ -11709,6 +11875,7 @@
     "subCourseCode": "LFS/Q0604",
     "subCourseName": "Associate- Store (Pharma/ Bio Pharma / Medical Devices)",
     "keywords": [
+      "medical-care",
       "pharmacy-assistant"
     ]
   },
@@ -11800,7 +11967,9 @@
     "courseName": "Research and Development",
     "subCourseCode": "LFS/Q0504",
     "subCourseName": "Regulatory Medical Writer",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1091,
@@ -11820,7 +11989,9 @@
     "courseName": "Research and Development",
     "subCourseCode": "LFS/Q0506",
     "subCourseName": "Scientific Medical Writer",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1093,
@@ -12004,7 +12175,9 @@
     "courseName": "Engineering and Maintenance",
     "subCourseCode": "LFS/Q0801",
     "subCourseName": "Assistant- Maintenance (Pharma, Biologics and Medical Device Facility)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1111,
@@ -12014,7 +12187,9 @@
     "courseName": "Engineering and Maintenance",
     "subCourseCode": "LFS/Q0802",
     "subCourseName": "Supervisor- Maintenance (Pharma, Biologics and Medical Device Facility)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1112,
@@ -12299,6 +12474,7 @@
     "subCourseCode": "LFS/Q0401",
     "subCourseName": "Medical Sales Representative",
     "keywords": [
+      "medical-care",
       "retail"
     ]
   },
@@ -12532,7 +12708,9 @@
     "courseName": "Clinical Trials",
     "subCourseCode": "LFS/Q3501",
     "subCourseName": "Associate-Clinical Research Management (Pharma, Biologics and Medical devices)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1161,
@@ -13725,7 +13903,9 @@
     "courseName": "Finance and Accounting",
     "subCourseCode": "SSC/Q2301",
     "subCourseName": "Associate - Transactional F&A",
-    "keywords": []
+    "keywords": [
+      "accounting"
+    ]
   },
   {
     "srNo": 1276,
@@ -13735,7 +13915,9 @@
     "courseName": "Finance and Accounting",
     "subCourseCode": "SSC/Q2302",
     "subCourseName": "Associate - F&A Complex",
-    "keywords": []
+    "keywords": [
+      "accounting"
+    ]
   },
   {
     "srNo": 1277,
@@ -14646,7 +14828,9 @@
     "courseName": "Hospital Administration",
     "subCourseCode": "HSS/Q6102",
     "subCourseName": "Patient Relations Associate",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1364,
@@ -14702,7 +14886,8 @@
     "subCourseCode": "HSS/Q5104",
     "subCourseName": "COVID Frontline Worker (Basic Care Support)",
     "keywords": [
-      "healthcare-support"
+      "healthcare-support",
+      "medical-care"
     ]
   },
   {
@@ -14714,7 +14899,8 @@
     "subCourseCode": "HSS/Q5105",
     "subCourseName": "COVID Frontline Worker (Home Care Support)",
     "keywords": [
-      "healthcare-support"
+      "healthcare-support",
+      "medical-care"
     ]
   },
   {
@@ -14887,7 +15073,9 @@
     "courseName": "Healthcare Administration",
     "subCourseCode": "HSS/Q6103",
     "subCourseName": "Assistant Duty Manager - Patient Relation Services",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1386,
@@ -14897,7 +15085,9 @@
     "courseName": "Healthcare Administration",
     "subCourseCode": "HSS/Q6104",
     "subCourseName": "Duty Manager (Patient Relation Services)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1387,
@@ -14907,7 +15097,9 @@
     "courseName": "Healthcare Administration",
     "subCourseCode": "HSS/Q6105",
     "subCourseName": "Pradhan Mantri Arogya Mitra",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1388,
@@ -14917,7 +15109,9 @@
     "courseName": "Healthcare Administration",
     "subCourseCode": "HSS/Q6106",
     "subCourseName": "Healthcare Quality Assurance Manager",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1389,
@@ -14927,7 +15121,9 @@
     "courseName": "Hospital Administration",
     "subCourseCode": "HSS/Q6101",
     "subCourseName": "Hospital Front Desk Coordinator",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1390,
@@ -14947,7 +15143,9 @@
     "courseName": "Curative Services",
     "subCourseCode": "HSS/Q3004",
     "subCourseName": "Dresser (Medical)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1392,
@@ -14967,7 +15165,9 @@
     "courseName": "Diagnostic",
     "subCourseCode": "HSS/Q0301",
     "subCourseName": "Medical Laboratory Technician",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1394,
@@ -14997,7 +15197,9 @@
     "courseName": "Diagnostic",
     "subCourseCode": "HSS/Q0502",
     "subCourseName": "COVID Frontline Worker (Sample Collection Support)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1397,
@@ -15047,7 +15249,9 @@
     "courseName": "Emergency Services",
     "subCourseCode": "HSS/Q2303",
     "subCourseName": "COVID Frontline Worker (Emergency Care Support)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1402,
@@ -15057,7 +15261,9 @@
     "courseName": "Emergency Services",
     "subCourseCode": "HSS/Q2304",
     "subCourseName": "Emergency Medical Technician- Basic",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1403,
@@ -15067,7 +15273,9 @@
     "courseName": "Health Informatics",
     "subCourseCode": "HSS/Q5501",
     "subCourseName": "Medical Records Assistant",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1404,
@@ -15087,7 +15295,9 @@
     "courseName": "Non-direct Care",
     "subCourseCode": "HSS/Q5601",
     "subCourseName": "Medical Equipment Technician (Basic Clinical Equipment)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1406,
@@ -15097,7 +15307,9 @@
     "courseName": "Non-direct Care",
     "subCourseCode": "HSS/Q5604",
     "subCourseName": "COVID Frontline Worker (Medical Equipment Support)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1407,
@@ -15107,7 +15319,9 @@
     "courseName": "Non-direct Care",
     "subCourseCode": "HSS/Q5605",
     "subCourseName": "COVID Frontline Worker (Advanced Care Support)",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1408,
@@ -15253,6 +15467,7 @@
     "subCourseCode": "HCS/Q7401",
     "subCourseName": "Jute Yarn Hank Dyer",
     "keywords": [
+      "cotton-spinning",
       "handloom-weaving",
       "fabric-dyeing"
     ]
@@ -15559,7 +15774,9 @@
     "courseName": "Curative Services",
     "subCourseCode": "HSS/Q2301",
     "subCourseName": "Emergency Medical Technician-Basic",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1448,
@@ -15569,7 +15786,9 @@
     "courseName": "Curative Services",
     "subCourseCode": "HSS/Q2302",
     "subCourseName": "Emergency Medical Technician (EMT) - Advanced",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1449,
@@ -19177,7 +19396,9 @@
     "courseName": "Medical Device Manufacturing",
     "subCourseCode": "ELE/Q6305",
     "subCourseName": "Assembly Supervisor",
-    "keywords": []
+    "keywords": [
+      "medical-care"
+    ]
   },
   {
     "srNo": 1776,
@@ -19625,7 +19846,9 @@
     "courseName": "Caregiving - Persons with Disabilities (Non Clinical)",
     "subCourseCode": "DWC/Q0301",
     "subCourseName": "Caregiver Persons with Disabilities (Non Clinical)",
-    "keywords": []
+    "keywords": [
+      "teaching"
+    ]
   },
   {
     "srNo": 1817,
@@ -19648,7 +19871,8 @@
     "subCourseCode": "DWC/Q0202",
     "subCourseName": "Baby Caregiver",
     "keywords": [
-      "childcare"
+      "childcare",
+      "teaching"
     ]
   },
   {
@@ -19660,7 +19884,8 @@
     "subCourseCode": "DWC/Q0203",
     "subCourseName": "Caregiver - Mother & Newborn",
     "keywords": [
-      "childcare"
+      "childcare",
+      "teaching"
     ]
   },
   {
@@ -19828,7 +20053,8 @@
     "subCourseCode": "ELE/Q3102",
     "subCourseName": "Field Technician - Air Conditioner",
     "keywords": [
-      "retail"
+      "retail",
+      "ac-repair"
     ]
   },
   {
@@ -21270,7 +21496,9 @@
     "courseName": "Finance and Accounts",
     "subCourseCode": "BSC/Q8101",
     "subCourseName": "Accounts Executive",
-    "keywords": []
+    "keywords": [
+      "accounting"
+    ]
   },
   {
     "srNo": 1951,
@@ -23982,7 +24210,8 @@
     "subCourseCode": "AGR/Q4804",
     "subCourseName": "Animal Health Worker",
     "keywords": [
-      "dairy-livestock"
+      "dairy-livestock",
+      "medical-care"
     ]
   },
   {
@@ -24469,7 +24698,8 @@
     "subCourseCode": "AGR/Q7906",
     "subCourseName": "Commodity Account Manager",
     "keywords": [
-      "agriculture"
+      "agriculture",
+      "accounting"
     ]
   },
   {
@@ -25154,7 +25384,8 @@
     "subCourseCode": "AGR/Q7807",
     "subCourseName": "Agri-Clinic & Agri-Business Centre Manager",
     "keywords": [
-      "agriculture"
+      "agriculture",
+      "medical-care"
     ]
   },
   {
@@ -25596,6 +25827,7 @@
     "subCourseCode": "AGR/Q0202",
     "subCourseName": "Cotton Cultivator",
     "keywords": [
+      "cotton-spinning",
       "agriculture"
     ]
   },
