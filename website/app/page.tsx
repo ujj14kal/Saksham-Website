@@ -1,93 +1,71 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { HeroPortrait } from "./hero-portrait";
 import {
-  MessageCircle,
   Mic,
-  Volume2,
-  Wifi,
+  Languages,
   ShieldCheck,
-  Sparkles,
+  Briefcase,
   ArrowRight,
   CheckCircle2,
   AlertTriangle,
+  Sparkles,
+  BookOpen,
+  Wifi,
+  MessageCircle,
 } from "lucide-react";
-import { SkillTryout } from "./skill-tryout";
-import { ProgramList } from "./program-list";
-import { HeroOrb } from "./hero-orb";
+import { API_BASE } from "@/lib/api";
+import { TryIt } from "./try-it";
+import { OfficialLogos } from "./official-logos";
+import { WhatItDoes } from "./what-it-does";
 
-const LANGUAGES = [
-  { native: "हिन्दी", english: "Hindi" },
-  { native: "English", english: "English" },
-  { native: "বাংলা", english: "Bengali" },
-  { native: "தமிழ்", english: "Tamil" },
-  { native: "తెలుగు", english: "Telugu" },
-  { native: "मराठी", english: "Marathi" },
-  { native: "ಕನ್ನಡ", english: "Kannada" },
-  { native: "ગુજરાતી", english: "Gujarati" },
-  { native: "ਪੰਜਾਬੀ", english: "Punjabi" },
-  { native: "ଓଡ଼ିଆ", english: "Odia" },
-];
-
-const STEPS = [
-  {
-    title: "Speak",
-    body: 'A beneficiary describes their traditional skill out loud, in their own language — "main mitti ke bartan banata hoon".',
-  },
-  {
-    title: "Map to NSQF",
-    body: "A transparent, editable keyword lexicon maps the informal phrase to a normalized skill, then to a real NSQF qualification.",
-  },
-  {
-    title: "Recommend",
-    body: "NSQF level and location are scored against real PM-AJAY programmes — qualification match, sector, district, state, seats, stipend.",
-  },
-  {
-    title: "Explain & speak back",
-    body: 'A templated "why this" rationale is generated in the beneficiary\'s language and read aloud with on-device text-to-speech.',
-  },
-];
-
-const FEATURES = [
-  {
-    icon: Mic,
-    title: "Voice-first, 10 Indian languages",
-    body: "Every screen is natively translated — zero fallback to another language anywhere in the app.",
-  },
-  {
-    icon: Sparkles,
-    title: "Transparent skill mapping",
-    body: "An editable keyword lexicon, not a black-box model — every confidence score is a simple, inspectable formula.",
-  },
+const WHY_POINTS = [
   {
     icon: ShieldCheck,
-    title: "RAG for policy questions",
-    body: '"Will I get a certificate?" is answered strictly from real government PDF passages — never a guess.',
+    title: "No Guessing",
+    body: "You are shown the exact government course your skill matches, and why. Nothing is hidden.",
   },
   {
-    icon: Volume2,
-    title: "Voice-reactive UI",
-    body: "The mic button is a swirling clay-and-teal orb whose pulse reacts to actual speaking volume in real time.",
+    icon: Languages,
+    title: "Your Own Language",
+    body: "Speak or listen in Hindi, Tamil, Bengali and 7 more. Every word is written by people who speak it.",
   },
   {
     icon: Wifi,
-    title: "Works on low bandwidth",
-    body: "Speech-to-text falls back gracefully, and the whole pipeline still runs offline with zero API keys.",
-  },
-  {
-    icon: MessageCircle,
-    title: "WhatsApp channel",
-    body: "A Twilio webhook wired to the same real pipeline — text or voice notes, no app download needed.",
+    title: "Works On Weak Network",
+    body: "Built for slow internet and simple phones. It keeps working when the signal is poor.",
   },
 ];
 
-function Eyebrow({ children }: { children: ReactNode }) {
-  return (
-    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent">
-      {children}
-    </p>
-  );
-}
+const STEPS = [
+  { n: "01", title: "Say Your Work", body: 'Just say what work you do, in your own words — "main mitti ke bartan banata hoon".' },
+  { n: "02", title: "We Find The Course", body: "Your work is matched to a real government skill course that fits it." },
+  { n: "03", title: "See What Is Near You", body: "Training and jobs close to your village or town, at your level." },
+  { n: "04", title: "Hear The Reason", body: "Saksham tells you out loud why it chose that, in the same language you spoke." },
+];
+
+const TRUST_POINTS = [
+  {
+    icon: CheckCircle2,
+    title: "Real Government Lists",
+    body: "Every course comes from the official government lists — 1,283 skill courses and 2,366 PM-AJAY courses.",
+  },
+  {
+    icon: AlertTriangle,
+    title: "We Say What Is A Sample",
+    body: "Where a wage or seat count is only an example, it is clearly marked. We never show a made-up number as real.",
+  },
+  {
+    icon: Sparkles,
+    title: "You Can Check It",
+    body: "The match is not a secret. The course code is shown so anyone can look it up on the government website.",
+  },
+  {
+    icon: BookOpen,
+    title: "Grounded Answers",
+    body: '"Will I get a certificate?" is answered strictly from real government PDF passages, never invented.',
+  },
+];
 
 const JSON_LD = {
   "@context": "https://schema.org",
@@ -100,276 +78,249 @@ const JSON_LD = {
     "AI-driven voice assistant for livelihood mapping and NSQF-aligned skilling recommendations for SC communities under PM-AJAY, Ministry of Social Justice & Empowerment.",
   offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
   inLanguage: ["hi", "en", "bn", "ta", "te", "mr", "kn", "gu", "pa", "or"],
-  publisher: {
-    "@type": "GovernmentOrganization",
-    name: "Ministry of Social Justice & Empowerment",
-  },
+  publisher: { "@type": "GovernmentOrganization", name: "Ministry of Social Justice & Empowerment" },
 };
 
-export default function Home() {
+async function getLiveCoverage() {
+  const fallback = { sectors: [] as string[], jobPostings: null as number | null, programs: null as number | null };
+  try {
+    const [sectorsRes, jobsRes, programsRes] = await Promise.all([
+      fetch(`${API_BASE}/api/pmajay-courses/filters`, { next: { revalidate: 3600 } }),
+      fetch(`${API_BASE}/api/job-postings?pageSize=1`, { next: { revalidate: 3600 } }),
+      fetch(`${API_BASE}/api/programs`, { next: { revalidate: 3600 } }),
+    ]);
+    const sectors: string[] = sectorsRes.ok ? (await sectorsRes.json()).sectors ?? [] : [];
+    const jobsData = jobsRes.ok ? await jobsRes.json() : null;
+    const programsData = programsRes.ok ? await programsRes.json() : null;
+    return {
+      sectors,
+      jobPostings: jobsData?.total ?? null,
+      programs: Array.isArray(programsData) ? programsData.length : (programsData?.total ?? null),
+    };
+  } catch {
+    return fallback;
+  }
+}
+
+function Pill({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium text-foreground-dim">
+      {children}
+    </span>
+  );
+}
+
+export default async function Home() {
+
   return (
     <div className="bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
-      {/* Nav */}
-      <header className="sticky top-0 z-20 border-b border-border/70 bg-background/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5">
+
+      {/* Government identifier strip */}
+      <div className="border-b border-border bg-surface-alt px-6 py-1.5 text-center text-xs text-foreground-dim">
+        Government of India · Ministry of Social Justice &amp; Empowerment
+      </div>
+
+      <header className="border-b border-border bg-surface">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 lg:px-10">
           <div className="flex items-center gap-2.5">
-            <Image src="/icon.png" alt="Saksham" width={34} height={34} className="rounded-xl" />
+            <Image src="/icon.png" alt="Saksham" width={34} height={34} className="rounded-lg" />
             <div className="leading-tight">
-              <p className="font-display text-sm font-semibold">सक्षम · Saksham</p>
-              <p className="text-[11px] text-foreground-faint">Ministry of Social Justice &amp; Empowerment</p>
+              <p className="text-sm font-extrabold">सक्षम · Saksham</p>
+              <p className="text-xs text-foreground-faint">Speak your skill. Get matched.</p>
             </div>
           </div>
+          <nav className="hidden items-center gap-1 md:flex">
+            <a href="#how-it-works" className="rounded-full px-3.5 py-1.5 text-sm font-medium text-foreground-dim hover:bg-surface-alt">
+              How It Works
+            </a>
+            <a href="#try-it" className="rounded-full px-3.5 py-1.5 text-sm font-medium text-foreground-dim hover:bg-surface-alt">
+              Try It
+            </a>
+            <a href="#trust" className="rounded-full px-3.5 py-1.5 text-sm font-medium text-foreground-dim hover:bg-surface-alt">
+              Trust
+            </a>
+          </nav>
           <div className="flex items-center gap-2">
-            <Link
-              href="/auth"
-              className="rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground-dim transition hover:border-brand/40 hover:text-foreground"
+            <a
+              href="https://saksham-app-preview.vercel.app"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold hover:bg-surface-alt"
             >
-              Log in
-            </Link>
+              Try the App
+            </a>
             <Link
-              href="/welcome"
-              className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-on-brand shadow-[var(--shadow-soft)] transition hover:bg-brand-strong"
+              href="/admin/login"
+              className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-on-brand hover:bg-brand-strong"
             >
-              Try the app
+              Admin Login
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6">
-        {/* Hero */}
-        <section className="grid gap-10 pb-4 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-8 lg:pt-20">
-          <div>
-            <Eyebrow>PM-AJAY · Ministry of Social Justice &amp; Empowerment</Eyebrow>
-            <h1 className="mt-3 font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl">
-              Say your skill.
-              <br />
-              <span className="italic text-brand">Get certified for it.</span>
-            </h1>
-            <p className="mt-5 max-w-xl text-lg text-foreground-dim">
-              Beneficiaries describe a traditional skill out loud, in their own language. Saksham maps it to a real{" "}
-              <strong className="font-semibold text-foreground">NSQF qualification</strong> and matches nearby{" "}
-              <strong className="font-semibold text-foreground">PM-AJAY</strong> training — voice-first, low-bandwidth,
-              spoken back in the same language.
-            </p>
-            <div className="mt-7 flex flex-wrap items-center gap-3">
-              <Link
-                href="/welcome"
-                className="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3.5 text-base font-semibold text-on-brand shadow-[var(--shadow-float)] transition hover:bg-brand-strong active:scale-[0.98]"
-              >
-                Try the voice assistant
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href="#skill-mapper"
-                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3.5 text-base font-medium text-foreground-dim transition hover:border-brand/40 hover:text-foreground"
-              >
-                See it map a skill
-              </a>
-            </div>
-            <dl className="mt-9 flex flex-wrap gap-x-8 gap-y-4 border-t border-border pt-6">
-              {[
-                ["1,283", "real NSQF qualifications"],
-                ["2,366", "PM-AJAY-eligible courses"],
-                ["10", "natively spoken languages"],
-              ].map(([n, label]) => (
-                <div key={label}>
-                  <dt className="font-display text-2xl font-semibold text-brand">{n}</dt>
-                  <dd className="text-sm text-foreground-dim">{label}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-
-          <HeroOrb />
-        </section>
-
-        {/* WhatsApp strip */}
-        <section className="my-14 flex flex-wrap items-center gap-3 rounded-2xl border border-accent/20 bg-accent/10 px-5 py-4">
-          <MessageCircle className="h-6 w-6 shrink-0 text-accent" />
-          <p className="flex-1 text-sm text-accent">
-            <strong className="font-semibold">Saksham AI is now on WhatsApp</strong> — chat or send a voice note, no app
-            download needed.
-          </p>
-          <span className="shrink-0 rounded-full border border-accent/30 px-3 py-1 text-xs font-medium text-accent">
-            Coming soon
-          </span>
-        </section>
-
-        {/* Languages marquee */}
-        <section className="mb-20">
-          <Eyebrow>Natively supported</Eyebrow>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold">Ten languages, zero fallback</h2>
-          <p className="mt-1 max-w-xl text-sm text-foreground-dim">
-            Every UI string, every screen — natively translated, not machine-translated placeholders.
-          </p>
-          <div className="relative mt-6 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-            <div className="flex w-max gap-3 [animation:marquee_32s_linear_infinite] hover:[animation-play-state:paused]">
-              {[...LANGUAGES, ...LANGUAGES].map((l, i) => (
-                <span
-                  key={`${l.english}-${i}`}
-                  className="flex shrink-0 items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 text-sm shadow-[var(--shadow-soft)]"
-                >
-                  <span className="font-semibold">{l.native}</span>
-                  <span className="text-foreground-faint">· {l.english}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* How it works */}
-        <section className="mb-20">
-          <Eyebrow>The pipeline</Eyebrow>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold">How skill becomes programme</h2>
-          <div className="relative mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="absolute left-0 right-0 top-5 hidden h-px bg-border lg:block" />
-            {STEPS.map((s, i) => (
-              <div key={s.title} className="relative">
-                <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-brand font-display text-sm font-semibold text-on-brand shadow-[var(--shadow-soft)]">
-                  {i + 1}
-                </div>
-                <h3 className="mt-3 font-display text-lg font-semibold">{s.title}</h3>
-                <p className="mt-1.5 text-sm text-foreground-dim">{s.body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Feature grid */}
-        <section className="mb-20">
-          <Eyebrow>What actually works</Eyebrow>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold">Not a demo — a real pipeline</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f, i) => (
-              <div
-                key={f.title}
-                className={`rounded-2xl border border-border bg-surface p-5 shadow-[var(--shadow-soft)] ${i % 2 === 0 ? "rounded-tr-[28px]" : "rounded-bl-[28px]"}`}
-              >
-                <span
-                  className={`flex h-10 w-10 items-center justify-center rounded-xl ${i % 2 === 0 ? "bg-brand/10 text-brand" : "bg-accent/10 text-accent"}`}
-                >
-                  <f.icon className="h-5 w-5" />
-                </span>
-                <h3 className="mt-3 font-semibold">{f.title}</h3>
-                <p className="mt-1.5 text-sm text-foreground-dim">{f.body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Screenshots */}
-        <section className="mb-20">
-          <Eyebrow>The mobile app</Eyebrow>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold">Screens from the field app</h2>
-          <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-4">
-            {[
-              ["01-welcome.png", "Welcome"],
-              ["02-language.png", "10 languages"],
-              ["03-home.png", "Home dashboard"],
-              ["04-speak-orb.png", "Voice orb"],
-              ["05-confirm.png", "Skill confirmation"],
-              ["06-profile.png", "Profile"],
-              ["08-programs.png", "PM-AJAY programmes"],
-              ["07-website.png", "Public website"],
-            ].map(([src, label]) => (
-              <figure key={src} className="group">
-                <div className="overflow-hidden rounded-[22px] border-[6px] border-surface bg-surface shadow-[var(--shadow-float)] ring-1 ring-border transition-transform duration-200 group-hover:-translate-y-1">
-                  <Image src={`/screenshots/${src}`} alt={label} width={200} height={430} className="w-full" />
-                </div>
-                <figcaption className="mt-2 text-center text-xs text-foreground-dim">{label}</figcaption>
-              </figure>
-            ))}
-          </div>
-        </section>
-
-        {/* Try it */}
-        <section id="skill-mapper" className="mb-20 scroll-mt-24">
-          <Eyebrow>Try it live</Eyebrow>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold">Try the skill mapper</h2>
-          <p className="mt-1 max-w-xl text-sm text-foreground-dim">
-            Type an informal skill the way someone would say it — e.g. <em>&ldquo;main mitti ke bartan banata hoon&rdquo;</em>{" "}
-            or <em>&ldquo;silai ka kaam karti hoon&rdquo;</em>.
-          </p>
-          <div className="mt-5">
-            <SkillTryout />
-          </div>
-        </section>
-
-        <section className="mb-20">
-          <Eyebrow>Live catalogue</Eyebrow>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold">PM-AJAY training programmes</h2>
-          <div className="mt-5">
-            <ProgramList />
-          </div>
-        </section>
-
-        {/* Data honesty */}
-        <section className="mb-20 rounded-2xl border border-border bg-surface p-6 shadow-[var(--shadow-soft)]">
-          <Eyebrow>Data provenance</Eyebrow>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold">Real government data, honestly labelled</h2>
-          <p className="mt-2 max-w-2xl text-sm text-foreground-dim">
-            Not everything is real — and this project says so, loudly, in the same places the data lives.
-          </p>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+      <main>
+        {/* Hero — soft gradient band, pill badge, big bold headline, example card */}
+        <section
+          className="border-b border-border"
+          style={{
+            background: "linear-gradient(120deg, color-mix(in srgb, var(--accent) 38%, var(--background)) 0%, var(--background) 52%, color-mix(in srgb, var(--brand) 44%, var(--background)) 100%)",
+          }}
+        >
+          <div className="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:px-10 lg:py-8">
             <div>
-              <p className="flex items-center gap-2 text-sm font-semibold text-success">
-                <CheckCircle2 className="h-4 w-4" />
-                Real, scraped, traceable
-              </p>
-              <ul className="mt-2 space-y-1.5 text-sm text-foreground-dim">
-                <li>1,283 NSQF qualifications (nqr.gov.in)</li>
-                <li>2,366 PM-AJAY-eligible courses (pmajay.dosje.gov.in)</li>
-                <li>177 RAG passages from 2 real government PDFs</li>
-              </ul>
-            </div>
-            <div>
-              <p className="flex items-center gap-2 text-sm font-semibold text-warning">
-                <AlertTriangle className="h-4 w-4" />
-                Illustrative sample data
-              </p>
-              <p className="mt-2 text-sm text-foreground-dim">
-                Specific seats / contact-number / batch-date fields on training programmes — no government source
-                publishes that centrally.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Tech stack */}
-        <section className="mb-20">
-          <Eyebrow>Under the hood</Eyebrow>
-          <h2 className="mt-1.5 font-display text-2xl font-semibold">Tech stack</h2>
-          <div className="mt-6 flex flex-wrap gap-2 text-sm">
-            {[
-              ["Backend", "Express · TypeScript · Prisma · PostgreSQL"],
-              ["Speech", "Sarvam AI → Groq Whisper → offline mock"],
-              ["RAG / LLM", "Groq gpt-oss-120b · Postgres full-text search"],
-              ["Mobile app", "Expo SDK 57 · React Native · Reanimated"],
-              ["Website", "Next.js 15 · React 19 · Tailwind v4"],
-              ["Messaging", "Twilio WhatsApp webhook"],
-            ].map(([label, value]) => (
-              <span key={label} className="rounded-full border border-border bg-surface px-4 py-2 shadow-[var(--shadow-soft)]">
-                <span className="font-semibold">{label}</span>
-                <span className="text-foreground-dim"> · {value}</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-accent">
+                PM-AJAY · Official Skilling Help
               </span>
-            ))}
+              <h1 className="mt-4 text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl">
+                Say What You Know.
+                <br />
+                Get Matched For Real.
+              </h1>
+              <p className="mt-4 max-w-lg text-base text-foreground-dim">
+                Speak your traditional skill out loud, in your own language. Saksham matches it to a real government
+                qualification and real training or job openings nearby — with proof, not a guess.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Pill><Mic className="h-3.5 w-3.5 text-brand" />Voice-first</Pill>
+                <Pill><Languages className="h-3.5 w-3.5 text-brand" />10 languages</Pill>
+                <Pill><ShieldCheck className="h-3.5 w-3.5 text-brand" />Real NSQF match</Pill>
+                <Pill><Briefcase className="h-3.5 w-3.5 text-brand" />Real vacancies</Pill>
+              </div>
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <a
+                  href="#how-it-works"
+                  className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-on-brand hover:bg-brand-strong"
+                >
+                  See How It Works
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+                <a href="#try-it" className="rounded-xl border border-border bg-surface px-6 py-3 text-sm font-semibold hover:bg-surface-alt">
+                  Try a real example
+                </a>
+              </div>
+            </div>
+
+            <HeroPortrait />
           </div>
         </section>
 
-        <footer className="mb-10 flex flex-col gap-3 border-t border-border pt-6 text-xs text-foreground-faint">
-          <p>Prototype for demonstration. Programme data is representative sample data.</p>
-          <p>Built for SC communities under PM-AJAY, Ministry of Social Justice &amp; Empowerment.</p>
-          <div className="flex gap-4">
-            <Link href="/privacy" className="hover:text-foreground-dim hover:underline">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-foreground-dim hover:underline">
-              Terms of Service
-            </Link>
-          </div>
-        </footer>
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <WhatItDoes />
+
+          {/* Why it matters */}
+          <section className="border-b border-border py-14">
+            <p className="text-xs font-bold uppercase tracking-wide text-emphasis">Why Use It</p>
+            <h2 className="mt-2 max-w-xl text-3xl font-extrabold leading-tight">
+              Know what your work is worth.
+            </h2>
+            <p className="mt-2 max-w-xl text-sm text-foreground-dim">
+              You already have the skill. What is missing is the paper that proves it.
+            </p>
+            <div className="mt-8 grid gap-5 sm:grid-cols-3">
+              {WHY_POINTS.map((p) => (
+                <div key={p.title} className="rounded-xl border border-border bg-surface p-5">
+                  <p.icon className="h-6 w-6 text-brand" />
+                  <h3 className="mt-3 font-bold">{p.title}</h3>
+                  <p className="mt-1.5 text-sm text-foreground-dim">{p.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* How it works */}
+          <section id="how-it-works" className="border-b border-border py-14">
+            <p className="text-xs font-bold uppercase tracking-wide text-emphasis">How It Works</p>
+            <h2 className="mt-2 max-w-xl text-3xl font-extrabold leading-tight">Say it once. Get a real answer.</h2>
+            <p className="mt-2 max-w-xl text-sm text-foreground-dim">
+              It works the same on the app, this website, or WhatsApp.
+            </p>
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {STEPS.map((s) => (
+                <div key={s.n} className="rounded-xl border border-border bg-surface p-5">
+                  <p className="text-2xl font-extrabold text-foreground/30">{s.n}</p>
+                  <h3 className="mt-1 font-bold">{s.title}</h3>
+                  <p className="mt-1.5 text-sm text-foreground-dim">{s.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Try it — interactive */}
+          <section id="try-it" className="border-b border-border py-14">
+            <p className="text-xs font-bold uppercase tracking-wide text-emphasis">Try It</p>
+            <h2 className="mt-2 max-w-xl text-3xl font-extrabold leading-tight">Check a real match now.</h2>
+            <p className="mt-2 max-w-xl text-sm text-foreground-dim">
+              Pick a phrase below. What you&apos;ll see is a real qualification and a real posting from the database
+              — not a mockup.
+            </p>
+            <div className="mt-8">
+              <TryIt />
+            </div>
+          </section>
+
+          {/* Trust */}
+          <section id="trust" className="border-b border-border py-14">
+            <p className="text-xs font-bold uppercase tracking-wide text-emphasis">Trust</p>
+            <h2 className="mt-2 max-w-xl text-3xl font-extrabold leading-tight">Made for important public information.</h2>
+            <p className="mt-2 max-w-xl text-sm text-foreground-dim">
+              Beneficiaries shouldn&apos;t lose out on real support because information was unclear or unlabelled.
+            </p>
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {TRUST_POINTS.map((p) => (
+                <div key={p.title} className="rounded-xl border border-border bg-surface p-5">
+                  <p.icon className="h-6 w-6 text-brand" />
+                  <h3 className="mt-3 font-bold">{p.title}</h3>
+                  <p className="mt-1.5 text-sm text-foreground-dim">{p.body}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Channels */}
+          <section className="border-b border-border py-14">
+            <p className="text-xs font-bold uppercase tracking-wide text-emphasis">Where To Reach It</p>
+            <h2 className="mt-2 max-w-xl text-3xl font-extrabold leading-tight">Built for citizens and field teams.</h2>
+            <div className="mt-8 grid gap-5 sm:grid-cols-3">
+              <div className="rounded-xl border border-border bg-surface p-5">
+                <Mic className="h-6 w-6 text-brand" />
+                <h3 className="mt-3 font-bold">Mobile App</h3>
+                <p className="mt-1.5 text-sm text-foreground-dim">The full voice-first experience — Android, with offline-friendly speech fallback.</p>
+              </div>
+              <div className="rounded-xl border border-border bg-surface p-5">
+                <MessageCircle className="h-6 w-6 text-brand" />
+                <h3 className="mt-3 font-bold">WhatsApp</h3>
+                <p className="mt-1.5 text-sm text-foreground-dim">A webhook wired to the same real pipeline — text or voice notes, no app download needed.</p>
+              </div>
+              <div className="rounded-xl border border-border bg-surface p-5">
+                <ShieldCheck className="h-6 w-6 text-brand" />
+                <h3 className="mt-3 font-bold">Admin Dashboard</h3>
+                <p className="mt-1.5 text-sm text-foreground-dim">Programme staff manage job postings, training programmes, and beneficiary funnel from one place.</p>
+              </div>
+            </div>
+          </section>
+
+          <footer className="flex flex-col gap-3 py-10 text-xs text-foreground-faint">
+            <div className="mb-2">
+              <OfficialLogos />
+            </div>
+            <p>Prototype for demonstration. Programme data is representative sample data.</p>
+            <p>
+              PM-AJAY and NCVET marks and course data are reproduced from pmajay.dosje.gov.in and
+              nqr.gov.in under their copyright policies, which permit reuse with acknowledgement.
+            </p>
+            <p>Built for SC communities under PM-AJAY, Ministry of Social Justice &amp; Empowerment.</p>
+            <div className="flex gap-4">
+              <Link href="/privacy" className="hover:text-foreground-dim hover:underline">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="hover:text-foreground-dim hover:underline">
+                Terms of Service
+              </Link>
+            </div>
+          </footer>
+        </div>
       </main>
     </div>
   );

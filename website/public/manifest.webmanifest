@@ -2,7 +2,7 @@
   "name": "Saksham — PM-AJAY Skilling Assistant",
   "short_name": "Saksham",
   "description": "Speak your skill in your own language and find real PM-AJAY training, matched to a formal NSQF qualification.",
-  "start_url": "/welcome",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#FBF7F1",
   "theme_color": "#BD4E1C",

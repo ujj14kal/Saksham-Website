@@ -7,7 +7,8 @@ import { use } from "react";
 import { ArrowLeft } from "lucide-react";
 import { getToken, handleAdminAuthError } from "@/lib/auth";
 import { fetchAllSessions, groupSessionsByUser, type UserProfile } from "@/lib/admin-users";
-import { Card, Skeleton } from "@/components/ui";
+import { moderateUser, recommendationName } from "@/lib/api";
+import { Button, Card, Skeleton } from "@/components/ui";
 import { AdminShell } from "../../admin-shell";
 
 export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -68,7 +69,7 @@ function UserDetail({ id }: { id: string }) {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-xl font-semibold">{user.name?.trim() || "(no name)"}</h1>
+          <h1 className="text-xl font-semibold">{user.name?.trim() || "(no name)"}</h1>
           <p className="text-sm text-foreground-dim">
             {[user.phone, user.district].filter(Boolean).join(" · ") || "No phone or district on file"}
           </p>
@@ -107,7 +108,7 @@ function UserDetail({ id }: { id: string }) {
             .slice()
             .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
             .map((s) => (
-              <div key={s.id} className="rounded-xl border border-border p-3.5 text-sm">
+              <div key={s.id} className="rounded-md border border-border p-3.5 text-sm">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-foreground-faint">
                   <span>{new Date(s.createdAt).toLocaleString()}</span>
                   <span className="rounded bg-surface-alt px-2 py-0.5">{s.language}</span>
@@ -133,7 +134,7 @@ function UserDetail({ id }: { id: string }) {
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {s.recommendations.map((r) => (
                       <span key={r.id} className="rounded-full border border-border px-2 py-0.5 text-xs">
-                        {r.trainingProgram.name} · {r.status}
+                        {recommendationName(r)} · {r.status}
                       </span>
                     ))}
                   </div>
@@ -148,6 +149,8 @@ function UserDetail({ id }: { id: string }) {
             ))}
         </div>
       </Panel>
+
+      <ModerationPanel userId={id} />
 
       <p className="text-xs text-foreground-faint">
         This view is derived entirely from this user&apos;s voice-session activity (the only per-user data the admin
@@ -171,7 +174,7 @@ function Kpi({ label, value }: { label: string; value: number }) {
   return (
     <Card>
       <p className="text-xs font-medium uppercase tracking-wide text-foreground-faint">{label}</p>
-      <p className="mt-0.5 font-display text-3xl font-semibold">{value}</p>
+      <p className="mt-0.5 text-3xl font-semibold">{value}</p>
     </Card>
   );
 }
@@ -182,5 +185,71 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
       <h2 className="mb-3 font-semibold">{title}</h2>
       {children}
     </Card>
+  );
+}
+
+function ModerationPanel({ userId }: { userId: string }) {
+  const [suspended, setSuspended] = useState(false);
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  async function toggleSuspend() {
+    const token = getToken();
+    if (!token) return;
+    setBusy(true);
+    try {
+      const result = await moderateUser(token, userId, { suspended: !suspended });
+      setSuspended(result.suspended);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveNote() {
+    const token = getToken();
+    if (!token) return;
+    setBusy(true);
+    try {
+      await moderateUser(token, userId, { adminNote: note });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Panel title="Moderation">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-foreground-dim">
+            {suspended ? "This account is suspended — login is refused." : "This account is active."}
+          </p>
+          <Button
+            label={suspended ? "Unsuspend" : "Suspend account"}
+            variant={suspended ? "secondary" : "danger"}
+            size="md"
+            fullWidth={false}
+            loading={busy}
+            onPress={toggleSuspend}
+          />
+        </div>
+        <div>
+          <p className="mb-1.5 text-xs uppercase tracking-wide text-foreground-faint">Admin-only note</p>
+          <textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            rows={2}
+            placeholder="Visible only to admins — e.g. reason for suspension, phone correction requested…"
+            className="w-full rounded-md border border-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand"
+          />
+          <div className="mt-2 flex items-center gap-2">
+            <Button label="Save note" size="md" fullWidth={false} loading={busy} onPress={saveNote} />
+            {saved && <span className="text-xs text-success">Saved</span>}
+          </div>
+        </div>
+      </div>
+    </Panel>
   );
 }

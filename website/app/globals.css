@@ -1,32 +1,43 @@
 @import "tailwindcss";
 
+/*
+ * Colors match the real Saksham app's own brand tokens
+ * (app/src/theme/tokens.ts: primary #12B76A, accent #FF8A34) so the admin
+ * portal and the field app read as the same product. Applied here in a
+ * plainer, denser, government-portal style — flat surfaces, small radius,
+ * no gradients or decorative shapes — since this is an internal
+ * administration tool, not the public-facing consumer app.
+ */
 :root {
-  --background: #fbf7f1;
+  --background: #ffffff;
   --surface: #ffffff;
-  --surface-alt: #f3ece1;
-  --foreground: #241b11;
-  --foreground-dim: #6b5d4c;
-  --foreground-faint: #a2917c;
-  --border: #e7ddcc;
+  --surface-alt: #f5f7fb;
+  --foreground: #12172b;
+  --foreground-dim: #4b5470;
+  --foreground-faint: #6b7690;
+  --border: #dde2ee;
 
-  /* clay terracotta — the primary craft/artisan identity color */
-  --brand: #bd4e1c;
-  --brand-strong: #9a3d14;
-  --on-brand: #fff8f1;
+  /* Emphasis type — section labels, stat figures, the matched qualification.
+     A deep indigo rather than the brand green: it sits calmly against the
+     orange-to-green hero gradient instead of competing with it, and reads as
+     the serious, official tone this is (a government skilling service) while
+     keeping strong contrast on white. */
+  --emphasis: #2a3a8c;
 
-  /* deep forest teal — trust / certification / government accent */
-  --accent: #0e6e5c;
-  --accent-strong: #095546;
-  --on-accent: #f4fbf8;
+  --brand: #12b76a;
+  --brand-strong: #0b8f52;
+  --on-brand: #ffffff;
 
-  --success: #1f8b4c;
-  --success-soft: #e6f4ea;
-  --warning: #a8681a;
-  --warning-soft: #faf0dd;
-  --danger: #c0392b;
-  --danger-soft: #fbe9e7;
+  --accent: #ff8a34;
+  --accent-strong: #d96a17;
+  --on-accent: #ffffff;
 
-  --shadow-color: 22 27 15;
+  --success: #0ea773;
+  --success-soft: #d8f5e8;
+  --warning: #d97706;
+  --warning-soft: #fdecc8;
+  --danger: #f43f5e;
+  --danger-soft: #ffe1e7;
 }
 
 @theme inline {
@@ -37,6 +48,8 @@
   --color-foreground-dim: var(--foreground-dim);
   --color-foreground-faint: var(--foreground-faint);
   --color-border: var(--border);
+
+  --color-emphasis: var(--emphasis);
 
   --color-brand: var(--brand);
   --color-brand-strong: var(--brand-strong);
@@ -53,41 +66,12 @@
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
 
-  --font-display: var(--font-display);
-  --font-sans: var(--font-sans);
-
-  --shadow-soft: 0 1px 2px rgb(var(--shadow-color) / 0.06), 0 6px 20px -4px rgb(var(--shadow-color) / 0.12);
-  --shadow-float: 0 4px 10px rgb(var(--shadow-color) / 0.08), 0 16px 40px -8px rgb(var(--shadow-color) / 0.22);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #15120d;
-    --surface: #1e1a14;
-    --surface-alt: #2a241b;
-    --foreground: #f3ece1;
-    --foreground-dim: #c9bba5;
-    --foreground-faint: #8a7c68;
-    --border: #382f22;
-
-    --brand: #e1793d;
-    --brand-strong: #f09b5c;
-    --on-brand: #1c0f06;
-
-    --accent: #2bb095;
-    --accent-strong: #59cbb3;
-    --on-accent: #06231d;
-
-    --success: #48c17e;
-    --success-soft: #163524;
-    --warning: #e0a937;
-    --warning-soft: #3a2c10;
-    --danger: #e4675a;
-    --danger-soft: #3a1815;
-
-    --shadow-color: 0 0 0;
-  }
-}
+/* Always light mode — a government portal stays consistent regardless of
+ * the visitor's OS theme preference, so there is deliberately no
+ * prefers-color-scheme: dark override here. */
 
 * {
   border-color: var(--border);
@@ -96,25 +80,17 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--brand) 30%, transparent);
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+  background: color-mix(in srgb, var(--brand) 25%, transparent);
 }
 
 :focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -126,8 +102,4 @@ body {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-.font-display {
-  font-family: var(--font-display);
 }

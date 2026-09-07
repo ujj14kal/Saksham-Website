@@ -17,14 +17,20 @@ const nextConfig: NextConfig = {
     // nonce propagation, 'unsafe-inline' is the accepted trade-off here —
     // it still blocks the more common cross-origin script-injection vector
     // via `script-src 'self'`, just not same-page inline injection.
+    // Next's dev server compiles and hot-reloads through eval(), so without
+    // this every client component silently fails to hydrate in `npm run dev`
+    // — interactive UI looks frozen while working fine in a production build.
+    // Never added to the production policy.
+    const devScript = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      `script-src 'self' 'unsafe-inline'${devScript}`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "media-src 'self' blob:",
       "font-src 'self'",
-      "connect-src 'self' https://saksham-api-82mn.onrender.com https://api.bigdatacloud.net",
+      "connect-src 'self' https://saksham-api-82mn.onrender.com",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -37,8 +43,8 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          // the Speak screen needs the mic on this origin; nothing else does
-          { key: "Permissions-Policy", value: "microphone=(self), geolocation=(self), camera=()" },
+          // No beneficiary voice/location features remain on this site — deny all three.
+          { key: "Permissions-Policy", value: "microphone=(), geolocation=(), camera=()" },
           { key: "Content-Security-Policy", value: csp },
         ],
       },

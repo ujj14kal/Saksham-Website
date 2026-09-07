@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Download } from "lucide-react";
 import { getToken, handleAdminAuthError } from "@/lib/auth";
 import { fetchAllSessions, groupSessionsByUser, type UserProfile } from "@/lib/admin-users";
-import { Card, Skeleton } from "@/components/ui";
+import { downloadCsv } from "@/lib/csv";
+import { Button, Card, Skeleton } from "@/components/ui";
 import { AdminShell } from "../admin-shell";
 
 export default function UsersPage() {
@@ -22,6 +24,7 @@ function Users() {
   const [guestCount, setGuestCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [stageFilter, setStageFilter] = useState("");
 
   useEffect(() => {
     const token = getToken();
@@ -51,11 +54,31 @@ function Users() {
     );
   }
 
+  const stages = [...new Set(users.map((u) => u.furthestStatus).filter((s): s is string => Boolean(s)))];
+
   const filtered = users.filter((u) => {
     const q = query.trim().toLowerCase();
-    if (!q) return true;
-    return (u.name ?? "").toLowerCase().includes(q) || (u.phone ?? "").includes(q) || (u.district ?? "").toLowerCase().includes(q);
+    const matchesQuery =
+      !q || (u.name ?? "").toLowerCase().includes(q) || (u.phone ?? "").includes(q) || (u.district ?? "").toLowerCase().includes(q);
+    const matchesStage = !stageFilter || u.furthestStatus === stageFilter;
+    return matchesQuery && matchesStage;
   });
+
+  function exportCsv() {
+    downloadCsv(
+      "beneficiaries.csv",
+      filtered.map((u) => ({
+        name: u.name ?? "",
+        phone: u.phone ?? "",
+        district: u.district ?? "",
+        sessions: u.sessions.length,
+        skills: u.skills.join("; "),
+        languages: u.languages.join("; "),
+        furthestStatus: u.furthestStatus ?? "",
+        lastSeen: u.lastSeen,
+      })),
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -64,15 +87,30 @@ function Users() {
           {users.length} beneficiaries
           {guestCount > 0 ? ` · ${guestCount} guest session${guestCount === 1 ? "" : "s"} not linked to an account` : ""}
         </p>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search name, phone, district…"
-          className="w-64 rounded-lg border border-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand"
-        />
+        <div className="flex flex-wrap gap-2">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search name, phone, district…"
+            className="w-56 rounded-md border border-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand"
+          />
+          <select
+            value={stageFilter}
+            onChange={(e) => setStageFilter(e.target.value)}
+            className="rounded-md border border-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand"
+          >
+            <option value="">All stages</option>
+            {stages.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          <Button label="Export CSV" icon={<Download className="h-4 w-4" />} variant="secondary" size="md" fullWidth={false} onPress={exportCsv} />
+        </div>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-[var(--shadow-soft)]">
+      <div className="overflow-x-auto rounded-md border border-border bg-surface">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border bg-surface-alt text-xs uppercase text-foreground-dim">
             <tr>

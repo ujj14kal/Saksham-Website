@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getSessions, type SessionRow } from "@/lib/api";
+import Link from "next/link";
+import { Download } from "lucide-react";
+import { getSessions, updateRecommendationStatus, recommendationName, type SessionRow } from "@/lib/api";
 import { getToken, handleAdminAuthError } from "@/lib/auth";
+import { downloadCsv } from "@/lib/csv";
 import { Button, Card, Skeleton } from "@/components/ui";
 import { AdminShell } from "../admin-shell";
 
@@ -24,6 +27,7 @@ function Sessions() {
   const [error, setError] = useState<string | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [query, setQuery] = useState("");
+  const [langFilter, setLangFilter] = useState("");
 
   function load(skip: number, append: boolean) {
     const token = getToken();
@@ -54,15 +58,34 @@ function Sessions() {
     );
   }
 
+  const languages = [...new Set(rows.map((r) => r.language))];
+
   const filtered = rows.filter((s) => {
     const q = query.trim().toLowerCase();
-    if (!q) return true;
-    return (
+    const matchesQuery =
+      !q ||
       (s.rawTranscript ?? "").toLowerCase().includes(q) ||
       (s.user?.name ?? "").toLowerCase().includes(q) ||
-      (s.district ?? "").toLowerCase().includes(q)
-    );
+      (s.district ?? "").toLowerCase().includes(q);
+    const matchesLang = !langFilter || s.language === langFilter;
+    return matchesQuery && matchesLang;
   });
+
+  function exportCsv() {
+    downloadCsv(
+      "sessions.csv",
+      filtered.map((s) => ({
+        createdAt: s.createdAt,
+        language: s.language,
+        transcript: s.rawTranscript ?? "",
+        district: s.district ?? "",
+        state: s.state ?? "",
+        bandwidthKbps: s.bandwidthKbps ?? "",
+        topRecommendation: s.recommendations[0] ? recommendationName(s.recommendations[0]) : "",
+        recommendationStatus: s.recommendations[0]?.status ?? "",
+      })),
+    );
+  }
 
   return (
     <div>
@@ -70,14 +93,29 @@ function Sessions() {
         <p className="text-sm text-foreground-dim">
           {rows.length} of {total} sessions loaded
         </p>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search transcript, user, district…"
-          className="w-64 rounded-lg border border-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand"
-        />
+        <div className="flex flex-wrap gap-2">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search transcript, user, district…"
+            className="w-56 rounded-md border border-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand"
+          />
+          <select
+            value={langFilter}
+            onChange={(e) => setLangFilter(e.target.value)}
+            className="rounded-md border border-border bg-transparent px-3 py-2 text-sm outline-none focus:border-brand"
+          >
+            <option value="">All languages</option>
+            {languages.map((l) => (
+              <option key={l} value={l}>
+                {l}
+              </option>
+            ))}
+          </select>
+          <Button label="Export CSV" icon={<Download className="h-4 w-4" />} variant="secondary" size="md" fullWidth={false} onPress={exportCsv} />
+        </div>
       </div>
-      <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-[var(--shadow-soft)]">
+      <div className="overflow-x-auto rounded-md border border-border bg-surface">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border bg-surface-alt text-xs uppercase text-foreground-dim">
             <tr>
@@ -93,7 +131,11 @@ function Sessions() {
           <tbody>
             {filtered.map((s) => (
               <tr key={s.id} className="border-b border-border align-top last:border-0">
-                <td className="whitespace-nowrap px-3 py-2 text-foreground-dim">{new Date(s.createdAt).toLocaleString()}</td>
+                <td className="whitespace-nowrap px-3 py-2 text-foreground-dim">
+                  <Link href={`/admin/sessions/${s.id}`} className="text-brand hover:underline">
+                    {new Date(s.createdAt).toLocaleString()}
+                  </Link>
+                </td>
                 <td className="px-3 py-2">{s.language}</td>
                 <td className="max-w-xs px-3 py-2">{s.rawTranscript}</td>
                 <td className="px-3 py-2">
@@ -115,7 +157,44 @@ function Sessions() {
                   )}
                 </td>
                 <td className="px-3 py-2">
-                  {s.recommendations[0]?.trainingProgram.name ?? <span className="text-foreground-faint">—</span>}
+                  {s.recommendations[0] ? (
+                    <div className="flex items-center gap-1.5">
+                      <span>{recommendationName(s.recommendations[0])}</span>
+                      <select
+                        value={s.recommendations[0].status}
+                        onChange={(e) => {
+                          const token = getToken();
+                          const recId = s.recommendations[0].id;
+                          const status = e.target.value;
+                          if (!token) return;
+                          setRows((prev) =>
+                            prev
+                              ? prev.map((row) =>
+                                  row.id === s.id
+                                    ? {
+                                        ...row,
+                                        recommendations: row.recommendations.map((r) =>
+                                          r.id === recId ? { ...r, status } : r,
+                                        ),
+                                      }
+                                    : row,
+                                )
+                              : prev,
+                          );
+                          updateRecommendationStatus(token, recId, status).catch(() => {});
+                        }}
+                        className="rounded border border-border bg-transparent px-1.5 py-0.5 text-xs outline-none focus:border-brand"
+                      >
+                        {["SUGGESTED", "VIEWED", "INTERESTED", "APPLIED", "ENROLLED", "REJECTED"].map((statusOption) => (
+                          <option key={statusOption} value={statusOption}>
+                            {statusOption}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : (
+                    <span className="text-foreground-faint">—</span>
+                  )}
                 </td>
                 <td className="whitespace-nowrap px-3 py-2 text-foreground-dim">
                   {[s.district, s.state].filter(Boolean).join(", ") || "—"}

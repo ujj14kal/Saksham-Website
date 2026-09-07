@@ -4,13 +4,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Users2, History, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users2,
+  History,
+  Briefcase,
+  GraduationCap,
+  BookOpen,
+  BarChart3,
+  Settings,
+  Library,
+  LogOut,
+} from "lucide-react";
 import { clearToken, getToken } from "@/lib/auth";
 
 const NAV = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users2 },
   { href: "/admin/sessions", label: "Sessions", icon: History },
+  { href: "/admin/jobs", label: "Job Postings", icon: Briefcase },
+  { href: "/admin/programs", label: "Training Programs", icon: GraduationCap },
+  { href: "/admin/catalog", label: "Catalogue", icon: Library },
+  { href: "/admin/knowledge", label: "Knowledge Base", icon: BookOpen },
+  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/admin/system", label: "System", icon: Settings },
 ];
 
 export function AdminShell({
@@ -45,7 +62,7 @@ export function AdminShell({
         <div className="flex items-center gap-2.5 px-2">
           <Image src="/icon.png" alt="Saksham" width={32} height={32} className="rounded-lg" />
           <div className="leading-tight">
-            <p className="font-display text-sm font-semibold">सक्षम · Admin</p>
+            <p className="text-sm font-semibold">सक्षम · Admin</p>
             <p className="text-[11px] text-foreground-faint">PM-AJAY · MoSJE</p>
           </div>
         </div>
@@ -58,8 +75,8 @@ export function AdminShell({
               <Link
                 key={n.href}
                 href={n.href}
-                className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-                  active ? "bg-brand text-on-brand shadow-[var(--shadow-soft)]" : "text-foreground-dim hover:bg-surface-alt"
+                className={`flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium transition ${
+                  active ? "bg-brand text-on-brand" : "text-foreground-dim hover:bg-surface-alt"
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -71,7 +88,7 @@ export function AdminShell({
 
         <button
           onClick={signOut}
-          className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground-dim transition hover:bg-surface-alt"
+          className="flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium text-foreground-dim transition hover:bg-surface-alt"
         >
           <LogOut className="h-4 w-4" />
           Sign out
@@ -83,7 +100,7 @@ export function AdminShell({
         <div className="flex items-center justify-between border-b border-border bg-surface px-4 py-3 lg:hidden">
           <div className="flex items-center gap-2">
             <Image src="/icon.png" alt="Saksham" width={26} height={26} className="rounded-lg" />
-            <p className="font-display text-sm font-semibold">सक्षम · Admin</p>
+            <p className="text-sm font-semibold">सक्षम · Admin</p>
           </div>
           <button onClick={signOut} className="text-sm font-medium text-foreground-dim">
             Sign out
@@ -111,7 +128,7 @@ export function AdminShell({
         <div className="mx-auto max-w-6xl px-6 py-8">
           {(title || subtitle) && (
             <div className="mb-6">
-              {title && <h1 className="font-display text-2xl font-semibold">{title}</h1>}
+              {title && <h1 className="text-2xl font-semibold">{title}</h1>}
               {subtitle && <p className="mt-1 text-sm text-foreground-dim">{subtitle}</p>}
             </div>
           )}

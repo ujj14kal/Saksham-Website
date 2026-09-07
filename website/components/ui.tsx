@@ -1,34 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Loader2 } from "lucide-react";
-import { AuthShell } from "./AuthShell";
-
-/** Used by the auth-family pages (welcome, auth, forgot-password,
- *  onboarding). Renders a branded split-screen panel on wide viewports via
- *  AuthShell instead of a phone-width column floating in empty space. */
-export function Screen({ children }: { children: ReactNode }) {
-  return (
-    <AuthShell>
-      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background">{children}</div>
-    </AuthShell>
-  );
-}
-
-export function BrandMark({ size = 40 }: { size?: number }) {
-  return (
-    <Image
-      src="/icon.png"
-      alt="Saksham"
-      width={size}
-      height={size}
-      style={{ width: size, height: size }}
-      className="rounded-2xl"
-    />
-  );
-}
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 
 export function Button({
   label,
@@ -56,18 +30,15 @@ export function Button({
   type?: "button" | "submit";
 }) {
   const variants: Record<string, string> = {
-    primary: "bg-brand text-on-brand hover:bg-brand-strong active:scale-[0.98]",
-    accent:
-      "bg-accent text-on-accent hover:bg-accent-strong active:scale-[0.98]",
-    secondary:
-      "bg-surface-alt text-foreground hover:brightness-95 dark:hover:brightness-110 active:scale-[0.98]",
-    ghost:
-      "bg-transparent text-foreground-dim hover:bg-surface-alt active:scale-[0.98]",
-    danger: "bg-danger text-white hover:brightness-95 active:scale-[0.98]",
-    success: "bg-success text-white hover:brightness-95 active:scale-[0.98]",
+    primary: "bg-brand text-on-brand hover:bg-brand-strong",
+    accent: "bg-accent text-on-accent hover:bg-accent-strong",
+    secondary: "border border-border bg-surface text-foreground hover:bg-surface-alt",
+    ghost: "bg-transparent text-foreground-dim hover:bg-surface-alt",
+    danger: "bg-danger text-white hover:brightness-95",
+    success: "bg-success text-white hover:brightness-95",
   };
-  const cls = `inline-flex items-center justify-center gap-2 rounded-2xl font-semibold shadow-[var(--shadow-soft)] transition-all duration-150 disabled:opacity-50 disabled:shadow-none ${
-    size === "lg" ? "h-[54px] px-6 text-base" : "h-11 px-4 text-sm"
+  const cls = `inline-flex items-center justify-center gap-2 rounded-md font-medium transition-colors disabled:opacity-50 ${
+    size === "lg" ? "h-11 px-5 text-sm" : "h-9 px-3.5 text-sm"
   } ${fullWidth ? "w-full" : ""} ${variants[variant]} ${className}`;
 
   const content = (
@@ -85,37 +56,14 @@ export function Button({
     );
   }
   return (
-    <button
-      type={type}
-      onClick={onPress}
-      disabled={disabled || loading}
-      className={cls}
-    >
+    <button type={type} onClick={onPress} disabled={disabled || loading} className={cls}>
       {content}
     </button>
   );
 }
 
-export function Card({
-  children,
-  className = "",
-  notch = false,
-}: {
-  children: ReactNode;
-  className?: string;
-  /** Cuts the top-right corner with a larger radius — a small signature
-   * detail used sparingly on featured cards instead of a uniform template look. */
-  notch?: boolean;
-}) {
-  return (
-    <div
-      className={`border border-border bg-surface p-4 shadow-[var(--shadow-soft)] ${
-        notch ? "rounded-2xl rounded-tr-[28px]" : "rounded-2xl"
-      } ${className}`}
-    >
-      {children}
-    </div>
-  );
+export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`rounded-lg border border-border bg-surface p-4 ${className}`}>{children}</div>;
 }
 
 export function Chip({
@@ -129,104 +77,69 @@ export function Chip({
 }) {
   const tones: Record<string, string> = {
     default: "border-border text-foreground-dim",
-    primary: "border-brand/25 bg-brand/10 text-brand",
-    accent: "border-accent/25 bg-accent/10 text-accent",
-    success: "border-success/25 bg-success-soft text-success",
-    warning: "border-warning/25 bg-warning-soft text-warning",
+    primary: "border-brand/30 bg-brand/5 text-brand",
+    accent: "border-accent/30 bg-accent/5 text-accent",
+    success: "border-success/30 bg-success-soft text-success",
+    warning: "border-warning/30 bg-warning-soft text-warning",
   };
   return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${tones[tone]}`}
-    >
+    <span className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-medium ${tones[tone]}`}>
       {icon}
       {label}
     </span>
   );
 }
 
-export function Meter({ value, size = 48 }: { value: number; size?: number }) {
-  const pct = Math.round(Math.max(0, Math.min(1, value)) * 100);
-  const r = (size - 6) / 2;
-  const c = 2 * Math.PI * r;
-  return (
-    <div className="relative shrink-0" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="-rotate-90">
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          stroke="currentColor"
-          strokeWidth={5}
-          fill="none"
-          className="text-surface-alt"
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          stroke="currentColor"
-          strokeWidth={5}
-          fill="none"
-          strokeDasharray={c}
-          strokeDashoffset={c - (pct / 100) * c}
-          strokeLinecap="round"
-          className="text-brand transition-[stroke-dashoffset] duration-500"
-        />
-      </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold">
-        {pct}%
-      </span>
-    </div>
-  );
-}
-
-export function StepProgress({ step, total }: { step: number; total: number }) {
-  return (
-    <div className="flex gap-1.5">
-      {Array.from({ length: total }).map((_, i) => (
-        <div
-          key={i}
-          className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${i < step ? "bg-brand" : "bg-surface-alt"}`}
-        />
-      ))}
-    </div>
-  );
-}
-
-export function OptionRow({
-  label,
-  selected,
-  onPress,
-  icon,
-}: {
-  label: string;
-  selected?: boolean;
-  onPress: () => void;
-  icon?: ReactNode;
-}) {
-  return (
-    <button
-      onClick={onPress}
-      className={`flex w-full items-center gap-3 rounded-2xl border-2 px-4 py-4 text-left transition-all duration-150 active:scale-[0.99] ${
-        selected
-          ? "border-brand bg-brand/5 shadow-[var(--shadow-soft)]"
-          : "border-border bg-surface hover:border-brand/40"
-      }`}
-    >
-      {icon && (
-        <span
-          className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors ${selected ? "bg-brand text-on-brand" : "bg-surface-alt text-foreground-dim"}`}
-        >
-          {icon}
-        </span>
-      )}
-      <span className="flex-1 font-medium">{label}</span>
-    </button>
-  );
-}
-
 export function Skeleton({ className = "" }: { className?: string }) {
+  return <div className={`animate-pulse rounded bg-surface-alt ${className}`} />;
+}
+
+/** Simple prev/next + page-number pagination, used consistently across every
+ *  admin list page (Job Postings, Knowledge Base, Catalogue). */
+export function Pagination({
+  page,
+  totalPages,
+  onChange,
+}: {
+  page: number;
+  totalPages: number;
+  onChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1).filter(
+    (p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1,
+  );
   return (
-    <div className={`animate-pulse rounded-lg bg-surface-alt ${className}`} />
+    <div className="flex items-center justify-center gap-1 pt-2">
+      <button
+        onClick={() => onChange(page - 1)}
+        disabled={page <= 1}
+        aria-label="Previous page"
+        className="flex h-8 w-8 items-center justify-center rounded border border-border disabled:opacity-40"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+      {pages.map((p, i) => (
+        <span key={p} className="flex items-center gap-1">
+          {i > 0 && pages[i - 1] !== p - 1 && <span className="px-1 text-foreground-faint">…</span>}
+          <button
+            onClick={() => onChange(p)}
+            className={`flex h-8 w-8 items-center justify-center rounded border text-sm ${
+              p === page ? "border-brand bg-brand text-on-brand" : "border-border hover:bg-surface-alt"
+            }`}
+          >
+            {p}
+          </button>
+        </span>
+      ))}
+      <button
+        onClick={() => onChange(page + 1)}
+        disabled={page >= totalPages}
+        aria-label="Next page"
+        className="flex h-8 w-8 items-center justify-center rounded border border-border disabled:opacity-40"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
   );
 }

@@ -126,12 +126,12 @@ function Kpi({
   return (
     <Card className={tone === "brand" ? "rounded-tr-[26px]" : "rounded-bl-[26px]"}>
       <span
-        className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone === "brand" ? "bg-brand/10 text-brand" : "bg-accent/10 text-accent"}`}
+        className={`flex h-9 w-9 items-center justify-center rounded-md ${tone === "brand" ? "bg-brand/10 text-brand" : "bg-accent/10 text-accent"}`}
       >
         <Icon className="h-[18px] w-[18px]" />
       </span>
       <p className="mt-3 text-xs font-medium uppercase tracking-wide text-foreground-faint">{label}</p>
-      <p className="mt-0.5 font-display text-3xl font-semibold">{value}</p>
+      <p className="mt-0.5 text-3xl font-semibold">{value}</p>
       {hint && <p className="text-xs text-foreground-faint">{hint}</p>}
     </Card>
   );
