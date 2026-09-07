@@ -219,11 +219,22 @@ async function callGroqASR(
 let sarvamDisabledUntil = 0;
 const SARVAM_COOLOFF_MS = 15 * 60 * 1000;
 
+function spokenTextForTts(text: string, language: Language): string {
+  if (language !== "hi") return text;
+  return text
+    .replace(/साक्षम/g, "सक्षम")
+    .replace(/Saksham/gi, "सक्षम")
+    .replace(/\bAI\b/g, "ए आई")
+    .replace(/\bNSQF\b/g, "एन एस क्यू एफ")
+    .replace(/\bPM-AJAY\b/g, "पी एम अजय")
+    .replace(/\bNCS\b/g, "एन सी एस");
+}
+
 export async function synthesizeSpeech(
   text: string,
   language: Language = "hi",
 ): Promise<SynthesizeResult> {
-  const clean = text.trim();
+  const clean = spokenTextForTts(text, language).trim();
   if (clean && hasSarvam && Date.now() >= sarvamDisabledUntil) {
     try {
       return await callSarvamTTS(clean, language);

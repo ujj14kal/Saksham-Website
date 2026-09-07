@@ -75,14 +75,26 @@ const CHARS_PER_SECOND: Partial<Record<LanguageCode, number>> = {
 };
 const DEFAULT_CHARS_PER_SECOND = 10;
 
+function spokenTextForTts(text: string, language: LanguageCode): string {
+  if (language !== 'hi') return text;
+  return text
+    .replace(/साक्षम/g, 'सक्षम')
+    .replace(/Saksham/gi, 'सक्षम')
+    .replace(/\bAI\b/g, 'ए आई')
+    .replace(/\bNSQF\b/g, 'एन एस क्यू एफ')
+    .replace(/\bPM-AJAY\b/g, 'पी एम अजय')
+    .replace(/\bNCS\b/g, 'एन सी एस');
+}
+
 /** On-device TTS. We get no real playback position from expo-speech, so drive
  *  `onProgress` off a wall-clock estimate calibrated per script. */
 function deviceSpeak(text: string, language: LanguageCode, myGeneration: number, handlers?: SpeakHandlers) {
+  const ttsText = spokenTextForTts(text, language);
   Speech.stop();
   speaking = true;
 
   const charsPerSecond = CHARS_PER_SECOND[language] ?? DEFAULT_CHARS_PER_SECOND;
-  const estimatedMs = Math.max(1200, (text.length / charsPerSecond) * 1000);
+  const estimatedMs = Math.max(1200, (ttsText.length / charsPerSecond) * 1000);
   const startedAt = Date.now();
   const tick = () => {
     if (myGeneration !== generation) return;
@@ -92,7 +104,7 @@ function deviceSpeak(text: string, language: LanguageCode, myGeneration: number,
   };
   tick();
 
-  Speech.speak(text, {
+  Speech.speak(ttsText, {
     language: speechTagFor(language),
     rate: 0.92,
     pitch: 1.0,
@@ -125,12 +137,13 @@ export async function speak(text: string, language: LanguageCode, handlers?: Spe
   stopSpeaking();
   const myGeneration = generation;
   speaking = true;
+  const ttsText = spokenTextForTts(text, language);
 
   try {
-    const { audioUrl, format } = await synthesizeSpeech(text, language);
+    const { audioUrl, format } = await synthesizeSpeech(ttsText, language);
     if (myGeneration !== generation) return;
     if (format === 'text' || !audioUrl.startsWith('data:audio')) {
-      deviceSpeak(text, language, myGeneration, handlers);
+      deviceSpeak(ttsText, language, myGeneration, handlers);
       return;
     }
 
@@ -198,7 +211,7 @@ export async function speak(text: string, language: LanguageCode, handlers?: Spe
     player.play();
   } catch (e) {
     console.warn('[speech] Sarvam TTS failed, using on-device voice:', e);
-    if (myGeneration === generation) deviceSpeak(text, language, myGeneration, handlers);
+    if (myGeneration === generation) deviceSpeak(ttsText, language, myGeneration, handlers);
   }
 }
 
