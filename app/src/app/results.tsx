@@ -323,6 +323,15 @@ function JobCard({
         </View>
       )}
 
+      {j.source === 'NCS' && (
+        <View style={styles.jobMeta}>
+          <Ionicons name="open-outline" size={13} color={c.textFaint} />
+          <Txt variant="caption" tone="faint">
+            {t.jobPortalSearch}
+          </Txt>
+        </View>
+      )}
+
       <Button
         label={t.apply}
         variant="success"

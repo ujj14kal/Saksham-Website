@@ -48,6 +48,59 @@ function jobSearchUrl(jobTitle: string): string {
   return `https://www.ncs.gov.in/?keyword=${encodeURIComponent(jobTitle)}`;
 }
 
+function academicTutorTitles(details: string): string[] {
+  const text = normalizeText(details);
+  const classMatch = text.match(/\b(?:class|standard)?\s*(9|10|11|12|9th|10th|11th|12th)\b/);
+  const classLabel = classMatch ? `Class ${classMatch[1].replace(/\D/g, "")}` : "Secondary School";
+  const subjects = [
+    ["Maths", /\b(math|maths|mathematics)\b/],
+    ["Science", /\b(science)\b/],
+    ["Physics", /\b(physics)\b/],
+    ["Chemistry", /\b(chemistry)\b/],
+    ["Biology", /\b(biology)\b/],
+    ["Accounts", /\b(accounts|accountancy)\b/],
+    ["Commerce", /\b(commerce|business studies|economics)\b/],
+    ["English", /\b(english)\b/],
+    ["Hindi", /\b(hindi)\b/],
+  ]
+    .filter(([, pattern]) => (pattern as RegExp).test(text))
+    .map(([subject]) => subject as string);
+
+  const subjectTitles = subjects.map((subject) => `${classLabel} ${subject} Tutor`);
+  return [
+    ...subjectTitles,
+    `${classLabel} Home Tuition Teacher`,
+    `${classLabel} Coaching Teacher`,
+    "Online Academic Tutor",
+    "Private Tuition Teacher",
+    "After School Tutor",
+  ].slice(0, 5);
+}
+
+function academicTutoringFallbackJobs(matched: MappingResult[], details: string, limit: number): JobMatch[] {
+  const source = matched.find((m) => m.normalizedSkill.toLowerCase() === "academic-tutoring") ?? matched[0];
+  return academicTutorTitles(details).slice(0, limit).map((title, index) => ({
+    jobPostingId: `ncs-academic-tutoring-${index + 1}`,
+    title,
+    titleHindi: null,
+    employerName: "National Career Service",
+    sector: "Special Tutoring",
+    nsqfLevel: null,
+    state: null,
+    district: null,
+    wageMin: null,
+    wageMax: null,
+    positions: null,
+    contactPhone: null,
+    applyUrl: jobSearchUrl(title),
+    source: "NCS",
+    score: Number((0.92 - index * 0.04).toFixed(3)),
+    needsUpskilling: false,
+    nsqfQpCode: source?.qpCode ?? null,
+    nsqfTitle: source?.title ?? "Academic Tutor / Special Tutoring",
+  }));
+}
+
 function detailScore(job: { title: string; description: string | null; skillTokens: string[] }, details: string): number {
   if (!details) return 0;
   const haystack = normalizeText(`${job.title} ${job.description ?? ""} ${job.skillTokens.join(" ")}`);
@@ -93,8 +146,6 @@ export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
   // beneficiary their job results entirely. Fall back to the qualification and
   // sector, which every mapping carries whichever path produced it.
   const qualificationIds = [...new Set(matched.map((m) => m.nsqfQualificationId).filter((id): id is string => !!id))];
-  const sectors = [...new Set(matched.map((m) => m.sector).filter((x): x is string => !!x))];
-
   let jobs = await prisma.jobPosting.findMany({
     where: { active: true, skillTokens: { hasSome: searchTokens } },
     take: 200,
@@ -158,10 +209,15 @@ export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
     };
   });
 
-  return scored
+  const ranked = scored
     .filter((job) => job.detailBoost >= 0)
-    // jobs they can take today rank above jobs needing training, then by score
     .sort((a, b) => Number(a.needsUpskilling) - Number(b.needsUpskilling) || b.score - a.score)
     .slice(0, limit)
     .map(({ detailBoost: _detailBoost, ...job }) => job);
+
+  if (ranked.length === 0 && tokens.includes("academic-tutoring")) {
+    return academicTutoringFallbackJobs(matched, skillDetails ?? "", Math.min(5, limit));
+  }
+
+  return ranked;
 }

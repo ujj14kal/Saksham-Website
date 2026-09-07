@@ -123,6 +123,7 @@ export interface Strings {
   guidanceTitle: string;
   jobsAvailable: string;
   jobSample: string;
+  jobPortalSearch: string;
   jobNeedsTraining: string;
   jobPositions: string;
   jobPerMonth: string;
@@ -306,6 +307,7 @@ const hi: Strings = {
   guidanceTitle: 'आपके लिए सभी विकल्प',
   jobsAvailable: 'आपके लिए नौकरियाँ',
   jobSample: 'नमूना डेटा',
+  jobPortalSearch: 'NCS पोर्टल खोज',
   jobNeedsTraining: 'ट्रेनिंग के बाद संभव',
   jobPositions: 'पद',
   jobPerMonth: 'प्रति माह',
@@ -486,6 +488,7 @@ const en: Strings = {
   guidanceTitle: 'All your options',
   jobsAvailable: 'Jobs for you',
   jobSample: 'Sample data',
+  jobPortalSearch: 'NCS portal search',
   jobNeedsTraining: 'Possible after training',
   jobPositions: 'positions',
   jobPerMonth: 'per month',
@@ -666,6 +669,7 @@ const bn: Strings = {
   guidanceTitle: 'আপনার জন্য সব বিকল্প',
   jobsAvailable: 'আপনার জন্য চাকরি',
   jobSample: 'নমুনা তথ্য',
+  jobPortalSearch: 'NCS portal search',
   jobNeedsTraining: 'প্রশিক্ষণের পরে সম্ভব',
   jobPositions: 'পদ',
   jobPerMonth: 'প্রতি মাসে',
@@ -846,6 +850,7 @@ const ta: Strings = {
   guidanceTitle: 'உங்களுக்கான அனைத்து வழிகள்',
   jobsAvailable: 'உங்களுக்கான வேலைகள்',
   jobSample: 'மாதிரி தரவு',
+  jobPortalSearch: 'NCS portal search',
   jobNeedsTraining: 'பயிற்சிக்குப் பிறகு சாத்தியம்',
   jobPositions: 'பணியிடங்கள்',
   jobPerMonth: 'மாதம் ஒன்றுக்கு',
@@ -1026,6 +1031,7 @@ const te: Strings = {
   guidanceTitle: 'మీ కోసం అన్ని అవకాశాలు',
   jobsAvailable: 'మీ కోసం ఉద్యోగాలు',
   jobSample: 'నమూనా డేటా',
+  jobPortalSearch: 'NCS portal search',
   jobNeedsTraining: 'శిక్షణ తర్వాత సాధ్యం',
   jobPositions: 'ఖాళీలు',
   jobPerMonth: 'నెలకు',
@@ -1206,6 +1212,7 @@ const mr: Strings = {
   guidanceTitle: 'तुमच्यासाठी सर्व पर्याय',
   jobsAvailable: 'तुमच्यासाठी नोकऱ्या',
   jobSample: 'नमुना डेटा',
+  jobPortalSearch: 'NCS portal search',
   jobNeedsTraining: 'प्रशिक्षणानंतर शक्य',
   jobPositions: 'जागा',
   jobPerMonth: 'दरमहा',
@@ -1386,6 +1393,7 @@ const kn: Strings = {
   guidanceTitle: 'ನಿಮಗಾಗಿ ಎಲ್ಲಾ ಆಯ್ಕೆಗಳು',
   jobsAvailable: 'ನಿಮಗಾಗಿ ಉದ್ಯೋಗಗಳು',
   jobSample: 'ಮಾದರಿ ಡೇಟಾ',
+  jobPortalSearch: 'NCS portal search',
   jobNeedsTraining: 'ತರಬೇತಿಯ ನಂತರ ಸಾಧ್ಯ',
   jobPositions: 'ಹುದ್ದೆಗಳು',
   jobPerMonth: 'ತಿಂಗಳಿಗೆ',
@@ -1566,6 +1574,7 @@ const gu: Strings = {
   guidanceTitle: 'તમારા માટે બધા વિકલ્પો',
   jobsAvailable: 'તમારા માટે નોકરીઓ',
   jobSample: 'નમૂના ડેટા',
+  jobPortalSearch: 'NCS portal search',
   jobNeedsTraining: 'તાલીમ પછી શક્ય',
   jobPositions: 'જગ્યાઓ',
   jobPerMonth: 'દર મહિને',
@@ -1746,6 +1755,7 @@ const pa: Strings = {
   guidanceTitle: 'ਤੁਹਾਡੇ ਲਈ ਸਾਰੇ ਵਿਕਲਪ',
   jobsAvailable: 'ਤੁਹਾਡੇ ਲਈ ਨੌਕਰੀਆਂ',
   jobSample: 'ਨਮੂਨਾ ਡਾਟਾ',
+  jobPortalSearch: 'NCS portal search',
   jobNeedsTraining: 'ਸਿਖਲਾਈ ਤੋਂ ਬਾਅਦ ਸੰਭਵ',
   jobPositions: 'ਅਸਾਮੀਆਂ',
   jobPerMonth: 'ਪ੍ਰਤੀ ਮਹੀਨਾ',
@@ -1926,6 +1936,7 @@ const or: Strings = {
   guidanceTitle: 'ଆପଣଙ୍କ ପାଇଁ ସମସ୍ତ ବିକଳ୍ପ',
   jobsAvailable: 'ଆପଣଙ୍କ ପାଇଁ ଚାକିରି',
   jobSample: 'ନମୁନା ତଥ୍ୟ',
+  jobPortalSearch: 'NCS portal search',
   jobNeedsTraining: 'ତାଲିମ ପରେ ସମ୍ଭବ',
   jobPositions: 'ପଦ',
   jobPerMonth: 'ମାସିକ',
