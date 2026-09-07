@@ -1,6 +1,36 @@
 import { prisma } from "../lib/prisma.js";
 import { extractSkills, patternHitCount, titleTermsForSkill } from "./skillLexicon.js";
-import { classifySkillsWithLlm } from "./skillLlm.js";
+import { classifySkillsWithLlm, classifyQualificationWithLlm } from "./skillLlm.js";
+
+/**
+ * Tuning constants for skill matching.
+ *
+ * These are hand-chosen judgement calls, not values derived from data — they
+ * are gathered here so the behaviour of the engine can be read and adjusted in
+ * one place instead of being scattered as literals through the scoring code.
+ * scripts/audit-coverage.ts reports how the current values perform across all
+ * ~84 known trades, so a change can be checked rather than guessed at.
+ */
+const TUNING = {
+  /** title names the trade outright — the dominant signal */
+  titleNamesTrade: 10,
+  /** title contains a stem of the trade ("mason" in "Concrete Mason") */
+  titleContainsStem: 6,
+  /** supervisor/manager titles: this app serves the worker, not their boss */
+  seniorTitlePenalty: 8,
+  /** qualifications above this NSQF level are progressively deprioritised */
+  preferredMaxLevel: 3,
+  /** base confidence for a keyword match, before per-hit bonuses */
+  keywordBase: 0.55,
+  /** added per matched keyword/pattern */
+  keywordPerHit: 0.1,
+  /** a keyword match never claims certainty */
+  keywordCeiling: 0.95,
+  /** below this we say we did not understand rather than assert a trade */
+  minConfidence: 0.4,
+  /** free-text catalogue fallback must clear this to be used at all */
+  catalogFallbackMin: 2,
+} as const;
 
 export interface MappingResult {
   rawSkillText: string;
@@ -63,13 +93,13 @@ export function pickBestByTitle<T>(candidates: T[], token: string, titleOf: (ite
     const title = normalizeTitle(titleOf(candidate));
     let score = 0;
     // naming the trade at all is the dominant signal
-    if (title.includes(normalizeTitle(token))) score += 10;
-    for (const stem of stems) if (new RegExp(`\\b${stem}`, "i").test(title)) score += 6;
+    if (title.includes(normalizeTitle(token))) score += TUNING.titleNamesTrade;
+    for (const stem of stems) if (new RegExp(`\\b${stem}`, "i").test(title)) score += TUNING.titleContainsStem;
     // prefer the worker over the manager of the worker
-    if (SENIOR_TITLE.test(title)) score -= 8;
+    if (SENIOR_TITLE.test(title)) score -= TUNING.seniorTitlePenalty;
     // prefer entry-level qualifications, which is who this app serves
     const level = levelOf?.(candidate);
-    if (typeof level === "number") score -= Math.max(0, level - 3);
+    if (typeof level === "number") score -= Math.max(0, level - TUNING.preferredMaxLevel);
     if (score > bestScore) {
       bestScore = score;
       best = candidate;
@@ -218,7 +248,7 @@ function catalogFallbackMatch(transcript: string, quals: QualRow[]): { match: Qu
     if (!best || score > best.score) best = { match: qual, score };
   }
 
-  return best && best.score >= 2 ? best : null;
+  return best && best.score >= TUNING.catalogFallbackMin ? best : null;
 }
 
 /**
@@ -231,11 +261,6 @@ function catalogFallbackMatch(transcript: string, quals: QualRow[]): { match: Qu
  *  4. Separately, check the real PM-AJAY course catalogue for the same token —
  *     this is an independent real-data signal, not a scoring input.
  */
-/** Below this we say we did not understand rather than assert a trade.
- *  Keyword matches start at 0.55 and a clear spoken description scores ~0.85+,
- *  so this only rejects genuinely vague input. */
-const MIN_CONFIDENCE = 0.4;
-
 function unknownMapping(transcript: string): MappingResult {
   return {
     rawSkillText: transcript,
@@ -267,6 +292,47 @@ export async function mapTranscriptToNsqf(transcript: string): Promise<MappingRe
   let tokens: string[] = matchedByLlm ? llmMatches.map((m) => m.token) : keywordTokens;
   if (tokens.length === 0) {
     const { quals, pmajayCourses } = await loadCatalog();
+
+    // Ask the model to match the real catalogue before falling back to word
+    // overlap. The token pass above can only return one of ~84 lexicon
+    // entries; this reaches all 819 live qualifications, so a trade nobody
+    // wrote into the lexicon is still findable.
+    const llmQuals = await classifyQualificationWithLlm(transcript, quals);
+    const byQpCode = new Map(quals.map((q) => [q.qpCode, q]));
+    const fromCatalogue = llmQuals
+      .map((m) => ({ match: byQpCode.get(m.qpCode), confidence: m.confidence }))
+      .filter((m): m is { match: QualRow; confidence: number } => !!m.match)
+      .filter((m) => m.confidence >= TUNING.minConfidence);
+
+    if (fromCatalogue.length > 0) {
+      return fromCatalogue.map(({ match, confidence }) => {
+        const course = pickBestByTitle(
+          pmajayCourses.filter(
+            (c) => normalizeSectorForFallback(c.sector) === normalizeSectorForFallback(match.sector),
+          ),
+          match.title,
+          (c) => c.subCourseName,
+        );
+        return {
+          rawSkillText: transcript,
+          normalizedSkill: normalizeTitle(match.title).replace(/\s+/g, "-"),
+          nsqfQualificationId: match.id,
+          qpCode: match.qpCode,
+          title: cleanDisplayTitle(match.title),
+          sector: match.sector,
+          nsqfLevel: match.nsqfLevel,
+          confidence,
+          method: "llm" as const,
+          pmajayVerified: Boolean(course),
+          pmajayCourse: course
+            ? { subCourseCode: course.subCourseCode, subCourseName: course.subCourseName, sector: course.sector }
+            : null,
+          nsqfExpired: false,
+          proposedOccupations: match.proposedOccupations ?? [],
+        };
+      });
+    }
+
     const fallback = catalogFallbackMatch(transcript, quals);
     if (fallback) {
       const course = pickBestByTitle(
@@ -378,7 +444,7 @@ export async function mapTranscriptToNsqf(transcript: string): Promise<MappingRe
     // the trade; a keyword match is scored on how many known phrases fired.
     const confidence = matchedByLlm
       ? (llmConfidence.get(token) ?? 0.5)
-      : Math.min(0.55 + 0.1 * (qualificationHits + spokenHits), 0.95);
+      : Math.min(TUNING.keywordBase + TUNING.keywordPerHit * (qualificationHits + spokenHits), TUNING.keywordCeiling);
 
     results.push({
       rawSkillText: transcript,
@@ -410,7 +476,7 @@ export async function mapTranscriptToNsqf(transcript: string): Promise<MappingRe
   // Operator" is worse than admitting we did not follow. Below the floor we
   // report unknown, which is the same path as no match: the client keeps them
   // on the question and asks them to say it again.
-  if (ranked.length > 0 && ranked[0].confidence < MIN_CONFIDENCE) {
+  if (ranked.length > 0 && ranked[0].confidence < TUNING.minConfidence) {
     return [unknownMapping(transcript)];
   }
   return ranked;

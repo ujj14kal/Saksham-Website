@@ -1,4 +1,5 @@
 import { env, hasBhashini, hasGroq, hasSarvam } from "../lib/env.js";
+import { GROQ_TRANSCRIPTION_URL, GROQ_WHISPER_MODEL } from "../lib/groq.js";
 import type { Language } from "@prisma/client";
 
 /**
@@ -13,7 +14,9 @@ export interface TranscribeResult {
   transcript: string;
   language: Language;
   provider: "sarvam" | "groq" | "bhashini";
-  confidence: number;
+  /** Only present when the provider actually reports one (Sarvam's
+   *  language_probability). Absent means unknown — never a stand-in value. */
+  confidence?: number;
 }
 
 export interface SynthesizeResult {
@@ -80,8 +83,13 @@ export async function transcribeAudio(
       return callGroqASR(audio, language, options);
     }
   }
+  // Bhashini was never implemented. Leaving an empty `if (hasBhashini)` here
+  // made the config look wired: setting Bhashini keys and nothing else would
+  // fall straight through to the error below with no indication why.
   if (hasBhashini) {
-    // return callBhashiniASR(audio, language)
+    console.error(
+      "[speech] BHASHINI_API_KEY is set but Bhashini ASR is not implemented — set SARVAM_API_KEY or GROQ_API_KEY instead",
+    );
   }
   throw new TranscriptionUnavailableError();
 }
@@ -127,14 +135,13 @@ async function callSarvamASR(
     transcript,
     language: detectedLanguage ?? language,
     provider: "sarvam",
-    confidence: body.language_probability ?? 0.9,
+    // absent when Sarvam omits it, rather than a made-up 0.9
+    confidence: body.language_probability ?? undefined,
   };
 }
 
-const GROQ_TRANSCRIPTION_URL = "https://api.groq.com/openai/v1/audio/transcriptions";
 // Full (non-turbo) model — this path only runs when Sarvam has already
 // failed, so accuracy matters more than shaving off latency here.
-const GROQ_WHISPER_MODEL = "whisper-large-v3";
 
 /** Whisper's verbose_json response names the detected language in full English
  *  (e.g. "hindi"), not an ISO code — map the ones relevant to Saksham back. */
@@ -196,9 +203,11 @@ async function callGroqASR(
     transcript,
     language: detectedLanguage ?? language,
     provider: "groq",
-    // Whisper doesn't return a single confidence/language-probability score
-    // the way Sarvam does — this is a fixed placeholder, not a measurement.
-    confidence: 0.75,
+    // Whisper returns no confidence score, so we report none rather than a
+    // number that looks measured. This used to be a fixed 0.75, which meant
+    // `stt.confidence` silently changed meaning depending on which provider
+    // served the request, with nothing saying which.
+    confidence: undefined,
   };
 }
 
@@ -231,8 +240,11 @@ export async function synthesizeSpeech(
       }
     }
   }
+  // as above: not implemented, so say so rather than silently using the mock
   if (hasBhashini) {
-    // return callBhashiniTTS(text, language)
+    console.error(
+      "[speech] BHASHINI_API_KEY is set but Bhashini TTS is not implemented — falling back to on-device speech",
+    );
   }
   // Mock: return the text itself as a "text" audio track. The client (RN app /
   // web) speaks it with the on-device TTS engine (expo-speech / Web Speech API),

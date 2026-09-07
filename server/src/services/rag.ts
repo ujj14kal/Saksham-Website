@@ -1,8 +1,7 @@
 import { env, hasGroq } from "../lib/env.js";
+import { GROQ_CHAT_URL, GROQ_CHAT_MODEL, GROQ_MAX_TOKENS, groqHeaders } from "../lib/groq.js";
 import { searchKnowledge } from "./knowledge.js";
 
-const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_CHAT_MODEL = "openai/gpt-oss-120b";
 
 export interface RagSource {
   documentTitle: string;
@@ -83,7 +82,7 @@ export async function answerFromDocuments(question: string, language: string): P
 
   const res = await fetch(GROQ_CHAT_URL, {
     method: "POST",
-    headers: { Authorization: `Bearer ${env.groqApiKey}`, "Content-Type": "application/json" },
+    headers: groqHeaders(),
     body: JSON.stringify({
       model: GROQ_CHAT_MODEL,
       messages: [
@@ -91,7 +90,7 @@ export async function answerFromDocuments(question: string, language: string): P
         { role: "user", content: question },
       ],
       temperature: 0.2,
-      max_tokens: 400,
+      max_tokens: GROQ_MAX_TOKENS.ragAnswer,
     }),
   });
 

@@ -51,13 +51,38 @@ function cleanupPlayer() {
   clearFallbackTimer();
 }
 
+/** Roughly how many characters a second the device voice speaks, per script.
+ *
+ *  A single figure was used for every language, which drifts badly: Devanagari
+ *  and the southern scripts pack a syllable into fewer characters than Latin,
+ *  so the same sentence is shorter on screen but takes the same time to say —
+ *  the text reveal ran ahead of the voice in exactly the languages most
+ *  beneficiaries use. These are still estimates (expo-speech reports no
+ *  playback position), but per-script ones. */
+const CHARS_PER_SECOND: Partial<Record<LanguageCode, number>> = {
+  en: 13,
+  // Indic scripts: fewer characters for the same spoken duration
+  hi: 9,
+  mr: 9,
+  bn: 9,
+  gu: 9,
+  pa: 9,
+  or: 9,
+  // Dravidian scripts are more agglutinative again
+  ta: 8,
+  te: 8,
+  kn: 8,
+};
+const DEFAULT_CHARS_PER_SECOND = 10;
+
 /** On-device TTS. We get no real playback position from expo-speech, so drive
- *  `onProgress` off a wall-clock estimate (~13 characters per second). */
+ *  `onProgress` off a wall-clock estimate calibrated per script. */
 function deviceSpeak(text: string, language: LanguageCode, myGeneration: number, handlers?: SpeakHandlers) {
   Speech.stop();
   speaking = true;
 
-  const estimatedMs = Math.max(1200, (text.length / 13) * 1000);
+  const charsPerSecond = CHARS_PER_SECOND[language] ?? DEFAULT_CHARS_PER_SECOND;
+  const estimatedMs = Math.max(1200, (text.length / charsPerSecond) * 1000);
   const startedAt = Date.now();
   const tick = () => {
     if (myGeneration !== generation) return;

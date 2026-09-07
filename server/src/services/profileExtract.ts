@@ -1,7 +1,6 @@
 import { env, hasGroq } from "../lib/env.js";
+import { GROQ_CHAT_URL, GROQ_CHAT_MODEL, GROQ_MAX_TOKENS, groqHeaders } from "../lib/groq.js";
 
-const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_CHAT_MODEL = "openai/gpt-oss-120b";
 
 export type ProfileField = "name" | "gender" | "age" | "education" | "experienceYears" | "workPreference";
 
@@ -231,7 +230,7 @@ export async function extractProfileAnswer(
   try {
     res = await fetch(GROQ_CHAT_URL, {
     method: "POST",
-    headers: { Authorization: `Bearer ${env.groqApiKey}`, "Content-Type": "application/json" },
+    headers: groqHeaders(),
     body: JSON.stringify({
       model: GROQ_CHAT_MODEL,
       messages: [
@@ -249,7 +248,7 @@ export async function extractProfileAnswer(
       // low cap here (originally 10) gets entirely consumed by that
       // reasoning and truncates before any real content comes out
       // (finish_reason "length", empty content). 150 leaves room for both.
-      max_tokens: 150,
+      max_tokens: GROQ_MAX_TOKENS.profileField,
     }),
     });
   } catch {
