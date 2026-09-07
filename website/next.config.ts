@@ -23,14 +23,22 @@ const nextConfig: NextConfig = {
     // Never added to the production policy.
     const devScript = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
 
+    // Vercel Analytics and Speed Insights load their script from
+    // va.vercel-scripts.com and beacon back to vitals.vercel-insights.com.
+    // Neither host was allowed, so both were blocked in the browser and the
+    // components in app/layout.tsx collected nothing — dead weight that looked
+    // wired up.
+    const vercelScript = "https://va.vercel-scripts.com";
+    const vercelBeacon = "https://vitals.vercel-insights.com";
+
     const csp = [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline'${devScript}`,
+      `script-src 'self' 'unsafe-inline' ${vercelScript}${devScript}`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "media-src 'self' blob:",
       "font-src 'self'",
-      "connect-src 'self' https://saksham-api-82mn.onrender.com",
+      `connect-src 'self' https://saksham-api-82mn.onrender.com ${vercelBeacon} ${vercelScript}`,
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",
