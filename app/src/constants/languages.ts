@@ -68,6 +68,7 @@ export interface Strings {
   speakAgain: string;
   typeInstead: string;
   typePlaceholder: string;
+  profileTypePlaceholder: string;
   send: string;
   tryAgain: string;
   askAgain: string;
@@ -251,6 +252,7 @@ const hi: Strings = {
   speakAgain: 'फिर से सुनें',
   typeInstead: 'लिखकर बताएं',
   typePlaceholder: 'अपना हुनर यहाँ लिखें…',
+  profileTypePlaceholder: 'अपना जवाब यहाँ लिखें…',
   send: 'भेजें',
   tryAgain: 'दोबारा कोशिश करें',
   askAgain: 'फिर से पूछें',
@@ -429,6 +431,7 @@ const en: Strings = {
   speakAgain: 'Hear again',
   typeInstead: 'Type instead',
   typePlaceholder: 'Type your skill here…',
+  profileTypePlaceholder: 'Type your answer here…',
   send: 'Send',
   tryAgain: 'Try again',
   askAgain: 'Ask again',
@@ -607,6 +610,7 @@ const bn: Strings = {
   speakAgain: 'আবার শুনুন',
   typeInstead: 'লিখে বলুন',
   typePlaceholder: 'আপনার দক্ষতা এখানে লিখুন…',
+  profileTypePlaceholder: 'আপনার উত্তর এখানে লিখুন…',
   send: 'পাঠান',
   tryAgain: 'আবার চেষ্টা করুন',
   askAgain: 'আবার জিজ্ঞাসা করুন',
@@ -785,6 +789,7 @@ const ta: Strings = {
   speakAgain: 'மீண்டும் கேட்க',
   typeInstead: 'தட்டச்சு செய்யவும்',
   typePlaceholder: 'உங்கள் திறனை இங்கே தட்டச்சு செய்யவும்…',
+  profileTypePlaceholder: 'உங்கள் பதிலை இங்கே தட்டச்சு செய்யவும்…',
   send: 'அனுப்பு',
   tryAgain: 'மீண்டும் முயற்சி',
   askAgain: 'மீண்டும் கேள்',
@@ -963,6 +968,7 @@ const te: Strings = {
   speakAgain: 'మళ్లీ వినండి',
   typeInstead: 'బదులుగా టైప్ చేయండి',
   typePlaceholder: 'మీ నైపుణ్యాన్ని ఇక్కడ టైప్ చేయండి…',
+  profileTypePlaceholder: 'మీ సమాధానాన్ని ఇక్కడ టైప్ చేయండి…',
   send: 'పంపండి',
   tryAgain: 'మళ్లీ ప్రయత్నించండి',
   askAgain: 'మళ్లీ అడగండి',
@@ -1141,6 +1147,7 @@ const mr: Strings = {
   speakAgain: 'पुन्हा ऐका',
   typeInstead: 'त्याऐवजी टाइप करा',
   typePlaceholder: 'तुमचे कौशल्य इथे टाइप करा…',
+  profileTypePlaceholder: 'तुमचे उत्तर इथे टाइप करा…',
   send: 'पाठवा',
   tryAgain: 'पुन्हा प्रयत्न करा',
   askAgain: 'पुन्हा विचारा',
@@ -1319,6 +1326,7 @@ const kn: Strings = {
   speakAgain: 'ಮತ್ತೆ ಕೇಳಿ',
   typeInstead: 'ಬದಲಿಗೆ ಟೈಪ್ ಮಾಡಿ',
   typePlaceholder: 'ನಿಮ್ಮ ಕೌಶಲ್ಯವನ್ನು ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ…',
+  profileTypePlaceholder: 'ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ…',
   send: 'ಕಳುಹಿಸಿ',
   tryAgain: 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
   askAgain: 'ಮತ್ತೆ ಕೇಳಿ',
@@ -1497,6 +1505,7 @@ const gu: Strings = {
   speakAgain: 'ફરી સાંભળો',
   typeInstead: 'તેના બદલે ટાઇપ કરો',
   typePlaceholder: 'તમારું કૌશલ્ય અહીં ટાઇપ કરો…',
+  profileTypePlaceholder: 'તમારો જવાબ અહીં ટાઇપ કરો…',
   send: 'મોકલો',
   tryAgain: 'ફરી પ્રયાસ કરો',
   askAgain: 'ફરી પૂછો',
@@ -1675,6 +1684,7 @@ const pa: Strings = {
   speakAgain: 'ਮੁੜ ਸੁਣੋ',
   typeInstead: 'ਇਸ ਦੀ ਬਜਾਏ ਟਾਈਪ ਕਰੋ',
   typePlaceholder: 'ਆਪਣਾ ਹੁਨਰ ਇੱਥੇ ਟਾਈਪ ਕਰੋ…',
+  profileTypePlaceholder: 'ਆਪਣਾ ਜਵਾਬ ਇੱਥੇ ਟਾਈਪ ਕਰੋ…',
   send: 'ਭੇਜੋ',
   tryAgain: 'ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
   askAgain: 'ਮੁੜ ਪੁੱਛੋ',
@@ -1853,6 +1863,7 @@ const or: Strings = {
   speakAgain: 'ପୁଣି ଶୁଣନ୍ତୁ',
   typeInstead: 'ଏହା ପରିବର୍ତ୍ତେ ଟାଇପ୍ କରନ୍ତୁ',
   typePlaceholder: 'ଆପଣଙ୍କର ଦକ୍ଷତା ଏଠାରେ ଟାଇପ୍ କରନ୍ତୁ…',
+  profileTypePlaceholder: 'ଆପଣଙ୍କର ଉତ୍ତର ଏଠାରେ ଟାଇପ୍ କରନ୍ତୁ…',
   send: 'ପଠାନ୍ତୁ',
   tryAgain: 'ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ',
   askAgain: 'ପୁଣି ପଚାରନ୍ତୁ',

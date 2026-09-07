@@ -152,7 +152,6 @@ assistantRouter.post("/converse", upload.single("audio"), async (req, res) => {
     mappings,
     recommendations.map((r) => ({ name: r.subCourseName, rationale: r.rationale })),
   );
-  const audio = await synthesizeSpeech(spokenText, effectiveLanguage);
 
   res.json({
     sessionId: session.id,
@@ -165,7 +164,9 @@ assistantRouter.post("/converse", upload.single("audio"), async (req, res) => {
       recommendationId: session.recommendations[i]?.id,
     })),
     jobs,
-    reply: { text: spokenText, audioUrl: audio.audioUrl, format: audio.format },
+    // Keep /converse fast: the app can request TTS separately after the text
+    // reply is already visible.
+    reply: { text: spokenText, audioUrl: `data:text/plain;charset=utf-8,${encodeURIComponent(spokenText)}`, format: "text" },
   });
 });
 

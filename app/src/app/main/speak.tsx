@@ -225,13 +225,8 @@ export default function SpeakScreen() {
       const replyText = result.reply.text || t.agentFallbackReply;
       const withReply = withUser.concat({ role: 'assistant' as const, text: replyText });
       setAgentMessages(withReply);
-      const replyIndex = withReply.length - 1;
-      setReveal({ index: replyIndex, fraction: 0 });
-      speak(replyText, replyLanguage, {
-        onProgress: (fraction) =>
-          setReveal((r) => (r && r.index === replyIndex ? { index: replyIndex, fraction } : r)),
-        onDone: () => setReveal((r) => (r && r.index === replyIndex ? null : r)),
-      });
+      setReveal(null);
+      speak(replyText, replyLanguage);
       const updated = await saveConversation(ensureSessionId(), withReply);
       setHistory(updated);
       // as above: only move on once we actually understood the skill. The

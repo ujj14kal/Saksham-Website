@@ -94,11 +94,8 @@ export default function VoiceProfileStep() {
   function addAssistant(text: string) {
     const id = ++idRef.current;
     setMessages((m) => m.concat({ id, role: 'assistant', text }));
-    setReveal({ id, fraction: 0 });
-    speak(text, effectiveLanguage, {
-      onProgress: (fraction) => setReveal((r) => (r && r.id === id ? { id, fraction } : r)),
-      onDone: () => setReveal((r) => (r && r.id === id ? null : r)),
-    });
+    setReveal(null);
+    speak(text, effectiveLanguage);
   }
 
   useEffect(() => () => stopSpeaking(), []);
@@ -330,7 +327,7 @@ export default function VoiceProfileStep() {
               <TextInput
                 value={typed}
                 onChangeText={setTyped}
-                placeholder={t.typePlaceholder}
+                placeholder={t.profileTypePlaceholder}
                 placeholderTextColor={c.textFaint}
                 autoFocus
                 style={[
