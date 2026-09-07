@@ -20,7 +20,7 @@ import {
   useAudioRecorderState,
 } from 'expo-audio';
 
-import { converse, type LanguageCode } from '@/lib/api';
+import { converse, type ConverseResponse, type LanguageCode } from '@/lib/api';
 import { LANGUAGES, UI_STRINGS } from '@/constants/languages';
 import { loadHistory, saveConversation, type ConversationRecord } from '@/lib/conversationHistory';
 import { setLastResult } from '@/lib/session';
@@ -85,6 +85,12 @@ export default function SpeakScreen() {
     return guestProfile?.experienceYears == null || !guestProfile.workPreference;
   }
 
+  /** A skill counts as understood only once it maps to a real NSQF
+   *  qualification. "unknown" mappings carry no title. */
+  function understoodSkill(result: ConverseResponse): boolean {
+    return (result.mappings ?? []).some((m) => m.normalizedSkill !== 'unknown' && !!m.title);
+  }
+
   function routeAfterSkill() {
     router.push(shouldAskSkillQuestions() ? '/onboarding/voice-profile?mode=skill&returnTo=/confirm' : '/confirm');
   }
@@ -143,7 +149,17 @@ export default function SpeakScreen() {
         ]);
         setHistory(updated);
       }
-      routeAfterSkill();
+      // Don't move on until we actually understood the skill. Asking "how many
+      // years have you done this work?" when we could not tell what the work
+      // is reads as the app not listening — and the answer would be attached
+      // to no trade. Stay here so they can say it again, in their own words.
+      if (understoodSkill(result)) {
+        routeAfterSkill();
+      } else {
+        setAgentMessages((prev) =>
+          prev.concat({ role: 'assistant' as const, text: result.reply.text || t.noMatch }),
+        );
+      }
     } catch (e) {
       Alert.alert(t.tryAgain, String(e));
     } finally {
@@ -195,7 +211,9 @@ export default function SpeakScreen() {
       });
       const updated = await saveConversation(ensureSessionId(), withReply);
       setHistory(updated);
-      routeAfterSkill();
+      // as above: only move on once we actually understood the skill. The
+      // reply is already shown and spoken, so they can simply try again.
+      if (understoodSkill(result)) routeAfterSkill();
     } catch (e) {
       Alert.alert(t.tryAgain, String(e));
     } finally {
