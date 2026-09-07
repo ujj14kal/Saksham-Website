@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
+import { authenticate } from "../middleware/auth.js";
 import { mapTranscriptToNsqf } from "../services/nsqf.js";
 
 export const catalogRouter = Router();
@@ -259,4 +260,45 @@ catalogRouter.get("/job-postings/:id", async (req, res) => {
   });
   if (!item) return res.status(404).json({ error: "Not found" });
   res.json(item);
+});
+
+
+/**
+ * POST /api/jobs/:id/apply — a beneficiary applies to a posting.
+ *
+ * Requires a signed-in account: an application that staff cannot phone back is
+ * worthless, and a guest session has no name or number attached. The app sends
+ * people to sign in first rather than letting them tap Apply into a void.
+ *
+ * Applying twice updates the existing row instead of creating a duplicate, so
+ * the admin list shows people, not taps.
+ */
+catalogRouter.post("/jobs/:id/apply", authenticate, async (req, res) => {
+  const schema = z.object({
+    matchedQpCode: z.string().max(80).optional(),
+    matchedTitle: z.string().max(200).optional(),
+  });
+  const parsed = schema.safeParse(req.body ?? {});
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+
+  const job = await prisma.jobPosting.findUnique({ where: { id: req.params.id } });
+  if (!job || !job.active) return res.status(404).json({ error: "This job is no longer open" });
+
+  const userId = req.auth!.userId;
+  const application = await prisma.jobApplication.upsert({
+    where: { jobPostingId_userId: { jobPostingId: job.id, userId } },
+    update: { ...parsed.data },
+    create: { jobPostingId: job.id, userId, ...parsed.data },
+  });
+  res.status(201).json({ applied: true, application });
+});
+
+/** GET /api/jobs/my-applications — what this beneficiary has already applied
+ *  to, so the app can show "Applied" instead of offering the button again. */
+catalogRouter.get("/jobs/my-applications", authenticate, async (req, res) => {
+  const rows = await prisma.jobApplication.findMany({
+    where: { userId: req.auth!.userId },
+    select: { jobPostingId: true, status: true, createdAt: true },
+  });
+  res.json(rows);
 });

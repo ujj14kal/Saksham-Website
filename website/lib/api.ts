@@ -160,6 +160,8 @@ export interface JobPosting {
   description: string | null;
   source: "SAMPLE" | "EMPLOYER" | "NCS";
   active: boolean;
+  /** how many beneficiaries have applied through the app */
+  applicationCount?: number;
   postedAt: string;
 }
 
@@ -226,6 +228,55 @@ export async function getJobPostings(token: string): Promise<JobPosting[]> {
   const res = await fetch(`${API_BASE}/api/admin/job-postings`, { headers: authHeaders(token), cache: "no-store" });
   throwIfUnauthorized(res);
   if (!res.ok) throw new Error(`job-postings ${res.status}`);
+  return res.json();
+}
+
+export interface JobApplicationRow {
+  id: string;
+  status: "APPLIED" | "CONTACTED" | "SHORTLISTED" | "PLACED" | "REJECTED";
+  matchedQpCode: string | null;
+  matchedTitle: string | null;
+  adminNote: string | null;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string | null;
+    phone: string | null;
+    age: number | null;
+    gender: string | null;
+    education: string | null;
+    experienceYears: number | null;
+    workPreference: string | null;
+    preferredLocation: string | null;
+    state: string | null;
+    district: string | null;
+  };
+}
+
+/** Who applied to one posting, with enough profile for staff to call them. */
+export async function getJobApplications(token: string, jobId: string): Promise<JobApplicationRow[]> {
+  const res = await fetch(`${API_BASE}/api/admin/job-postings/${jobId}/applications`, {
+    headers: authHeaders(token),
+    cache: "no-store",
+  });
+  throwIfUnauthorized(res);
+  if (!res.ok) throw new Error(`applications ${res.status}`);
+  return res.json();
+}
+
+/** Move an application along the funnel, or attach a note after a phone call. */
+export async function updateJobApplication(
+  token: string,
+  applicationId: string,
+  input: { status?: JobApplicationRow["status"]; adminNote?: string },
+): Promise<JobApplicationRow> {
+  const res = await fetch(`${API_BASE}/api/admin/applications/${applicationId}`, {
+    method: "PATCH",
+    headers: { ...authHeaders(token), "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  throwIfUnauthorized(res);
+  if (!res.ok) throw new Error(`update application ${res.status}`);
   return res.json();
 }
 

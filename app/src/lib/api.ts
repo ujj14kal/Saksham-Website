@@ -999,3 +999,38 @@ export async function checkHealth(): Promise<boolean> {
     return false;
   }
 }
+
+
+/** A beneficiary applying to a posting. Requires a signed-in account — an
+ *  application staff cannot phone back is worthless, so the app routes guests
+ *  to sign in rather than letting them tap Apply into nothing. */
+export async function applyToJob(
+  token: string,
+  jobPostingId: string,
+  matched?: { qpCode?: string | null; title?: string | null },
+): Promise<{ applied: boolean }> {
+  const res = await fetch(`${API_BASE}/api/jobs/${jobPostingId}/apply`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      matchedQpCode: matched?.qpCode ?? undefined,
+      matchedTitle: matched?.title ?? undefined,
+    }),
+  });
+  if (!res.ok) throw new Error(await extractError(res, 'Could not apply right now'));
+  return res.json();
+}
+
+/** Postings this beneficiary has already applied to, so the button can show
+ *  "Applied" instead of offering itself again. */
+export async function getMyApplications(token: string): Promise<{ jobPostingId: string; status: string }[]> {
+  try {
+    const res = await fetch(`${API_BASE}/api/jobs/my-applications`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
+  }
+}

@@ -118,6 +118,7 @@ model User {
 
   sessions        VoiceSession[]
   recommendations Recommendation[]
+  jobApplications JobApplication[]
   auditLogEntries AuditLogEntry[] @relation("AuditLogAdmin")
 }
 
@@ -305,6 +306,39 @@ model TrainingProgram {
 /// the portal by a real employer. NCS is reserved for a future National Career
 /// Service integration (their vacancy API requires credentials we don't hold).
 /// Never present a SAMPLE row as a live opening.
+/// A beneficiary applying to a job posting through the app.
+///
+/// One row per person per posting — reapplying updates the existing row rather
+/// than stacking duplicates, so the admin sees a clean list of who is
+/// interested rather than a log of taps.
+model JobApplication {
+  id            String     @id @default(cuid())
+  jobPostingId  String
+  jobPosting    JobPosting @relation(fields: [jobPostingId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// where the beneficiary was in the flow when they applied, kept so staff can
+  /// see the qualification that led them here
+  matchedQpCode String?
+  matchedTitle  String?
+  status        JobApplicationStatus @default(APPLIED)
+  /// free-text note a programme officer can add after speaking to them
+  adminNote     String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@unique([jobPostingId, userId])
+  @@index([jobPostingId])
+}
+
+enum JobApplicationStatus {
+  APPLIED
+  CONTACTED
+  SHORTLISTED
+  PLACED
+  REJECTED
+}
+
 model JobPosting {
   id                  String             @id @default(cuid())
   title               String
@@ -332,6 +366,8 @@ model JobPosting {
   postedAt            DateTime           @default(now())
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
+
+  applications JobApplication[]
 
   @@index([active, source])
 }

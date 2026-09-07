@@ -18,6 +18,7 @@ import {
 import { downloadCsv } from "@/lib/csv";
 import { Button, Card, Chip, Pagination, Skeleton } from "@/components/ui";
 import { AdminShell } from "../admin-shell";
+import { ApplicationsPanel } from "./applications-panel";
 
 const PAGE_SIZE = 12;
 
@@ -37,6 +38,13 @@ function Jobs() {
   const [jobs, setJobs] = useState<JobPosting[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [onlyWithApplications, setOnlyWithApplications] = useState(false);
+  // which posting's applicant list is expanded
+  const [openApplicationsFor, setOpenApplicationsFor] = useState<string | null>(null);
+  // read once on mount: getToken() touches localStorage, which is not available
+  // during the server render
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => setToken(getToken()), []);
   const [editing, setEditing] = useState<JobPosting | null>(null);
   const [query, setQuery] = useState("");
   const [sectorFilter, setSectorFilter] = useState("");
@@ -75,6 +83,7 @@ function Jobs() {
     );
   }
 
+  const totalApplications = jobs.reduce((n, j) => n + (j.applicationCount ?? 0), 0);
   const sectors = [...new Set(jobs.map((j) => j.sector).filter((s): s is string => Boolean(s)))].sort();
 
   const filtered = jobs.filter((j) => {
@@ -85,7 +94,8 @@ function Jobs() {
       j.employerName.toLowerCase().includes(q) ||
       j.skillTokens.some((t) => t.includes(q));
     const matchesSector = !sectorFilter || j.sector === sectorFilter;
-    return matchesQuery && matchesSector;
+    const matchesApplied = !onlyWithApplications || (j.applicationCount ?? 0) > 0;
+    return matchesQuery && matchesSector && matchesApplied;
   });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -117,6 +127,23 @@ function Jobs() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-foreground-dim">
           {filtered.length} of {jobs.length} posting{jobs.length === 1 ? "" : "s"}
+          {totalApplications > 0 && (
+            <>
+              {" · "}
+              <button
+                type="button"
+                onClick={() => setOnlyWithApplications((v) => !v)}
+                className={`rounded-full px-2 py-0.5 text-xs font-semibold transition ${
+                  onlyWithApplications
+                    ? "bg-emphasis text-white"
+                    : "bg-emphasis/10 text-emphasis hover:bg-emphasis/15"
+                }`}
+              >
+                {totalApplications} application{totalApplications === 1 ? "" : "s"}
+                {onlyWithApplications ? " · showing only these" : " · show only these"}
+              </button>
+            </>
+          )}
         </p>
         <div className="flex flex-wrap gap-2">
           <input
@@ -199,6 +226,29 @@ function Jobs() {
               </div>
 
               {job.description && <p className="text-sm text-foreground-dim">{job.description}</p>}
+
+              {(job.applicationCount ?? 0) > 0 && (
+                <div className="-mx-4 -mb-4 mt-1 rounded-b-xl bg-surface-alt/60">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenApplicationsFor((cur) => (cur === job.id ? null : job.id))
+                    }
+                    aria-expanded={openApplicationsFor === job.id}
+                    className="flex w-full items-center justify-between px-4 py-2.5 text-sm font-semibold text-emphasis hover:bg-surface-alt"
+                  >
+                    <span>
+                      {job.applicationCount} applicant{job.applicationCount === 1 ? "" : "s"}
+                    </span>
+                    <span className="text-xs font-normal text-foreground-faint">
+                      {openApplicationsFor === job.id ? "Hide" : "View"}
+                    </span>
+                  </button>
+                  {openApplicationsFor === job.id && token && (
+                    <ApplicationsPanel jobId={job.id} token={token} />
+                  )}
+                </div>
+              )}
 
               <div className="flex flex-wrap gap-1.5">
                 {job.skillTokens.map((t) => (

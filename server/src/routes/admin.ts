@@ -237,10 +237,47 @@ const jobPostingSchema = z.object({
  *  SAMPLE demonstration rows), for the admin job-postings manager. */
 adminRouter.get("/job-postings", async (_req, res) => {
   const jobs = await prisma.jobPosting.findMany({
-    include: { nsqfQualification: true },
+    include: { nsqfQualification: true, _count: { select: { applications: true } } },
     orderBy: { postedAt: "desc" },
   });
-  res.json(jobs);
+  // surface the application count so the manager can sort by interest without
+  // opening every posting
+  res.json(jobs.map(({ _count, ...job }) => ({ ...job, applicationCount: _count.applications })));
+});
+
+/** GET /api/admin/job-postings/:id/applications — who applied to one posting,
+ *  with enough of the beneficiary's profile for staff to actually call them. */
+adminRouter.get("/job-postings/:id/applications", async (req, res) => {
+  const applications = await prisma.jobApplication.findMany({
+    where: { jobPostingId: req.params.id },
+    orderBy: { createdAt: "desc" },
+    include: {
+      user: {
+        select: {
+          id: true, name: true, phone: true, age: true, gender: true,
+          education: true, experienceYears: true, workPreference: true,
+          preferredLocation: true, state: true, district: true,
+        },
+      },
+    },
+  });
+  res.json(applications);
+});
+
+/** PATCH /api/admin/applications/:id — move an application along the funnel
+ *  (contacted, shortlisted, placed) or attach a note after a phone call. */
+adminRouter.patch("/applications/:id", async (req, res) => {
+  const schema = z.object({
+    status: z.enum(["APPLIED", "CONTACTED", "SHORTLISTED", "PLACED", "REJECTED"]).optional(),
+    adminNote: z.string().max(2000).optional(),
+  });
+  const parsed = schema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
+  const updated = await prisma.jobApplication.update({
+    where: { id: req.params.id },
+    data: parsed.data,
+  });
+  res.json(updated);
 });
 
 /** POST /api/admin/job-postings — create a real vacancy (source: EMPLOYER) */

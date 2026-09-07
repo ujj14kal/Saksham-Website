@@ -1,10 +1,18 @@
 import { Redirect, router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 
-import { setRecommendationStatus, type NsqfMapping, type CourseRecommendation, type JobMatch } from '@/lib/api';
+import {
+  applyToJob,
+  getMyApplications,
+  setRecommendationStatus,
+  type NsqfMapping,
+  type CourseRecommendation,
+  type JobMatch,
+} from '@/lib/api';
+import { useAuth } from '@/lib/auth';
 import { UI_STRINGS } from '@/constants/languages';
 import { getIntent, getLastResult } from '@/lib/session';
 import { speak, stopSpeaking } from '@/lib/speech';
@@ -19,6 +27,37 @@ export default function ResultsScreen() {
   const { c, radius } = useTheme();
   const result = getLastResult();
   const intent = getIntent();
+  const { token } = useAuth();
+  const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
+  const [applyingId, setApplyingId] = useState<string | null>(null);
+
+  // what they have already applied to, so the button reads "Applied" on return
+  useEffect(() => {
+    if (!token) return;
+    getMyApplications(token).then((rows) => setAppliedIds(new Set(rows.map((r) => r.jobPostingId))));
+  }, [token]);
+
+  async function applyTo(j: JobMatch) {
+    // Applying needs an account: a programme officer has to be able to call
+    // this person back, and a guest session carries no name or number. Send
+    // them to sign in and bring them straight back here.
+    if (!token) {
+      Alert.alert(t.loginToApply, t.loginToApplyBody, [
+        { text: t.cancel, style: 'cancel' },
+        { text: t.loginBtn, onPress: () => router.push('/auth?returnTo=/results') },
+      ]);
+      return;
+    }
+    setApplyingId(j.jobPostingId);
+    try {
+      await applyToJob(token, j.jobPostingId, { qpCode: j.nsqfQpCode, title: j.nsqfTitle });
+      setAppliedIds((prev) => new Set(prev).add(j.jobPostingId));
+    } catch (e) {
+      Alert.alert(t.tryAgain, e instanceof Error ? e.message : String(e));
+    } finally {
+      setApplyingId(null);
+    }
+  }
   const [jobsPage, setJobsPage] = useState(0);
   const [recsPage, setRecsPage] = useState(0);
   const t = language ? UI_STRINGS[language] : UI_STRINGS.hi;
@@ -121,7 +160,15 @@ export default function ResultsScreen() {
               </View>
             </View>
             {visibleJobs.map((j, i) => (
-              <JobCard key={j.jobPostingId} j={j} t={t} index={i + 2} />
+              <JobCard
+                key={j.jobPostingId}
+                j={j}
+                t={t}
+                index={i + 2}
+                applied={appliedIds.has(j.jobPostingId)}
+                applying={applyingId === j.jobPostingId}
+                onApply={() => applyTo(j)}
+              />
             ))}
             <Pager total={jobs.length} page={jobsPage} onPage={setJobsPage} />
           </View>
@@ -257,10 +304,16 @@ function JobCard({
   j,
   t,
   index,
+  applied,
+  applying,
+  onApply,
 }: {
   j: JobMatch;
   t: (typeof UI_STRINGS)['hi'];
   index: number;
+  applied: boolean;
+  applying: boolean;
+  onApply: () => void;
 }) {
   const { c, radius } = useTheme();
   const wage =
@@ -332,13 +385,39 @@ function JobCard({
         </View>
       )}
 
-      <Button
-        label={t.apply}
-        variant="success"
-        size="md"
-        icon="arrow-forward"
-        onPress={() => Linking.openURL(j.applyUrl || `https://www.ncs.gov.in/?keyword=${encodeURIComponent(j.title)}`)}
-      />
+      {/* A posting we hold ourselves is applied to in-app, so a programme
+          officer gets a name and a number to call back. Only a posting that
+          genuinely lives on another portal sends the beneficiary out to it —
+          the old fallback opened the NCS homepage with the search term
+          silently dropped, which stranded them on an unfamiliar site. */}
+      {j.applyUrl ? (
+        <Button
+          label={t.apply}
+          variant="success"
+          size="md"
+          icon="open-outline"
+          onPress={() => Linking.openURL(j.applyUrl!)}
+        />
+      ) : (
+        <Button
+          label={applied ? t.applied : applying ? t.applying : t.apply}
+          variant={applied ? 'secondary' : 'success'}
+          size="md"
+          icon={applied ? 'checkmark' : 'arrow-forward'}
+          loading={applying}
+          disabled={applied || applying}
+          onPress={onApply}
+        />
+      )}
+
+      {!!j.contactPhone && (
+        <Pressable onPress={() => Linking.openURL(`tel:${j.contactPhone}`)} style={styles.jobMeta}>
+          <Ionicons name="call-outline" size={14} color={c.primary} />
+          <Txt variant="caption" tone="primary">
+            {j.contactPhone}
+          </Txt>
+        </Pressable>
+      )}
     </Card>
   );
 }
