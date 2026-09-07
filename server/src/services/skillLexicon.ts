@@ -101,8 +101,10 @@ export const SKILL_LEXICON: LexiconEntry[] = [
   {
     normalized: "masonry",
     patterns: [
-      "raj mistri", "mistri", "diwar banana", "mason", "masonry", "construction",
-      "राज मिस्त्री", "मिस्त्री", "brick", "plaster",
+      // "mistri" alone is any craftsman ("AC ka mistri" is a technician), so
+      // only the qualified forms count as masonry
+      "raj mistri", "diwar banana", "mason", "masonry", "construction",
+      "राज मिस्त्री", "brick", "plaster",
       "brickwork", "cement ka kaam", "building work", "दीवार", "प्लास्टर",
       "রাজমিস্ত্রি", "ইটের কাজ", "கட்டிட வேலை", "மேஸ்திரி", "తాపీ మేస్త్రీ",
       "ఇటుక పని", "गवंडी", "बांधकाम", "ಮೇಸ್ತ್ರಿ", "ಕಟ್ಟಡ ಕೆಲಸ",
@@ -274,104 +276,131 @@ export const SKILL_LEXICON: LexiconEntry[] = [
   // ── Agriculture (expanded) ─────────────────────────────────────────────
   {
     normalized: "poultry",
-    patterns: ["murgi palan", "poultry farm", "chicken farm", "अंडे का व्यापार", "मुर्गी पालन", "poultry"],
+    patterns: [
+      "murgi", "chicken", "hen", "poultry", "kukkut", "anda", "egg farm", "broiler", "bird for egg","murgi palan", "poultry farm", "chicken farm", "अंडे का व्यापार", "मुर्गी पालन", "poultry"],
   },
   {
     normalized: "horticulture",
-    patterns: ["bagwani", "phal ki kheti", "sabzi ki kheti", "nursery", "बागवानी", "horticulture", "nursery ka kaam"],
+    patterns: [
+      "bagwani", "horticulture", "phal sabzi", "fruits and vegetables", "nursery", "orchard", "podhe lagata", "sabzi ki kheti", "saplings","bagwani", "phal ki kheti", "sabzi ki kheti", "nursery", "बागवानी", "horticulture", "nursery ka kaam"],
   },
   {
     normalized: "fisheries",
-    patterns: ["machli palan", "matsya palan", "fish farming", "मछली पालन", "fisheries"],
+    patterns: [
+      "machhli", "fish", "matsya", "fisherman", "talab mein machhli", "fish farm", "boat catching","machli palan", "matsya palan", "fish farming", "मछली पालन", "fisheries"],
   },
   {
     normalized: "beekeeping",
-    patterns: ["madhumakhi palan", "shahad", "honey farming", "मधुमक्खी पालन", "beekeeping"],
+    patterns: [
+      "madhumakhi", "bee", "honey", "shahad", "apiary", "madhu makkhi", "bee farm", "मधुमक्खी",
+      "honey banana", "shahad banana","madhumakhi palan", "shahad", "honey farming", "मधुमक्खी पालन", "beekeeping"],
     titleTerms: ["honey bee", "apiculture", "beekeeper"],
   },
   {
     normalized: "sericulture",
-    patterns: ["resham keet palan", "silk farming", "sericulture", "रेशम पालन", "रेशम कीट"],
+    patterns: [
+      "resham", "silk", "sericulture", "silkworm", "silk worm", "cocoon", "mulberry", "keede palta","resham keet palan", "silk farming", "sericulture", "रेशम पालन", "रेशम कीट"],
     titleTerms: ["silkworm", "silk reeling", "cocoon"],
   },
 
   // ── Handicrafts (expanded) ──────────────────────────────────────────────
   {
     normalized: "wood-carving",
-    patterns: ["lakdi ki nakkashi", "wood carving", "काष्ठ नक्काशी", "लकड़ी की नक्काशी", "murti lakdi"],
+    patterns: [
+      "lakdi par nakkashi", "wood carv", "lakdi ki carving", "wooden art", "carved wooden", "kaath par design", "nakkashi lakdi", "carving on timber","lakdi ki nakkashi", "wood carving", "काष्ठ नक्काशी", "लकड़ी की नक्काशी", "murti lakdi"],
     titleTerms: ["wood carv", "wooden toy", "artisan wood"],
   },
   {
     normalized: "stone-carving",
-    patterns: ["patthar ki nakkashi", "stone carving", "पत्थर की नक्काशी", "murti patthar", "sangtarashi"],
+    patterns: [
+      "marble carving", "stone sculpt",
+      "carve stone", "stone statue", "patthar par nakkashi", "sculptor", "shilpkar", "patthar tarash", "murti banana","patthar ki nakkashi", "stone carving", "पत्थर की नक्काशी", "murti patthar", "sangtarashi"],
     titleTerms: ["stone carv", "sculpt", "stone artisan"],
   },
   {
     normalized: "metal-craft",
-    patterns: ["pital ka kaam", "dhatu shilp", "brass work", "bell metal", "पीतल का काम", "धातु शिल्प"],
+    patterns: [
+      "metal handicraft", "metalwork", "dhatu se murti",
+      "dhatu ka kaam", "dhatu shilp", "metal work", "peetal ka saman", "brass work","pital ka kaam", "dhatu shilp", "brass work", "bell metal", "पीतल का काम", "धातु शिल्प"],
     titleTerms: ["metalware", "planishing", "acid cleaner", "metal craft", "brass", "artware", "metal artisan"],
   },
   {
     normalized: "carpet-weaving",
-    patterns: ["kaleen bunai", "carpet weaving", "galeecha", "कालीन बुनाई", "गलीचा"],
+    patterns: [
+      "carpet weav", "woollen carpet", "kaleen ka kaam",
+      "kaleen bunta", "kaleen bun", "dari banana", "rug making", "galicha", "carpet knot","kaleen bunai", "carpet weaving", "galeecha", "कालीन बुनाई", "गलीचा"],
     titleTerms: ["carpet", "durrie", "rug weav"],
   },
   {
     normalized: "jewellery-making",
-    patterns: ["jewellery banana", "sunar", "gehna banana", "jewellery making", "जौहरी", "सुनार", "गहना बनाना"],
+    patterns: [
+      "jewellery", "jewelry", "gold ornament", "silver jewel", "chandi ke gehne",
+      "gehne banata", "gehne bana", "zewar bana", "ornament making", "goldsmith", "गहने बनाना", "sunar","jewellery banana", "sunar", "gehna banana", "jewellery making", "जौहरी", "सुनार", "गहना बनाना"],
     titleTerms: ["goldsmith", "jewell", "sunar"],
   },
   {
     normalized: "pattern-making",
-    patterns: ["pattern banana", "cutting master", "pattern making", "कटिंग मास्टर"],
+    patterns: [
+      "pattern mak", "pattern bana", "cutting master", "garment pattern", "design cutting", "sample maker", "draft design",
+      "पैटर्न बनाना", "pattern banana", "cutting master", "garment pattern","pattern banana", "cutting master", "pattern making", "कटिंग मास्टर"],
     titleTerms: ["pattern master", "pattern maker"],
   },
   {
     normalized: "garment-quality-check",
-    patterns: ["quality check kapde", "garment checking", "गारमेंट चेकिंग", "क्वालिटी चेकर"],
+    patterns: [
+      "kapde ki checking", "quality check", "garment quality", "inline checker", "kapda inspection", "checking karta", "garment defect", "finished garment","quality check kapde", "garment checking", "गारमेंट चेकिंग", "क्वालिटी चेकर"],
     titleTerms: ["sample maker", "inline checker"],
   },
   {
     normalized: "fabric-dyeing",
-    patterns: ["rangai", "kapda rangna", "dyeing", "रंगाई", "कपड़ा रंगना"],
+    patterns: [
+      "dye cloth", "dyeing", "rangai", "rangayi", "kapde rang","rangai", "kapda rangna", "dyeing", "रंगाई", "कपड़ा रंगना"],
   },
   {
     normalized: "leather-goods",
-    patterns: ["chamde ka samaan", "bag banana chamda", "leather bag", "leather goods", "चमड़े का सामान"],
+    patterns: [
+      "chamde ka bag", "leather goods", "leather bag", "leather belt", "chamda ka saman", "leather accessor", "purse banata", "wallet bana", "leather product","chamde ka samaan", "bag banana chamda", "leather bag", "leather goods", "चमड़े का सामान"],
     titleTerms: ["leather goods", "leather accessor", "sample maker"],
   },
   {
     normalized: "furniture-polishing",
-    patterns: ["furniture polish", "polish karna", "फर्नीचर पॉलिश", "पॉलिश का काम"],
+    patterns: [
+      "french polish", "polish ka kaam", "furniture polish", "wood finishing", "lakdi polish","furniture polish", "polish karna", "फर्नीचर पॉलिश", "पॉलिश का काम"],
     titleTerms: ["polish", "rubberwood"],
   },
 
   // ── Construction (expanded) ─────────────────────────────────────────────
   {
     normalized: "bar-bending",
-    patterns: ["sariya modna", "bar bending", "सरिया मोड़ना", "सरिया बेंडर"],
+    patterns: [
+      "sariya mod", "sariya ka kaam", "bar bend", "rebar", "steel fixer", "loha modne","sariya modna", "bar bending", "सरिया मोड़ना", "सरिया बेंडर"],
     titleTerms: ["bar bender", "steel fixer", "rebar"],
   },
   {
     normalized: "tile-laying",
-    patterns: ["tile lagana", "tiles fitting", "टाइल लगाना", "टाइल फिटिंग"],
+    patterns: [
+      "floor tile", "tiles ka kaam", "tile lagana", "tile fit", "tiling", "farsh ki tile","tile lagana", "tiles fitting", "टाइल लगाना", "टाइल फिटिंग"],
     titleTerms: ["tile mason", "tile fixer"],
   },
   {
     normalized: "house-painting",
-    patterns: ["painting ka kaam", "rang rogan", "painter", "पेंटिंग", "रंग रोगन", "भवन पेंटर"],
+    patterns: [
+      "ghar mein paint", "putai", "house paint", "wall paint", "deewar par paint", "painter", "rang rogan", "building painting","painting ka kaam", "rang rogan", "painter", "पेंटिंग", "रंग रोगन", "भवन पेंटर"],
     titleTerms: ["painter", "painting"],
   },
   {
     normalized: "scaffolding",
-    patterns: ["scaffolding", "बांस बल्ली", "स्कैफोल्डिंग"],
+    patterns: [
+      "scaffolding", "temporary structure", "pipe scaffold", "tower scaffold",
+      "balli baandh", "scaffolder", "scaffold", "dhancha bandhna","scaffolding", "बांस बल्ली", "स्कैफोल्डिंग"],
     titleTerms: ["scaffold"],
   },
 
   // ── Beauty & Wellness (expanded) ────────────────────────────────────────
   {
     normalized: "hair-styling",
-    patterns: ["hair cutting", "hair style", "hair dresser", "naai", "barber", "बाल काटना", "हेयर स्टाइलिस्ट", "नाई"],
+    patterns: [
+      "baal katta", "baal kat", "hair cut", "haircut", "hairdress", "naai", "hajaam", "salon mein baal","hair cutting", "hair style", "hair dresser", "naai", "barber", "बाल काटना", "हेयर स्टाइलिस्ट", "नाई"],
   },
   {
     normalized: "makeup-artist",
@@ -379,33 +408,42 @@ export const SKILL_LEXICON: LexiconEntry[] = [
   },
   {
     normalized: "spa-therapy",
-    patterns: ["spa", "massage therapy", "स्पा", "मसाज थेरेपी"],
+    patterns: [
+      "wellness centre", "spa therapist", "ayurvedic massage",
+      "malish", "maalish", "massage", "spa", "body massage", "tel malish","spa", "massage therapy", "स्पा", "मसाज थेरेपी"],
     titleTerms: ["beauty therapist", "spa", "therapy assistant"],
   },
 
   // ── Food (expanded) ──────────────────────────────────────────────────────
   {
     normalized: "bakery",
-    patterns: ["bakery", "cake banana", "bread banana", "बेकरी", "केक बनाना", "ब्रेड बनाना"],
+    patterns: [
+      "baker", "pav bana", "pastry",
+      "biscuit", "bun banana", "double roti", "bread bana", "cake bana", "bakery","bakery", "cake banana", "bread banana", "बेकरी", "केक बनाना", "ब्रेड बनाना"],
   },
   {
     normalized: "dairy-processing",
-    patterns: ["paneer banana", "ghee banana", "doodh processing", "पनीर बनाना", "घी बनाना"],
+    patterns: [
+      "paneer bana", "doodh se", "dairy process", "ghee", "butter", "milk process", "doodh ka karkhana", "dahi bana", "doodh ki packing","paneer banana", "ghee banana", "doodh processing", "पनीर बनाना", "घी बनाना"],
     titleTerms: ["dairy", "milk product"],
   },
   {
     normalized: "domestic-cooking",
-    patterns: ["ghar ka khana", "khana banana", "cooking", "रसोइया", "khana banane ka kaam", "घर का खाना"],
+    patterns: [
+      "घरेलू रसोई", "ghar ka khana bana", "ghar mein khana bana", "house cook", "domestic cook","ghar ka khana", "khana banana", "cooking", "रसोइया", "khana banane ka kaam", "घर का खाना"],
   },
   {
     normalized: "cooking-chef",
-    patterns: ["chef", "hotel mein khana", "rasoiya hotel", "khana banana", "cooking", "शेफ", "बावर्ची"],
+    patterns: [
+      "rasoiya", "halwai", "chef", "restaurant cook", "hotel mein khana","chef", "hotel mein khana", "rasoiya hotel", "khana banana", "cooking", "शेफ", "बावर्ची"],
   },
 
   // ── Electronics & Power (expanded) ──────────────────────────────────────
   {
     normalized: "ac-repair",
     patterns: [
+      "ac ka mistri", "ac mistri",
+      "ac theek", "ac repair", "ac ka kaam", "split ac", "ac servic", "air conditioner", "ac gas", "refrigeration",
       "ac repair", "ac mechanic", "air conditioner", "air conditioning",
       "conditioner repair", "cooling machine", "एसी रिपेयर", "एसी मैकेनिक",
     ],
@@ -413,79 +451,100 @@ export const SKILL_LEXICON: LexiconEntry[] = [
   },
   {
     normalized: "electronics-repair",
-    patterns: ["tv repair", "fridge repair", "electronics repair", "टीवी रिपेयर", "फ्रिज रिपेयर"],
+    patterns: [
+      "electronics", "appliance repair", "circuit board", "tv fridge",
+      "tv theek", "tv repair", "television", "electronics repair", "electronic saman", "fridge repair", "washing machine repair","tv repair", "fridge repair", "electronics repair", "टीवी रिपेयर", "फ्रिज रिपेयर"],
   },
   {
     normalized: "solar-installation",
-    patterns: ["solar panel", "surya urja", "solar installation", "सोलर पैनल", "सौर ऊर्जा"],
+    patterns: [
+      "solar", "rooftop solar", "photovoltaic", "solar plate","solar panel", "surya urja", "solar installation", "सोलर पैनल", "सौर ऊर्जा"],
   },
   {
     normalized: "lineman",
-    patterns: ["lineman", "bijli ka khambha", "electric pole", "लाइनमैन"],
+    patterns: [
+      "bijli ki line", "lineman", "line man", "electric pole", "power line", "bijli ka khamba", "tar jodne", "distribution line","lineman", "bijli ka khambha", "electric pole", "लाइनमैन"],
   },
   {
     normalized: "house-wiring",
-    patterns: ["wiring ka kaam", "ghar ki wiring", "wireman", "वायरिंग", "वायरमैन"],
+    patterns: [
+      "ghar ki wiring", "house wiring", "wiring ka kaam", "domestic wiring", "switch board", "internal wiring", "makan mein bijli", "fit switches","wiring ka kaam", "ghar ki wiring", "wireman", "वायरिंग", "वायरमैन"],
   },
 
   // ── Capital Goods (expanded) ─────────────────────────────────────────────
   {
     normalized: "fitter",
-    patterns: ["fitter ka kaam", "machine fitting", "फिटर"],
+    patterns: [
+      "fitter", "fitting ka kaam", "machine assemble", "mechanical fitting", "parts jodne", "machine fitter","fitter ka kaam", "machine fitting", "फिटर"],
     titleTerms: ["fitter"],
   },
   {
     normalized: "fabrication",
-    patterns: ["fabrication", "sheet metal ka kaam", "फैब्रिकेशन", "शीट मेटल"],
+    patterns: [
+      "fabrication", "fabricat", "steel structure", "gate grill", "sheet metal", "loha jodne", "structure banane","fabrication", "sheet metal ka kaam", "फैब्रिकेशन", "शीट मेटल"],
   },
 
   // ── Automotive (expanded) ────────────────────────────────────────────────
   {
     normalized: "two-wheeler-repair",
-    patterns: ["bike repair", "scooter mechanic", "do pahiya vahan", "बाइक रिपेयर", "दोपहिया मैकेनिक"],
+    patterns: [
+      "two wheeler", "bike theek", "bike repair", "bike mechanic", "scooter", "scooty", "motorcycle","bike repair", "scooter mechanic", "do pahiya vahan", "बाइक रिपेयर", "दोपहिया मैकेनिक"],
   },
   {
     normalized: "car-repair",
-    patterns: ["car mechanic", "gaadi ka mechanic", "car repair", "कार मैकेनिक"],
+    patterns: [
+      "gaadi theek", "gaadi ki marammat", "car garage", "car repair", "car mechanic", "motor mechanic", "four wheeler","car mechanic", "gaadi ka mechanic", "car repair", "कार मैकेनिक"],
     titleTerms: ["automotive", "automobile", "vehicle technician"],
   },
   {
     normalized: "car-wash",
-    patterns: ["car washing", "gaadi dhona", "car wash", "गाड़ी धोना"],
+    patterns: [
+      "gaadi dhota", "gaadi dho", "car wash", "gaadi ki safai", "कार धुलाई", "vehicle wash","car washing", "gaadi dhona", "car wash", "गाड़ी धोना"],
     titleTerms: ["washerman", "dhobi", "washing"],
   },
 
   // ── Domestic Work (expanded) ─────────────────────────────────────────────
   {
     normalized: "childcare",
-    patterns: ["bachon ki dekhbhal", "nanny", "babysitting", "बच्चों की देखभाल"],
+    patterns: [
+      "look after children", "nanny", "chhote bachche",
+      "bachchon ki dekhbhal", "bachche sambhal", "childcare", "child care", "creche", "baby sitting", "aaya ka kaam", "anganwadi","bachon ki dekhbhal", "nanny", "babysitting", "बच्चों की देखभाल"],
     titleTerms: ["creche", "anganwadi", "child care"],
   },
   {
     normalized: "elderly-care",
-    patterns: ["budhon ki dekhbhal", "elderly care", "बुजुर्गों की देखभाल"],
+    patterns: [
+      "old people", "senior", "attendant for elderly", "bimar budhe",
+      "budhon ki seva", "buzurg ki dekhbhal", "elderly care", "old age", "caregiver", "budhe ki seva","budhon ki dekhbhal", "elderly care", "बुजुर्गों की देखभाल"],
   },
 
   // ── Healthcare (expanded) ────────────────────────────────────────────────
   {
     normalized: "pharmacy-assistant",
-    patterns: ["medical store", "pharmacy", "dawai dukan", "मेडिकल स्टोर", "दवाई की दुकान"],
+    patterns: [
+      "medicine counter", "dawa dene", "pharmacist", "medicines at a chemist", "sell medicine",
+      "फार्मेसी", "pharmacy", "medical store", "dawai ki dukan", "chemist","medical store", "pharmacy", "dawai dukan", "मेडिकल स्टोर", "दवाई की दुकान"],
   },
   {
     normalized: "phlebotomy",
-    patterns: ["khoon nikalna", "blood sample", "phlebotomy", "लैब सैंपल", "खून निकालना"],
+    patterns: [
+      "blood sample", "khoon ki jaanch", "nas se khoon", "blood draw",
+      "फ्लेबोटॉमी", "phlebotom", "blood collection", "khoon nikal","khoon nikalna", "blood sample", "phlebotomy", "लैब सैंपल", "खून निकालना"],
     titleTerms: ["phlebotom"],
   },
 
   // ── Retail / IT-ITeS / BFSI ──────────────────────────────────────────────
   {
     normalized: "ecommerce-logistics",
-    patterns: ["ecommerce packing", "online order packing", "amazon flipkart kaam", "ई-कॉमर्स पैकिंग"],
+    patterns: [
+      "online order", "parcel pack", "ecommerce", "e-commerce", "courier sort", "order fulfil", "packing ka kaam", "godown packing", "online saman","ecommerce packing", "online order packing", "amazon flipkart kaam", "ई-कॉमर्स पैकिंग"],
     titleTerms: ["e-commerce", "logistics associate"],
   },
   {
     normalized: "computer-operator",
-    patterns: ["computer chalana", "data entry", "computer operator", "कंप्यूटर ऑपरेटर", "डेटा एंट्री"],
+    patterns: [
+      "computer chalata", "ms office", "typing",
+      "dtp operator", "data entry", "computer operator", "computer par typing", "data feeding","computer chalana", "data entry", "computer operator", "कंप्यूटर ऑपरेटर", "डेटा एंट्री"],
   },
   {
     normalized: "clerk-office-assistant",
@@ -498,20 +557,26 @@ export const SKILL_LEXICON: LexiconEntry[] = [
   },
   {
     normalized: "customer-support",
-    patterns: ["call center", "customer care", "bpo", "कॉल सेंटर", "ग्राहक सेवा"],
+    patterns: [
+      "customer support", "customer care", "call center", "call centre", "telecaller", "helpline", "bpo","call center", "customer care", "bpo", "कॉल सेंटर", "ग्राहक सेवा"],
   },
   {
     normalized: "banking-correspondent",
-    patterns: ["bank correspondent", "banking sakhi", "बैंक सखी", "बिजनेस कॉरेस्पॉन्डेंट"],
+    patterns: [
+      "bank mein", "villagers with bank", "bank account",
+      "bank work", "bank ka kaam", "paise nikalne", "aadhaar se paisa",
+      "bc point", "bank mitra", "banking correspondent", "business correspondent", "csp operator","bank correspondent", "banking sakhi", "बैंक सखी", "बिजनेस कॉरेस्पॉन्डेंट"],
     titleTerms: ["banking", "business correspondent"],
   },
   {
     normalized: "insurance-agent",
-    patterns: ["insurance agent", "bima agent", "बीमा एजेंट"],
+    patterns: [
+      "insurance", "bima", "policy bech", "lic agent","insurance agent", "bima agent", "बीमा एजेंट"],
   },
   {
     normalized: "accounting",
     patterns: [
+      "hisab kitab", "munshi", "khata bahi", "accounting", "bookkeeping", "accountant", "tally",
       "accounting", "accounts", "accountant", "book keeping", "bookkeeping",
       "tally", "gst filing", "billing accounts", "लेखा", "अकाउंटिंग", "अकाउंटेंट",
     ],
@@ -521,54 +586,70 @@ export const SKILL_LEXICON: LexiconEntry[] = [
   // ── Tourism & Hospitality ─────────────────────────────────────────────────
   {
     normalized: "waiter-steward",
-    patterns: ["waiter", "steward", "hotel mein serving", "वेटर"],
+    patterns: [
+      "hotel mein waiter", "banquet", "catering staff", "restaurant mein order",
+      "table service", "khana paros", "waiter", "steward", "order lena restaurant","waiter", "steward", "hotel mein serving", "वेटर"],
   },
   {
     normalized: "hotel-housekeeping",
-    patterns: ["hotel housekeeping", "hotel safai", "होटल हाउसकीपिंग"],
+    patterns: [
+      "hotel ki safai", "hotel room", "make beds", "room attendant", "housekeeping staff", "kamre ki safai","hotel housekeeping", "hotel safai", "होटल हाउसकीपिंग"],
     titleTerms: ["housekeeper", "housekeeping"],
   },
   {
     normalized: "tour-guide",
-    patterns: ["tour guide", "paryatak guide", "गाइड", "पर्यटक गाइड"],
+    patterns: [
+      "tourist guide", "guide ka kaam", "tourism guide",
+      "ghumata", "visitors", "smarak dikha",
+      "tourist", "tour guide", "sightseeing", "paryatak", "monument", "travel guide","tour guide", "paryatak guide", "गाइड", "पर्यटक गाइड"],
   },
 
   // ── Logistics / Security ──────────────────────────────────────────────────
   {
     normalized: "warehouse-operations",
-    patterns: ["warehouse ka kaam", "godam", "packing warehouse", "गोदाम", "वेयरहाउस"],
+    patterns: [
+      "load and store", "maal ka rakhrakhav", "warehouse helper",
+      "godown mein kaam", "godown ka kaam", "warehouse", "stock keeper", "inventory","warehouse ka kaam", "godam", "packing warehouse", "गोदाम", "वेयरहाउस"],
     titleTerms: ["warehouse"],
   },
   {
     normalized: "delivery-executive",
-    patterns: ["delivery boy", "delivery ka kaam", "parcel delivery", "डिलीवरी", "स्विगी ज़ोमैटो"],
+    patterns: [
+      "ghar ghar saman", "last mile", "swiggy", "zomato",
+      "saman deliver", "deliver parcel", "delivery boy", "delivery executive", "courier deliver", "food delivery","delivery boy", "delivery ka kaam", "parcel delivery", "डिलीवरी", "स्विगी ज़ोमैटो"],
     titleTerms: ["last mile", "delivery"],
   },
   {
     normalized: "forklift-operator",
-    patterns: ["forklift", "फोर्कलिफ्ट"],
+    patterns: [
+      "forklift", "material handling", "stacker", "pallet","forklift", "फोर्कलिफ्ट"],
   },
   {
     normalized: "security-guard",
-    patterns: ["security guard", "chowkidar", "watchman", "गार्ड", "चौकीदार"],
+    patterns: [
+      "guard a building", "night duty", "gate pe duty","security guard", "chowkidar", "watchman", "गार्ड", "चौकीदार"],
   },
 
   // ── Telecom / Media / Sports / Others ─────────────────────────────────────
   {
     normalized: "telecom-tower",
-    patterns: ["mobile tower", "telecom tower", "टावर तकनीशियन", "मोबाइल टावर"],
+    patterns: [
+      "mobile tower", "telecom tower", "tower technician", "bts", "antenna", "tower maintenance", "tower pe chadh", "telecom infra","mobile tower", "telecom tower", "टावर तकनीशियन", "मोबाइल टावर"],
   },
   {
     normalized: "fiber-installation",
-    patterns: ["optical fiber", "internet cable", "broadband installation", "फाइबर केबल", "ब्रॉडबैंड"],
+    patterns: [
+      "fiber cable", "fibre cable", "optical fiber", "optical fibre", "broadband cable", "internet cable", "ofc lay", "fibre technician", "fiber lagata","optical fiber", "internet cable", "broadband installation", "फाइबर केबल", "ब्रॉडबैंड"],
   },
   {
     normalized: "photography",
-    patterns: ["photography", "photo khichna", "photographer", "फोटोग्राफी", "फोटोग्राफर"],
+    patterns: [
+      "photo khinch", "photograph", "camera ka kaam", "photo shoot", "shaadi ki photo","photography", "photo khichna", "photographer", "फोटोग्राफी", "फोटोग्राफर"],
   },
   {
     normalized: "video-editing",
     patterns: [
+      "video edit", "video banane", "film editing", "post production", "footage",
       "video editing", "video edit", "make videos", "making videos", "video banana",
       "video banata", "video banati", "content creator", "वीडियो एडिटिंग", "वीडियो बनाना",
     ],
@@ -576,24 +657,29 @@ export const SKILL_LEXICON: LexiconEntry[] = [
   },
   {
     normalized: "fitness-training",
-    patterns: ["gym trainer", "fitness trainer", "yoga instructor", "जिम ट्रेनर", "योगा ट्रेनर"],
+    patterns: [
+      "fitness", "gym", "yoga", "personal trainer", "exercise karv", "gym instructor", "fitness coach","gym trainer", "fitness trainer", "yoga instructor", "जिम ट्रेनर", "योगा ट्रेनर"],
   },
   {
     normalized: "rubber-processing",
-    patterns: ["rubber tapping", "rubber ka kaam", "रबर टैपिंग"],
+    patterns: [
+      "rubber", "latex", "rubber sheet", "rubber tapping", "tyre factory","rubber tapping", "rubber ka kaam", "रबर टैपिंग"],
     titleTerms: ["rubber"],
   },
   {
     normalized: "mining-helper",
-    patterns: ["khadan mein kaam", "mining", "खदान"],
+    patterns: [
+      "khadan", "khan majdoor", "mine mein kaam", "quarry", "mining","khadan mein kaam", "mining", "खदान"],
   },
   {
     normalized: "lab-technician",
-    patterns: ["lab technician", "prayogshala", "lab assistant", "प्रयोगशाला सहायक"],
+    patterns: [
+      "lab mein kaam", "laboratory", "pathology", "medical test", "jaanch karta","lab technician", "prayogshala", "lab assistant", "प्रयोगशाला सहायक"],
   },
   {
     normalized: "teaching",
     patterns: [
+      "master ji", "padhata", "padhati", "padhane ka kaam", "tuition", "coaching", "teacher", "shikshak", "school mein padha",
       "teacher", "teaching", "teach", "tutor", "tuition", "school teacher",
       "play school", "children ko padhana", "bachchon ko padhana",
       "adhyapak", "shikshak", "padhata hoon", "padhati hoon", "padhana",

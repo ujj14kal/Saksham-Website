@@ -59,10 +59,31 @@ export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
   const tokens = [...new Set(matched.map((m) => m.normalizedSkill.toLowerCase()))];
   if (tokens.length === 0) return [];
 
-  const jobs = await prisma.jobPosting.findMany({
+  // Jobs are keyed on the lexicon's skill tokens, but a mapping can also come
+  // from the catalogue path, whose normalizedSkill is derived from the
+  // qualification title ("craft-baker", "optical-fiber-splicer"). Those match
+  // no job token, so the better qualification match used to cost the
+  // beneficiary their job results entirely. Fall back to the qualification and
+  // sector, which every mapping carries whichever path produced it.
+  const qualificationIds = [...new Set(matched.map((m) => m.nsqfQualificationId).filter((id): id is string => !!id))];
+  const sectors = [...new Set(matched.map((m) => m.sector).filter((x): x is string => !!x))];
+
+  let jobs = await prisma.jobPosting.findMany({
     where: { active: true, skillTokens: { hasSome: tokens } },
     take: 200,
   });
+  if (jobs.length === 0 && qualificationIds.length > 0) {
+    jobs = await prisma.jobPosting.findMany({
+      where: { active: true, nsqfQualificationId: { in: qualificationIds } },
+      take: 200,
+    });
+  }
+  if (jobs.length === 0 && sectors.length > 0) {
+    jobs = await prisma.jobPosting.findMany({
+      where: { active: true, sector: { in: sectors } },
+      take: 200,
+    });
+  }
 
   const wantedSectors = new Set(matched.map((m) => m.sector).filter(Boolean).map((s) => s!.toLowerCase()));
   // the highest level the beneficiary has actually mapped to
