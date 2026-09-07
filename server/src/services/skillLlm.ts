@@ -26,7 +26,16 @@ const ALLOWED = SKILL_LEXICON.map((e) => e.normalized);
  * Returns [] when nothing fits, so the caller still says "I didn't understand"
  * rather than mapping someone onto a trade they never mentioned.
  */
-export async function classifySkillsWithLlm(transcript: string): Promise<string[]> {
+export interface LlmSkillMatch {
+  token: string;
+  /** how well the transcript actually evidences this trade, 0-1, as judged by
+   *  the model. A vague "something related to cotton" should score lower than
+   *  "I weave cotton saris on a handloom" — without this every LLM match
+   *  carried the same hardcoded number and the ranking meant nothing. */
+  confidence: number;
+}
+
+export async function classifySkillsWithLlm(transcript: string): Promise<LlmSkillMatch[]> {
   if (!hasGroq || !transcript.trim()) return [];
 
   try {
@@ -44,8 +53,13 @@ export async function classifySkillsWithLlm(transcript: string): Promise<string[
               "they often describe the work rather than naming it (e.g. \"I do something with honey\" " +
               "is beekeeping; \"I make things from mud\" is pottery; \"I look after cows and sell milk\" " +
               "is dairy-livestock).\n\n" +
-              `Reply with a comma-separated list of matching values from this exact list:\n${ALLOWED.join(", ")}\n\n` +
-              "Rules: use ONLY values from that list, copied exactly. List at most 3, most relevant first. " +
+              `Choose from this exact list of trades:\n${ALLOWED.join(", ")}\n\n` +
+              "Reply with one match per line as `trade:confidence`, where confidence is 0.0-1.0 for how " +
+              "clearly the person's words evidence that trade. Judge it honestly: an explicit description " +
+              "of the work (\"I weave cotton saris on a handloom\") is high, around 0.85-0.95; a clear " +
+              "statement of the trade is around 0.7-0.8; a vague or indirect mention (\"something related " +
+              "to cotton\") is low, around 0.3-0.5, because the actual occupation is genuinely uncertain.\n" +
+              "Rules: use ONLY trades from that list, copied exactly. At most 3, most relevant first. " +
               "If the person has not described any trade or occupation at all, reply exactly: none",
           },
           { role: "user", content: transcript },
@@ -67,7 +81,19 @@ export async function classifySkillsWithLlm(transcript: string): Promise<string[
 
     // keep only real lexicon tokens — the model does not get to invent trades
     const allowed = new Set(ALLOWED);
-    return [...new Set(raw.split(/[,\n]/).map((t) => t.trim()).filter((t) => allowed.has(t)))].slice(0, 3);
+    const seen = new Set<string>();
+    const matches: LlmSkillMatch[] = [];
+    for (const line of raw.split(/[\n,]/)) {
+      const [rawToken, rawScore] = line.split(":").map((x) => x?.trim());
+      if (!rawToken || !allowed.has(rawToken) || seen.has(rawToken)) continue;
+      seen.add(rawToken);
+      const parsed = Number(rawScore);
+      // an unparseable score means the model ignored the format; treat that as
+      // moderate rather than confident
+      const confidence = Number.isFinite(parsed) ? Math.max(0.05, Math.min(0.95, parsed)) : 0.5;
+      matches.push({ token: rawToken, confidence });
+    }
+    return matches.slice(0, 3);
   } catch (err) {
     console.error("[skill-llm] classification error:", err);
     return [];

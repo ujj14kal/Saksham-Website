@@ -231,14 +231,40 @@ function catalogFallbackMatch(transcript: string, quals: QualRow[]): { match: Qu
  *  4. Separately, check the real PM-AJAY course catalogue for the same token —
  *     this is an independent real-data signal, not a scoring input.
  */
+/** Below this we say we did not understand rather than assert a trade.
+ *  Keyword matches start at 0.55 and a clear spoken description scores ~0.85+,
+ *  so this only rejects genuinely vague input. */
+const MIN_CONFIDENCE = 0.4;
+
+function unknownMapping(transcript: string): MappingResult {
+  return {
+    rawSkillText: transcript,
+    normalizedSkill: "unknown",
+    nsqfQualificationId: null,
+    qpCode: null,
+    title: null,
+    sector: null,
+    nsqfLevel: null,
+    confidence: 0,
+    method: "keyword",
+    pmajayVerified: false,
+    pmajayCourse: null,
+    nsqfExpired: false,
+    proposedOccupations: [],
+  };
+}
+
 export async function mapTranscriptToNsqf(transcript: string): Promise<MappingResult[]> {
   // Let the LLM interpret natural phrasing first when configured. It is still
   // constrained to known catalogue tokens; keyword and catalogue matching stay
   // as deterministic fallbacks for local/no-key development.
-  const llmTokens = await classifySkillsWithLlm(transcript);
+  const llmMatches = await classifySkillsWithLlm(transcript);
   const keywordTokens = extractSkills(transcript);
-  let matchedByLlm = llmTokens.length > 0;
-  let tokens = matchedByLlm ? llmTokens : keywordTokens;
+  let matchedByLlm = llmMatches.length > 0;
+  // how clearly the model judged each trade to be evidenced, so an indirect
+  // mention ("something related to cotton") ranks below an explicit one
+  const llmConfidence = new Map(llmMatches.map((m) => [m.token, m.confidence]));
+  let tokens: string[] = matchedByLlm ? llmMatches.map((m) => m.token) : keywordTokens;
   if (tokens.length === 0) {
     const { quals, pmajayCourses } = await loadCatalog();
     const fallback = catalogFallbackMatch(transcript, quals);
@@ -348,8 +374,10 @@ export async function mapTranscriptToNsqf(transcript: string): Promise<MappingRe
     const spokenHits = patternHitCount(transcript, token);
     // an LLM match is a genuine reading of what they said, but it is inferred
     // rather than a literal phrase hit, so it does not claim keyword certainty
+    // An LLM match is scored by the model on how clearly the words evidence
+    // the trade; a keyword match is scored on how many known phrases fired.
     const confidence = matchedByLlm
-      ? 0.6
+      ? (llmConfidence.get(token) ?? 0.5)
       : Math.min(0.55 + 0.1 * (qualificationHits + spokenHits), 0.95);
 
     results.push({
@@ -369,5 +397,21 @@ export async function mapTranscriptToNsqf(transcript: string): Promise<MappingRe
     });
   }
 
-  return results;
+  // Rank by confidence so the "best match" the client shows really is the
+  // best one. Results used to come back in whatever order the model listed
+  // them, which did not track its own scores — a 35% match could be presented
+  // above a 50% one.
+  const ranked = results.sort((a, b) => b.confidence - a.confidence);
+
+  // A guess we do not believe should not be stated back as fact. "I do
+  // something related to cotton" scores very low precisely because the trade
+  // is genuinely ambiguous — weaving, spinning and farming are all plausible —
+  // and telling that beneficiary "you have experience in Shuttle Loom
+  // Operator" is worse than admitting we did not follow. Below the floor we
+  // report unknown, which is the same path as no match: the client keeps them
+  // on the question and asks them to say it again.
+  if (ranked.length > 0 && ranked[0].confidence < MIN_CONFIDENCE) {
+    return [unknownMapping(transcript)];
+  }
+  return ranked;
 }
