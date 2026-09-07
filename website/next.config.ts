@@ -31,6 +31,18 @@ const nextConfig: NextConfig = {
     const vercelScript = "https://va.vercel-scripts.com";
     const vercelBeacon = "https://vitals.vercel-insights.com";
 
+    // The API host was hardcoded here, so pointing NEXT_PUBLIC_API_URL at a
+    // local backend left every request blocked by connect-src with no error the
+    // UI could show — the form simply did nothing. Derive it from the same
+    // variable the client uses, and keep the deployed host as the fallback.
+    const apiOrigin = (() => {
+      try {
+        return new URL(process.env.NEXT_PUBLIC_API_URL ?? "https://saksham-api-82mn.onrender.com").origin;
+      } catch {
+        return "https://saksham-api-82mn.onrender.com";
+      }
+    })();
+
     const csp = [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline' ${vercelScript}${devScript}`,
@@ -38,7 +50,7 @@ const nextConfig: NextConfig = {
       "img-src 'self' data: blob:",
       "media-src 'self' blob:",
       "font-src 'self'",
-      `connect-src 'self' https://saksham-api-82mn.onrender.com ${vercelBeacon} ${vercelScript}`,
+      `connect-src 'self' ${apiOrigin} ${vercelBeacon} ${vercelScript}`,
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",

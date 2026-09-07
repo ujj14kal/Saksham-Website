@@ -8,6 +8,7 @@ export interface AdminStats {
     beneficiaries: number;
     recommendations: number;
     lowBandwidthSessions: number;
+    applications: number;
   };
   funnel: {
     suggested: number;
@@ -20,6 +21,12 @@ export interface AdminStats {
   byLanguage: { language: string; _count: number }[];
   byStatus: { status: string; _count: number }[];
   topSkills: { normalizedSkill: string; _count: number }[];
+  /** most-matched NSQF qualifications, named */
+  topQualifications: { name: string; count: number }[];
+  /** most-recommended PM-AJAY courses, named */
+  topCourses: { name: string; count: number }[];
+  /** postings people actually applied to, named */
+  topJobs: { name: string; count: number }[];
 }
 
 export interface SessionRow {

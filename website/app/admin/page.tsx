@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mic, Users2, GraduationCap, WifiOff } from "lucide-react";
+import { Mic, Users2, GraduationCap, WifiOff, Briefcase } from "lucide-react";
 import { getStats, type AdminStats } from "@/lib/api";
 import { getToken, handleAdminAuthError } from "@/lib/auth";
 import { Card, Skeleton } from "@/components/ui";
 import { AdminShell } from "./admin-shell";
+import { Donut, RankedBars } from "./overview-charts";
 
 export default function AdminOverview() {
   return (
@@ -37,8 +38,8 @@ function Overview() {
 
   if (!stats) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {Array.from({ length: 5 }).map((_, i) => (
           <Card key={i} className="space-y-3">
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-8 w-14" />
@@ -48,63 +49,50 @@ function Overview() {
     );
   }
 
-  const funnelSteps = [
-    { label: "Suggested", value: stats.funnel.suggested },
-    { label: "Viewed", value: stats.funnel.viewed },
-    { label: "Interested", value: stats.funnel.interested },
-    { label: "Applied", value: stats.funnel.applied },
-    { label: "Enrolled", value: stats.funnel.enrolled },
-  ];
-  const maxFunnel = Math.max(1, ...funnelSteps.map((s) => s.value));
-  const maxLang = Math.max(1, ...stats.byLanguage.map((l) => l._count));
-  const maxSkill = Math.max(1, ...stats.topSkills.map((s) => s._count));
+  const languageNames: Record<string, string> = {
+    hi: "Hindi", en: "English", bn: "Bengali", ta: "Tamil", te: "Telugu",
+    mr: "Marathi", kn: "Kannada", gu: "Gujarati", pa: "Punjabi", or: "Odia",
+  };
+
+  const languageSlices = stats.byLanguage.map((l) => ({
+    name: languageNames[l.language] ?? l.language,
+    count: l._count,
+  }));
+  const skillSlices = stats.topSkills.map((sk) => ({
+    name: sk.normalizedSkill.replace(/-/g, " "),
+    count: sk._count,
+  }));
+  // the real denominator for skills — a top-5 donut must not imply those five
+  // are every mapping we have made
+  const skillTotal = skillSlices.reduce((n, sk) => n + sk.count, 0);
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="flex flex-col gap-3">
+      {/* headline numbers */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Kpi icon={Mic} label="Voice sessions" value={stats.totals.sessions} tone="brand" />
         <Kpi icon={Users2} label="Beneficiaries" value={stats.totals.beneficiaries} tone="accent" />
-        <Kpi icon={GraduationCap} label="Recommendations" value={stats.totals.recommendations} tone="brand" />
-        <Kpi
-          icon={WifiOff}
-          label="Low-bandwidth sessions"
-          value={stats.totals.lowBandwidthSessions}
-          hint="≤ 256 kbps"
-          tone="accent"
-        />
+        <Kpi icon={GraduationCap} label="Recommendations" value={stats.totals.recommendations} tone="emphasis" />
+        <Kpi icon={Briefcase} label="Job applications" value={stats.totals.applications ?? 0} tone="emphasis" />
+        <Kpi icon={WifiOff} label="Low bandwidth" value={stats.totals.lowBandwidthSessions} tone="accent" />
       </div>
 
-      <Panel title="Recommendation funnel" hint={`${Math.round(stats.funnel.conversionRate * 100)}% reach enrollment`}>
-        <div className="space-y-3">
-          {funnelSteps.map((s, i) => {
-            const pct = (s.value / maxFunnel) * 100;
-            return (
-              <div key={s.label} className="flex items-center gap-3 text-sm">
-                <span className="w-24 shrink-0 text-foreground-dim">{s.label}</span>
-                <div className="h-7 flex-1 overflow-hidden rounded-lg bg-surface-alt">
-                  <div
-                    className="flex h-7 items-center justify-end rounded-lg px-2 text-xs font-semibold text-on-brand transition-[width] duration-500"
-                    style={{
-                      width: `${Math.max(pct, 6)}%`,
-                      background: `color-mix(in srgb, var(--brand) ${100 - i * 15}%, var(--accent))`,
-                    }}
-                  >
-                    {s.value}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </Panel>
+      {/* part-of-whole: every session has a language, every mapping a skill */}
+      <div className="grid gap-3 lg:grid-cols-2">
+        <Donut
+          title="Languages spoken"
+          slices={languageSlices}
+          total={stats.totals.sessions}
+          unit="sessions"
+        />
+        <Donut title="Skills mapped" slices={skillSlices} total={skillTotal} unit="mappings" />
+      </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Panel title="Sessions by language">
-          <BarList rows={stats.byLanguage.map((l) => ({ label: l.language, value: l._count }))} max={maxLang} />
-        </Panel>
-        <Panel title="Top skills detected">
-          <BarList rows={stats.topSkills.map((s) => ({ label: s.normalizedSkill, value: s._count }))} max={maxSkill} />
-        </Panel>
+      {/* rankings out of many — length, not slices */}
+      <div className="grid gap-3 lg:grid-cols-3">
+        <RankedBars title="Top NSQF qualifications" rows={stats.topQualifications ?? []} unit="matches" />
+        <RankedBars title="Top PM-AJAY courses" rows={stats.topCourses ?? []} unit="recommendations" />
+        <RankedBars title="Most applied-to jobs" rows={stats.topJobs ?? []} unit="applications" />
       </div>
     </div>
   );
@@ -121,12 +109,18 @@ function Kpi({
   label: string;
   value: number;
   hint?: string;
-  tone: "brand" | "accent";
+  tone: "brand" | "accent" | "emphasis";
 }) {
   return (
     <Card className={tone === "brand" ? "rounded-tr-[26px]" : "rounded-bl-[26px]"}>
       <span
-        className={`flex h-9 w-9 items-center justify-center rounded-md ${tone === "brand" ? "bg-brand/10 text-brand" : "bg-accent/10 text-accent"}`}
+        className={`flex h-9 w-9 items-center justify-center rounded-md ${
+          tone === "brand"
+            ? "bg-brand/10 text-brand"
+            : tone === "emphasis"
+              ? "bg-emphasis/10 text-emphasis"
+              : "bg-accent/10 text-accent"
+        }`}
       >
         <Icon className="h-[18px] w-[18px]" />
       </span>

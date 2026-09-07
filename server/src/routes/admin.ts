@@ -23,23 +23,71 @@ function logAdmin(adminId: string, action: string, entityType: string, entityId:
 
 /** GET /api/admin/stats — headline numbers for the dashboard */
 adminRouter.get("/stats", async (_req, res) => {
-  const [sessions, users, recommendations, byStatus, byLanguage, bySector, lowBandwidth] =
-    await Promise.all([
-      prisma.voiceSession.count(),
-      prisma.user.count({ where: { role: "BENEFICIARY" } }),
-      prisma.recommendation.count(),
-      prisma.recommendation.groupBy({ by: ["status"], _count: true }),
-      prisma.voiceSession.groupBy({ by: ["language"], _count: true }),
-      prisma.skillMapping.groupBy({ by: ["normalizedSkill"], _count: true }),
-      prisma.voiceSession.count({ where: { bandwidthKbps: { lte: 256 } } }),
-    ]);
+  const [
+    sessions, users, recommendations, byStatus, byLanguage, bySkill, lowBandwidth,
+    byQualification, byCourse, byJob, applications,
+  ] = await Promise.all([
+    prisma.voiceSession.count(),
+    prisma.user.count({ where: { role: "BENEFICIARY" } }),
+    prisma.recommendation.count(),
+    prisma.recommendation.groupBy({ by: ["status"], _count: true }),
+    prisma.voiceSession.groupBy({ by: ["language"], _count: true }),
+    prisma.skillMapping.groupBy({ by: ["normalizedSkill"], _count: true }),
+    prisma.voiceSession.count({ where: { bandwidthKbps: { lte: 256 } } }),
+    // which NSQF qualifications beneficiaries actually map onto
+    prisma.skillMapping.groupBy({
+      by: ["nsqfQualificationId"],
+      _count: true,
+      where: { nsqfQualificationId: { not: null } },
+    }),
+    // which PM-AJAY courses get recommended
+    prisma.recommendation.groupBy({
+      by: ["pmajayCourseId"],
+      _count: true,
+      where: { pmajayCourseId: { not: null } },
+    }),
+    // which postings people apply to
+    prisma.jobApplication.groupBy({ by: ["jobPostingId"], _count: true }),
+    prisma.jobApplication.count(),
+  ]);
 
-  const enrolled =
-    byStatus.find((s) => s.status === "ENROLLED")?._count ?? 0;
+  /** groupBy gives ids and counts; the dashboard needs names. */
+  async function label<T extends { _count: number }>(
+    rows: T[],
+    idOf: (r: T) => string | null,
+    lookup: (ids: string[]) => Promise<{ id: string; name: string }[]>,
+    limit: number,
+  ) {
+    const top = rows.sort((a, b) => b._count - a._count).slice(0, limit);
+    const ids = top.map(idOf).filter((x): x is string => !!x);
+    if (ids.length === 0) return [];
+    const named = new Map((await lookup(ids)).map((n) => [n.id, n.name]));
+    return top.map((r) => ({ name: named.get(idOf(r) ?? "") ?? "Unknown", count: r._count }));
+  }
+
+  const [topQualifications, topCourses, topJobs] = await Promise.all([
+    label(byQualification, (r) => r.nsqfQualificationId, async (ids) =>
+      (await prisma.nsqfQualification.findMany({ where: { id: { in: ids } }, select: { id: true, title: true } }))
+        .map((q) => ({ id: q.id, name: q.title })), 3),
+    label(byCourse, (r) => r.pmajayCourseId, async (ids) =>
+      (await prisma.pmajayCourse.findMany({ where: { id: { in: ids } }, select: { id: true, subCourseName: true } }))
+        .map((c) => ({ id: c.id, name: c.subCourseName })), 3),
+    label(byJob, (r) => r.jobPostingId, async (ids) =>
+      (await prisma.jobPosting.findMany({ where: { id: { in: ids } }, select: { id: true, title: true, employerName: true } }))
+        .map((j) => ({ id: j.id, name: `${j.title} — ${j.employerName}` })), 3),
+  ]);
+
+  const enrolled = byStatus.find((s) => s.status === "ENROLLED")?._count ?? 0;
   const applied = byStatus.find((s) => s.status === "APPLIED")?._count ?? 0;
 
   res.json({
-    totals: { sessions, beneficiaries: users, recommendations, lowBandwidthSessions: lowBandwidth },
+    totals: {
+      sessions,
+      beneficiaries: users,
+      recommendations,
+      lowBandwidthSessions: lowBandwidth,
+      applications,
+    },
     funnel: {
       suggested: recommendations,
       viewed: byStatus.find((s) => s.status === "VIEWED")?._count ?? 0,
@@ -49,8 +97,11 @@ adminRouter.get("/stats", async (_req, res) => {
       conversionRate: recommendations ? Number((enrolled / recommendations).toFixed(3)) : 0,
     },
     byStatus,
-    byLanguage,
-    topSkills: bySector.sort((a, b) => b._count - a._count).slice(0, 10),
+    byLanguage: byLanguage.sort((a, b) => b._count - a._count),
+    topSkills: bySkill.sort((a, b) => b._count - a._count).slice(0, 10),
+    topQualifications,
+    topCourses,
+    topJobs,
   });
 });
 
