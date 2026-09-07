@@ -18,6 +18,7 @@ export function getLastResult(): ConverseResponse | null {
 export type Intent = 'jobs' | 'training' | 'certificate' | 'guidance';
 
 let intent: Intent = 'training';
+let skillDetails = '';
 
 export function setIntent(i: Intent) {
   intent = i;
@@ -25,4 +26,12 @@ export function setIntent(i: Intent) {
 
 export function getIntent(): Intent {
   return intent;
+}
+
+export function setSkillDetails(details: string) {
+  skillDetails = details.trim();
+}
+
+export function getSkillDetails(): string {
+  return skillDetails;
 }

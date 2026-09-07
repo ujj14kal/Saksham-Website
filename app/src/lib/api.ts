@@ -119,6 +119,7 @@ export interface JobMatch {
   wageMax: number | null;
   positions: number | null;
   contactPhone: string | null;
+  applyUrl?: string | null;
   source: string;
   score: number;
   /** job asks a higher NSQF level than the beneficiary has — reachable with training */
@@ -348,12 +349,13 @@ export async function reprioritise(
   sessionId: string,
   intent: 'jobs' | 'training' | 'certificate' | 'guidance',
   location?: { state?: string | null; district?: string | null },
+  skillDetails?: string,
 ): Promise<{ mappings: NsqfMapping[]; recommendations: CourseRecommendation[]; jobs?: JobMatch[] } | null> {
   try {
     const res = await fetch(`${API_BASE}/api/assistant/reprioritise`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId, intent, state: location?.state, district: location?.district }),
+      body: JSON.stringify({ sessionId, intent, state: location?.state, district: location?.district, skillDetails }),
     });
     if (!res.ok) return null;
     return await res.json();

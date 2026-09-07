@@ -1,6 +1,6 @@
 import { Redirect, router } from 'expo-router';
 import { useEffect } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -119,8 +119,27 @@ export default function ResultsScreen() {
           </View>
         )}
 
+        {intent === 'jobs' && (result.jobs?.length ?? 0) === 0 && (
+          <Card index={2} style={{ gap: 12 }}>
+            <View style={styles.sectionHead}>
+              <Ionicons name="briefcase" size={18} color={c.primary} />
+              <Txt variant="h2">{t.jobsAvailable}</Txt>
+            </View>
+            <Txt variant="body" tone="dim">
+              {t.noResults}
+            </Txt>
+            <Button
+              label={t.apply}
+              variant="success"
+              size="md"
+              icon="arrow-forward"
+              onPress={() => Linking.openURL(jobPortalUrl(result.transcript))}
+            />
+          </Card>
+        )}
+
         {/* recommendations */}
-        {result.recommendations.length > 0 && (
+        {intent !== 'jobs' && result.recommendations.length > 0 && (
           <View style={{ gap: 12, marginTop: 4 }}>
             <View style={styles.sectionHead}>
               <Ionicons name="school" size={18} color={c.primary} />
@@ -157,6 +176,10 @@ export default function ResultsScreen() {
       </View>
     </Screen>
   );
+}
+
+function jobPortalUrl(query: string): string {
+  return `https://www.ncs.gov.in/?keyword=${encodeURIComponent(query)}`;
 }
 
 function NsqfCard({
@@ -265,6 +288,14 @@ function JobCard({
           </Txt>
         </View>
       )}
+
+      <Button
+        label={t.apply}
+        variant="success"
+        size="md"
+        icon="arrow-forward"
+        onPress={() => Linking.openURL(j.applyUrl || `https://www.ncs.gov.in/?keyword=${encodeURIComponent(j.title)}`)}
+      />
     </Card>
   );
 }

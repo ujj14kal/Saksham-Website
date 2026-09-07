@@ -687,7 +687,7 @@ export const SKILL_LEXICON: LexiconEntry[] = [
       "बच्चों को पढ़ाना", "बच्चों को पढ़ाती", "बच्चों को पढ़ाता", "बच्चों को पढ़ाते",
       "पढ़ाना", "पढ़ाती", "पढ़ाता", "पढ़ाते", "बच्चों को पढ़ाती", "बच्चों को पढ़ाता",
     ],
-    titleTerms: ["play school", "school facilitator", "teacher", "tutoring", "tutor", "caregiver"],
+    titleTerms: ["school facilitator", "teacher", "tutoring", "tutor"],
   },
 ];
 

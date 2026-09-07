@@ -30,6 +30,7 @@ interface RecommendInput {
   /** What the beneficiary asked for. Re-weights the ranking; never filters, so
    *  the full livelihood map stays visible whichever option they picked. */
   intent?: Intent;
+  skillDetails?: string | null;
 }
 
 /** The two real datasets spell sectors differently — NSQF says
@@ -69,6 +70,18 @@ function normalizeLocation(value: string | null | undefined): string | null {
   return value?.trim().toLowerCase().replace(/[^a-z0-9]+/g, "") || null;
 }
 
+function normalizeText(value: string | null | undefined): string {
+  return value?.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() || "";
+}
+
+function isEarlyChildhoodText(value: string): boolean {
+  return /\b(play school|playschool|pre school|preschool|anganwadi|childcare|child care|caregiver|creche|nursery|toddler|early childhood|poshak)\b/.test(value);
+}
+
+function wantsSeniorTeaching(details: string): boolean {
+  return /\b(9|10|11|12|9th|10th|11th|12th|secondary|senior|higher secondary|board|math|maths|science|physics|chemistry|biology|accounts|commerce|english|hindi)\b/.test(details);
+}
+
 /**
  * Recommend real PM-AJAY courses for a beneficiary.
  *
@@ -85,7 +98,7 @@ function normalizeLocation(value: string | null | undefined): string | null {
  *   0.05  the skill mapped to an NSQF qualification at all (auditable match)
  */
 export async function recommendCourses(input: RecommendInput): Promise<CourseRecommendation[]> {
-  const { mappings, state, language = "hi", intent = "guidance" } = input;
+  const { mappings, state, language = "hi", intent = "guidance", skillDetails } = input;
 
   const matched = mappings.filter((m) => m.normalizedSkill !== "unknown");
   const tokens = [...new Set(matched.map((m) => m.normalizedSkill.toLowerCase()))];
@@ -115,6 +128,8 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
 
   const beneficiaryState = normalizeLocation(state);
 
+  const details = normalizeText(skillDetails);
+
   const scored = candidates.map((course) => {
     const courseKeywords = course.keywords.map((k) => k.toLowerCase());
     const hitToken = tokens.find((token) => courseKeywords.includes(token));
@@ -124,6 +139,8 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
 
     let score = 0;
     const reasons: string[] = [];
+    const courseText = normalizeText(`${course.subCourseName} ${course.courseName} ${course.subSector} ${course.keywords.join(" ")}`);
+    const detailPenalty = wantsSeniorTeaching(details) && isEarlyChildhoodText(courseText) ? -1 : 0;
 
     if (hitToken) {
       score += 0.5;
@@ -171,6 +188,7 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
       // signal the catalogue holds (PmajayCourse has no vacancy/placement data).
       const occupations = (source?.proposedOccupations ?? []).map((o) => o.toLowerCase());
       if (occupations.some((o) => o && courseTitle.includes(o))) score += 0.1;
+      score += detailPenalty;
     } else if (intent === "certificate") {
       // Certifying an existing skill: prefer the course that names the trade
       // they already practise, over adjacent ones in the same sector.
@@ -189,14 +207,16 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
       nsqfTitle: source?.title ?? null,
       nsqfLevel: source?.nsqfLevel ?? null,
       score: Number(Math.max(0, Math.min(1, score)).toFixed(3)),
+      detailPenalty,
       locationRank,
       rationale: rationalePhrase(language, reasons, { sector: course.sector }),
     };
   });
 
   return scored
+    .filter((s) => s.detailPenalty >= 0)
     .filter((s) => s.score > 0)
     .sort((a, b) => b.locationRank - a.locationRank || b.score - a.score)
     .slice(0, 5)
-    .map(({ locationRank: _locationRank, ...recommendation }) => recommendation);
+    .map(({ locationRank: _locationRank, detailPenalty: _detailPenalty, ...recommendation }) => recommendation);
 }

@@ -58,6 +58,7 @@ assistantRouter.post("/converse", upload.single("audio"), async (req, res) => {
     bandwidthKbps: z.coerce.number().int().positive().optional(),
     history: z.string().optional(),
     autoDetectLanguage: z.coerce.boolean().default(true),
+    skillDetails: z.string().max(500).optional(),
     /** What the beneficiary said they want on the confirm screen. Steers
      *  ranking only — the full result set is always returned underneath, so a
      *  wrong guess never hides an opportunity. */
@@ -65,7 +66,7 @@ assistantRouter.post("/converse", upload.single("audio"), async (req, res) => {
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
-  const { language, state, district, userId, channel, bandwidthKbps, autoDetectLanguage, intent } = parsed.data;
+  const { language, state, district, userId, channel, bandwidthKbps, autoDetectLanguage, intent, skillDetails } = parsed.data;
   const history = parseHistory(parsed.data.history);
   // The language the beneficiary chose. Never overwritten by STT detection —
   // see the note in the transcription step below.
@@ -107,8 +108,8 @@ assistantRouter.post("/converse", upload.single("audio"), async (req, res) => {
 
   // 3. NSQF match -> real PM-AJAY courses
   const [recommendations, jobs] = await Promise.all([
-    recommendCourses({ mappings, state, language: effectiveLanguage, intent }),
-    matchJobs({ mappings, state, district }),
+    recommendCourses({ mappings, state, language: effectiveLanguage, intent, skillDetails }),
+    matchJobs({ mappings, state, district, skillDetails }),
   ]);
 
   // 4. Persist the session for the admin dashboard
@@ -187,10 +188,11 @@ assistantRouter.post("/reprioritise", async (req, res) => {
     intent: z.enum(["jobs", "training", "certificate", "guidance"]),
     state: z.string().optional(),
     district: z.string().optional(),
+    skillDetails: z.string().max(500).optional(),
   });
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() });
-  const { sessionId, intent, state, district } = parsed.data;
+  const { sessionId, intent, state, district, skillDetails } = parsed.data;
 
   const session = await prisma.voiceSession.findUnique({ where: { id: sessionId } });
   if (!session) return res.status(404).json({ error: "Session not found" });
@@ -210,7 +212,9 @@ assistantRouter.post("/reprioritise", async (req, res) => {
   // a session recorded with no usable transcript has nothing to re-rank
   if (!session.rawTranscript) return res.json({ sessionId, intent, mappings: [], recommendations: [], jobs: [] });
 
-  const mappings = await mapTranscriptToNsqf(session.rawTranscript);
+  const detailText = skillDetails?.trim();
+  const mappingText = detailText ? `${session.rawTranscript}. ${detailText}` : session.rawTranscript;
+  const mappings = await mapTranscriptToNsqf(mappingText);
   const [recommendations, jobs] = await Promise.all([
     recommendCourses({
       mappings,
@@ -218,8 +222,9 @@ assistantRouter.post("/reprioritise", async (req, res) => {
       district: effectiveDistrict,
       language: session.language,
       intent,
+      skillDetails: detailText,
     }),
-    matchJobs({ mappings, state: effectiveState, district: effectiveDistrict }),
+    matchJobs({ mappings, state: effectiveState, district: effectiveDistrict, skillDetails: detailText }),
   ]);
 
   res.json({ sessionId, intent, mappings, recommendations, jobs });

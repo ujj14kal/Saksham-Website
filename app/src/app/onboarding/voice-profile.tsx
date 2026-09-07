@@ -18,11 +18,13 @@ import { revealPortion, speak, stopSpeaking } from '@/lib/speech';
 import { transcribeWithSarvam } from '@/lib/transcription';
 import { useAutoStopRecording } from '@/lib/useAutoStopRecording';
 import { resolveDeviceLocation } from '@/lib/location';
+import { setSkillDetails } from '@/lib/session';
 import { useStore } from '@/lib/store';
 import { useTheme } from '@/theme';
 import { Button, MicOrb, Screen, StepProgress, TypingDots, Txt, type MicState } from '@/ui';
 
 type ProfileMessage = { id: number; role: 'user' | 'assistant'; text: string };
+type StepField = ProfileField | 'skillDetails';
 
 export default function VoiceProfileStep() {
   const params = useLocalSearchParams<{ mode?: string; returnTo?: string; skill?: string }>();
@@ -45,7 +47,7 @@ export default function VoiceProfileStep() {
   // Basic onboarding is deliberately short: name, age, qualification. The
   // work-specific questions happen only after the beneficiary has told a skill.
   const knownName = user?.name?.trim() || null;
-  const basicSteps: { field: ProfileField; question: string }[] = knownName
+  const basicSteps: { field: StepField; question: string }[] = knownName
     ? [
         { field: 'age', question: `${t.voiceProfileGreetingNamed.replace('{name}', knownName)} ${t.ageQuestion}` },
         { field: 'education', question: t.eduQuestion },
@@ -55,7 +57,8 @@ export default function VoiceProfileStep() {
         { field: 'age', question: t.ageQuestion },
         { field: 'education', question: t.eduQuestion },
       ];
-  const skillSteps: { field: ProfileField; question: string }[] = [
+  const skillSteps: { field: StepField; question: string }[] = [
+    { field: 'skillDetails', question: t.skillDetailQuestion },
     { field: 'experienceYears', question: t.experienceQuestion },
     { field: 'workPreference', question: t.workPreferenceQuestion },
   ];
@@ -164,6 +167,13 @@ export default function VoiceProfileStep() {
     setShowType(false);
     addUser(clean);
     try {
+      if (currentStep.field === 'skillDetails') {
+        setSkillDetails(clean);
+        addAssistant(clean);
+        setTimeout(() => setStepIndex((i) => i + 1), 700);
+        return;
+      }
+
       const { value } = await extractProfileAnswer(currentStep.field, clean, effectiveLanguage);
       if (value === null) {
         addAssistant(t.profileAnswerUnclear);

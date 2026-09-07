@@ -7,7 +7,7 @@ import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { reprioritise } from '@/lib/api';
 import { UI_STRINGS } from '@/constants/languages';
 import { resolveDeviceLocation } from '@/lib/location';
-import { getLastResult, setLastResult } from '@/lib/session';
+import { getLastResult, getSkillDetails, setLastResult } from '@/lib/session';
 import type { Intent } from '@/lib/session';
 import { setIntent } from '@/lib/session';
 import { speak, stopSpeaking } from '@/lib/speech';
@@ -79,7 +79,7 @@ export default function ConfirmScreen() {
       const ranked = await reprioritise(current.sessionId, intent, {
         state: effectiveState,
         district: effectiveDistrict,
-      });
+      }, getSkillDetails());
       if (ranked?.recommendations?.length) {
         setLastResult({
           ...current,

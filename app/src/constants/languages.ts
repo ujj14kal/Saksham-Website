@@ -158,6 +158,7 @@ export interface Strings {
   yearsSuffix: string;
   eduQuestion: string;
   experienceQuestion: string;
+  skillDetailQuestion: string;
   experienceNone: string;
   workPreferenceQuestion: string;
   workNearHome: string;
@@ -338,6 +339,7 @@ const hi: Strings = {
   yearsSuffix: 'वर्ष',
   eduQuestion: 'आप कहाँ तक पढ़े हैं?',
   experienceQuestion: 'आप यह काम कितने साल से कर रहे हैं?',
+  skillDetailQuestion: 'इस काम के बारे में थोड़ा और बताइए — जैसे किस उम्र, कक्षा, चीज़ या तरीके से काम करते हैं?',
   experienceNone: 'अभी शुरुआत की है',
   workPreferenceQuestion: 'आप कहाँ काम करना चाहेंगे — घर के पास या कहीं और?',
   workNearHome: 'घर के पास',
@@ -517,6 +519,7 @@ const en: Strings = {
   yearsSuffix: 'years',
   eduQuestion: 'How far did you study?',
   experienceQuestion: 'How many years have you done this work?',
+  skillDetailQuestion: 'Tell me a little more about this work — for example the class, age group, subject, product, tool, or task.',
   experienceNone: 'Just starting out',
   workPreferenceQuestion: 'Where would you like to work — near home, or somewhere else?',
   workNearHome: 'Near home',
@@ -696,6 +699,7 @@ const bn: Strings = {
   yearsSuffix: 'বছর',
   eduQuestion: 'আপনি কত দূর পড়াশোনা করেছেন?',
   experienceQuestion: 'আপনি কত বছর ধরে এই কাজ করছেন?',
+  skillDetailQuestion: 'এই কাজ সম্পর্কে আর একটু বলুন — যেমন কোন ক্লাস, বয়স, বিষয়, পণ্য, যন্ত্র বা কাজ।',
   experienceNone: 'সবে শুরু করেছি',
   workPreferenceQuestion: 'আপনি কোথায় কাজ করতে চান — বাড়ির কাছে না অন্য কোথাও?',
   workNearHome: 'বাড়ির কাছে',
@@ -875,6 +879,7 @@ const ta: Strings = {
   yearsSuffix: 'ஆண்டுகள்',
   eduQuestion: 'நீங்கள் எவ்வளவு தூரம் படித்தீர்கள்?',
   experienceQuestion: 'இந்த வேலையை எத்தனை ஆண்டுகளாக செய்கிறீர்கள்?',
+  skillDetailQuestion: 'இந்த வேலையைப் பற்றி இன்னும் கொஞ்சம் சொல்லுங்கள் — வகுப்பு, வயது, பாடம், பொருள், கருவி அல்லது பணி போன்றவை.',
   experienceNone: 'இப்போதுதான் தொடங்கியுள்ளேன்',
   workPreferenceQuestion: 'நீங்கள் எங்கே வேலை செய்ய விரும்புகிறீர்கள் — வீட்டிற்கு அருகில் அல்லது வேறு இடத்தில்?',
   workNearHome: 'வீட்டிற்கு அருகில்',
@@ -1054,6 +1059,7 @@ const te: Strings = {
   yearsSuffix: 'సంవత్సరాలు',
   eduQuestion: 'మీరు ఎంతవరకు చదువుకున్నారు?',
   experienceQuestion: 'మీరు ఈ పని ఎన్ని సంవత్సరాలుగా చేస్తున్నారు?',
+  skillDetailQuestion: 'ఈ పని గురించి కొంచెం మరింత చెప్పండి — తరగతి, వయస్సు, విషయం, ఉత్పత్తి, సాధనం లేదా పని లాంటివి.',
   experienceNone: 'ఇప్పుడే మొదలుపెట్టాను',
   workPreferenceQuestion: 'మీరు ఎక్కడ పని చేయాలనుకుంటున్నారు — ఇంటి దగ్గరా లేక వేరే చోటా?',
   workNearHome: 'ఇంటి దగ్గర',
@@ -1233,6 +1239,7 @@ const mr: Strings = {
   yearsSuffix: 'वर्षे',
   eduQuestion: 'तुम्ही किती शिक्षण घेतले आहे?',
   experienceQuestion: 'तुम्ही हे काम किती वर्षांपासून करत आहात?',
+  skillDetailQuestion: 'या कामाबद्दल थोडे अधिक सांगा — उदा. वर्ग, वयोगट, विषय, वस्तू, साधन किंवा काम.',
   experienceNone: 'आत्ताच सुरुवात केली',
   workPreferenceQuestion: 'तुम्हाला कुठे काम करायचे आहे — घराजवळ की दुसरीकडे?',
   workNearHome: 'घराजवळ',
@@ -1412,6 +1419,7 @@ const kn: Strings = {
   yearsSuffix: 'ವರ್ಷಗಳು',
   eduQuestion: 'ನೀವು ಎಷ್ಟು ಓದಿದ್ದೀರಿ?',
   experienceQuestion: 'ನೀವು ಈ ಕೆಲಸವನ್ನು ಎಷ್ಟು ವರ್ಷಗಳಿಂದ ಮಾಡುತ್ತಿದ್ದೀರಿ?',
+  skillDetailQuestion: 'ಈ ಕೆಲಸದ ಬಗ್ಗೆ ಸ್ವಲ್ಪ ಹೆಚ್ಚು ಹೇಳಿ — ತರಗತಿ, ವಯಸ್ಸು, ವಿಷಯ, ಉತ್ಪನ್ನ, ಉಪಕರಣ ಅಥವಾ ಕೆಲಸದಂತೆ.',
   experienceNone: 'ಈಗಷ್ಟೇ ಪ್ರಾರಂಭಿಸಿದೆ',
   workPreferenceQuestion: 'ನೀವು ಎಲ್ಲಿ ಕೆಲಸ ಮಾಡಲು ಬಯಸುತ್ತೀರಿ — ಮನೆಯ ಹತ್ತಿರವೇ ಅಥವಾ ಬೇರೆಡೆಯೇ?',
   workNearHome: 'ಮನೆಯ ಹತ್ತಿರ',
@@ -1591,6 +1599,7 @@ const gu: Strings = {
   yearsSuffix: 'વર્ષ',
   eduQuestion: 'તમે કેટલું ભણ્યા છો?',
   experienceQuestion: 'તમે આ કામ કેટલા વર્ષથી કરો છો?',
+  skillDetailQuestion: 'આ કામ વિશે થોડું વધુ કહો — જેમ કે ધોરણ, ઉંમર, વિષય, વસ્તુ, સાધન અથવા કામ.',
   experienceNone: 'હમણાં જ શરૂ કર્યું',
   workPreferenceQuestion: 'તમે ક્યાં કામ કરવા માંગો છો — ઘરની નજીક કે બીજે ક્યાંક?',
   workNearHome: 'ઘરની નજીક',
@@ -1770,6 +1779,7 @@ const pa: Strings = {
   yearsSuffix: 'ਸਾਲ',
   eduQuestion: 'ਤੁਸੀਂ ਕਿੰਨੀ ਪੜ੍ਹਾਈ ਕੀਤੀ ਹੈ?',
   experienceQuestion: 'ਤੁਸੀਂ ਇਹ ਕੰਮ ਕਿੰਨੇ ਸਾਲਾਂ ਤੋਂ ਕਰ ਰਹੇ ਹੋ?',
+  skillDetailQuestion: 'ਇਸ ਕੰਮ ਬਾਰੇ ਹੋਰ ਦੱਸੋ — ਜਿਵੇਂ ਕਲਾਸ, ਉਮਰ, ਵਿਸ਼ਾ, ਚੀਜ਼, ਸੰਦ ਜਾਂ ਕੰਮ।',
   experienceNone: 'ਹੁਣੇ ਸ਼ੁਰੂ ਕੀਤਾ ਹੈ',
   workPreferenceQuestion: 'ਤੁਸੀਂ ਕਿੱਥੇ ਕੰਮ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ — ਘਰ ਦੇ ਨੇੜੇ ਜਾਂ ਕਿਤੇ ਹੋਰ?',
   workNearHome: 'ਘਰ ਦੇ ਨੇੜੇ',
@@ -1949,6 +1959,7 @@ const or: Strings = {
   yearsSuffix: 'ବର୍ଷ',
   eduQuestion: 'ଆପଣ କେତେ ପଢ଼ିଛନ୍ତି?',
   experienceQuestion: 'ଆପଣ ଏହି କାମ କେତେ ବର୍ଷରୁ କରୁଛନ୍ତି?',
+  skillDetailQuestion: 'ଏହି କାମ ବିଷୟରେ ଆଉ କିଛି କୁହନ୍ତୁ — ଯେପରି କ୍ଲାସ, ବୟସ, ବିଷୟ, ସାମଗ୍ରୀ, ଉପକରଣ କିମ୍ବା କାମ।',
   experienceNone: 'ବର୍ତ୍ତମାନ ଆରମ୍ଭ କରିଛି',
   workPreferenceQuestion: 'ଆପଣ କେଉଁଠି କାମ କରିବାକୁ ଚାହାଁନ୍ତି — ଘର ପାଖରେ ନା ଅନ୍ୟ କେଉଁଠି?',
   workNearHome: 'ଘର ପାଖରେ',

@@ -14,6 +14,7 @@ export interface JobMatch {
   wageMax: number | null;
   positions: number | null;
   contactPhone: string | null;
+  applyUrl: string;
   /** where this row came from — SAMPLE rows are demonstration data and the
    *  client must label them as such, never as live vacancies */
   source: string;
@@ -31,11 +32,36 @@ interface MatchInput {
   mappings: MappingResult[];
   state?: string | null;
   district?: string | null;
+  skillDetails?: string | null;
   limit?: number;
 }
 
 function normalizeLocation(value: string | null | undefined): string | null {
   return value?.trim().toLowerCase().replace(/[^a-z0-9]+/g, "") || null;
+}
+
+function normalizeText(value: string | null | undefined): string {
+  return value?.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() || "";
+}
+
+function jobSearchUrl(jobTitle: string): string {
+  return `https://www.ncs.gov.in/?keyword=${encodeURIComponent(jobTitle)}`;
+}
+
+function detailScore(job: { title: string; description: string | null; skillTokens: string[] }, details: string): number {
+  if (!details) return 0;
+  const haystack = normalizeText(`${job.title} ${job.description ?? ""} ${job.skillTokens.join(" ")}`);
+  const wantsSeniorTeaching = /\b(9|10|11|12|9th|10th|11th|12th|secondary|senior|higher secondary|board|math|maths|science|physics|chemistry|biology|accounts|commerce|english|hindi)\b/.test(details);
+  const earlyChildRole = /\b(play school|playschool|pre school|preschool|anganwadi|childcare|child care|caregiver|creche|nursery|toddler|early childhood|poshak)\b/.test(haystack);
+
+  if (wantsSeniorTeaching && earlyChildRole) return -1;
+
+  let score = 0;
+  for (const word of details.split(/\s+/).filter((w) => w.length >= 4)) {
+    if (haystack.includes(word)) score += 0.04;
+  }
+  if (wantsSeniorTeaching && /\b(teacher|teaching|tutor|tuition|school facilitator|secondary|senior)\b/.test(haystack)) score += 0.18;
+  return Math.min(0.25, score);
 }
 
 /**
@@ -53,7 +79,7 @@ function normalizeLocation(value: string | null | undefined): string | null {
  *   0.10  sector matches the mapped qualification's sector
  */
 export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
-  const { mappings, state, district, limit = 8 } = input;
+  const { mappings, state, district, skillDetails, limit = 8 } = input;
 
   const matched = mappings.filter((m) => m.normalizedSkill !== "unknown");
   const tokens = [...new Set(matched.map((m) => m.normalizedSkill.toLowerCase()))];
@@ -75,12 +101,6 @@ export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
   if (jobs.length === 0 && qualificationIds.length > 0) {
     jobs = await prisma.jobPosting.findMany({
       where: { active: true, nsqfQualificationId: { in: qualificationIds } },
-      take: 200,
-    });
-  }
-  if (jobs.length === 0 && sectors.length > 0) {
-    jobs = await prisma.jobPosting.findMany({
-      where: { active: true, sector: { in: sectors } },
       take: 200,
     });
   }
@@ -107,6 +127,9 @@ export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
     if (!needsUpskilling) score += 0.15;
 
     if (job.sector && wantedSectors.has(job.sector.toLowerCase())) score += 0.1;
+    const details = normalizeText(skillDetails);
+    const detailBoost = detailScore(job, details);
+    score += detailBoost;
 
     return {
       jobPostingId: job.id,
@@ -121,16 +144,20 @@ export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
       wageMax: job.wageMax,
       positions: job.positions,
       contactPhone: job.contactPhone,
+      applyUrl: jobSearchUrl(job.title),
       source: job.source,
       score: Number(Math.max(0, Math.min(1, score)).toFixed(3)),
       needsUpskilling,
       nsqfQpCode: source?.qpCode ?? null,
       nsqfTitle: source?.title ?? null,
+      detailBoost,
     };
   });
 
   return scored
+    .filter((job) => job.detailBoost >= 0)
     // jobs they can take today rank above jobs needing training, then by score
     .sort((a, b) => Number(a.needsUpskilling) - Number(b.needsUpskilling) || b.score - a.score)
-    .slice(0, limit);
+    .slice(0, limit)
+    .map(({ detailBoost: _detailBoost, ...job }) => job);
 }
