@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { File } from 'expo-file-system';
 import { Platform } from 'react-native';
 
 /** The deployed backend. Used by default so a fresh clone works with no setup:
@@ -311,12 +312,7 @@ export async function converse(input: ConverseInput): Promise<ConverseResponse> 
   if (input.history?.length) form.append('history', JSON.stringify(input.history.slice(-8)));
   form.append('autoDetectLanguage', String(input.autoDetectLanguage ?? true));
   if (input.audioUri) {
-    // React Native's FormData accepts a { uri, name, type } file descriptor.
-    form.append('audio', {
-      uri: input.audioUri,
-      name: 'speech.m4a',
-      type: 'audio/x-m4a',
-    } as unknown as Blob);
+    form.append('audio', new File(input.audioUri), 'speech.m4a');
   }
 
   try {

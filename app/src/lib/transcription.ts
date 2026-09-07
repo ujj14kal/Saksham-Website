@@ -1,3 +1,4 @@
+import { File } from 'expo-file-system';
 import { Platform } from 'react-native';
 
 import { API_BASE, type LanguageCode } from '@/lib/api';
@@ -61,7 +62,7 @@ async function appendAudio(form: FormData, audioUri: string) {
     return;
   }
 
-  form.append('file', { uri: audioUri, name, type } as unknown as Blob);
+  form.append('file', new File(audioUri), name);
 }
 
 async function appendServerAudio(form: FormData, audioUri: string) {
@@ -75,7 +76,7 @@ async function appendServerAudio(form: FormData, audioUri: string) {
     return;
   }
 
-  form.append('audio', { uri: audioUri, name, type } as unknown as Blob);
+  form.append('audio', new File(audioUri), name);
 }
 
 function languageFromSpeechCode(code: string | null | undefined): LanguageCode | null {

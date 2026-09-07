@@ -30,6 +30,7 @@ export default function ResultsScreen() {
   const { token } = useAuth();
   const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
   const [applyingId, setApplyingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   // what they have already applied to, so the button reads "Applied" on return
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function ResultsScreen() {
     try {
       await applyToJob(token, j.jobPostingId, { qpCode: j.nsqfQpCode, title: j.nsqfTitle });
       setAppliedIds((prev) => new Set(prev).add(j.jobPostingId));
+      setToast(t.applied);
     } catch (e) {
       Alert.alert(t.tryAgain, e instanceof Error ? e.message : String(e));
     } finally {
@@ -61,6 +63,13 @@ export default function ResultsScreen() {
   const [jobsPage, setJobsPage] = useState(0);
   const [recsPage, setRecsPage] = useState(0);
   const t = language ? UI_STRINGS[language] : UI_STRINGS.hi;
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 2200);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
   const sectionTitle =
     intent === 'jobs'
       ? t.jobsTitle
@@ -184,11 +193,11 @@ export default function ResultsScreen() {
               {t.noResults}
             </Txt>
             <Button
-              label={t.apply}
-              variant="success"
+              label={t.askAgain}
+              variant="secondary"
               size="md"
-              icon="arrow-forward"
-              onPress={() => Linking.openURL(jobPortalUrl(result.transcript))}
+              icon="mic"
+              onPress={() => router.replace('/main/speak')}
             />
           </Card>
         )}
@@ -230,6 +239,16 @@ export default function ResultsScreen() {
           <Button label={t.askAgain} size="md" icon="mic" onPress={() => router.replace('/main/speak')} />
         </View>
       </View>
+      {toast && (
+        <Animated.View
+          entering={FadeInDown.duration(180)}
+          style={[styles.toast, { backgroundColor: c.text, shadowColor: '#16204A' }]}>
+          <Ionicons name="checkmark-circle" size={18} color={c.success} />
+          <Txt variant="body" style={{ color: c.bg }}>
+            {toast}
+          </Txt>
+        </Animated.View>
+      )}
     </Screen>
   );
 }
@@ -257,10 +276,6 @@ function Pager({ total, page, onPage }: { total: number; page: number; onPage: (
       </Pressable>
     </View>
   );
-}
-
-function jobPortalUrl(query: string): string {
-  return `https://www.ncs.gov.in/?keyword=${encodeURIComponent(query)}`;
 }
 
 function NsqfCard({
@@ -385,30 +400,15 @@ function JobCard({
         </View>
       )}
 
-      {/* A posting we hold ourselves is applied to in-app, so a programme
-          officer gets a name and a number to call back. Only a posting that
-          genuinely lives on another portal sends the beneficiary out to it —
-          the old fallback opened the NCS homepage with the search term
-          silently dropped, which stranded them on an unfamiliar site. */}
-      {j.applyUrl ? (
-        <Button
-          label={t.apply}
-          variant="success"
-          size="md"
-          icon="open-outline"
-          onPress={() => Linking.openURL(j.applyUrl!)}
-        />
-      ) : (
-        <Button
-          label={applied ? t.applied : applying ? t.applying : t.apply}
-          variant={applied ? 'secondary' : 'success'}
-          size="md"
-          icon={applied ? 'checkmark' : 'arrow-forward'}
-          loading={applying}
-          disabled={applied || applying}
-          onPress={onApply}
-        />
-      )}
+      <Button
+        label={applied ? t.applied : applying ? t.applying : t.apply}
+        variant={applied ? 'secondary' : 'success'}
+        size="md"
+        icon={applied ? 'checkmark' : 'arrow-forward'}
+        loading={applying}
+        disabled={applied || applying}
+        onPress={onApply}
+      />
 
       {!!j.contactPhone && (
         <Pressable onPress={() => Linking.openURL(`tel:${j.contactPhone}`)} style={styles.jobMeta}>
@@ -518,5 +518,22 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 8,
     borderTopWidth: 1,
+  },
+  toast: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 76,
+    minHeight: 48,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 8,
   },
 });

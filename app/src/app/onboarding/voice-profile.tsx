@@ -169,7 +169,7 @@ export default function VoiceProfileStep() {
     try {
       if (currentStep.field === 'skillDetails') {
         setSkillDetails(clean);
-        addAssistant(clean);
+        setCollected({ ...collected, skillDetails: clean });
         setTimeout(() => setStepIndex((i) => i + 1), 700);
         return;
       }

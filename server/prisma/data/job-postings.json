@@ -76,6 +76,25 @@
     "source": "SAMPLE"
   },
   {
+    "title": "Self Employed Tailor",
+    "titleHindi": null,
+    "employerName": "Jaipur Apparel Training Unit",
+    "skillTokens": [
+      "tailoring"
+    ],
+    "qpCode": "QG-2.5-AP-01868-2024-V1.1-AMHSSC",
+    "sector": "Apparel",
+    "nsqfLevel": 3,
+    "state": "RAJASTHAN",
+    "district": "Jaipur",
+    "wageMin": 15000,
+    "wageMax": 15000,
+    "positions": 4,
+    "contactPhone": "0141-2100000",
+    "description": "Stipend-based tailoring role in Jaipur, RAJASTHAN with a monthly stipend of ₹15,000. Aligned to NSQF qualification QG-2.5-AP-01868-2024-V1.1-AMHSSC (level 3).",
+    "source": "SAMPLE"
+  },
+  {
     "title": "Two Shaft Handloom Weaver",
     "titleHindi": null,
     "employerName": "Apparel Export Unit",
