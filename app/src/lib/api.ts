@@ -858,6 +858,7 @@ export interface AuthUser {
   age?: number | null;
   education?: Education | null;
   experienceYears?: number | null;
+  experienceSkill?: string | null;
   workPreference?: 'home' | 'other' | null;
   preferredLocation?: string | null;
   state?: string | null;
@@ -946,6 +947,7 @@ export async function updateProfile(
     age?: number;
     education?: Education;
     experienceYears?: number;
+    experienceSkill?: string;
     workPreference?: 'home' | 'other';
     preferredLocation?: string;
     state?: string;

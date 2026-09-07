@@ -38,7 +38,7 @@ type AgentMessage = {
 };
 
 export default function SpeakScreen() {
-  const { language, setLanguage, state, district, guestProfile } = useStore();
+  const { language, state, district, guestProfile } = useStore();
   const { user } = useAuth();
   const { c, radius, elevation } = useTheme();
   const recorder = useAudioRecorder({ ...RecordingPresets.HIGH_QUALITY, isMeteringEnabled: true });
@@ -80,19 +80,36 @@ export default function SpeakScreen() {
     setShowType(false);
   }
 
-  function shouldAskSkillQuestions(): boolean {
-    if (user) return user.experienceYears == null || !user.workPreference;
-    return guestProfile?.experienceYears == null || !guestProfile.workPreference;
+  /** The work questions are about a specific trade — "how many years have you
+   *  done THIS work?" — so they are asked per skill, not once per user. Twenty
+   *  years of pottery says nothing about food processing, and answering once
+   *  used to silently credit those years to every later trade. */
+  function shouldAskSkillQuestions(skill: string | null): boolean {
+    const profile = user ?? guestProfile;
+    if (!profile) return true;
+    if (profile.experienceYears == null || !profile.workPreference) return true;
+    // already answered — but only skip if it was about this same trade
+    return !!skill && profile.experienceSkill !== skill;
+  }
+
+  /** The normalized skill token this turn resolved to, if any. */
+  function capturedSkill(result: ConverseResponse): string | null {
+    return (result.mappings ?? []).find((m) => m.normalizedSkill !== 'unknown' && !!m.title)?.normalizedSkill ?? null;
   }
 
   /** A skill counts as understood only once it maps to a real NSQF
    *  qualification. "unknown" mappings carry no title. */
   function understoodSkill(result: ConverseResponse): boolean {
-    return (result.mappings ?? []).some((m) => m.normalizedSkill !== 'unknown' && !!m.title);
+    return capturedSkill(result) !== null;
   }
 
-  function routeAfterSkill() {
-    router.push(shouldAskSkillQuestions() ? '/onboarding/voice-profile?mode=skill&returnTo=/confirm' : '/confirm');
+  function routeAfterSkill(result: ConverseResponse) {
+    const skill = capturedSkill(result);
+    router.push(
+      shouldAskSkillQuestions(skill)
+        ? `/onboarding/voice-profile?mode=skill&returnTo=/confirm${skill ? `&skill=${encodeURIComponent(skill)}` : ''}`
+        : '/confirm',
+    );
   }
 
   const t = language ? UI_STRINGS[language] : UI_STRINGS.hi;
@@ -137,7 +154,6 @@ export default function SpeakScreen() {
         history: agentMessages,
         autoDetectLanguage: true,
       });
-      if (result.language && result.language !== language) await setLanguage(result.language);
       setLastResult(result);
       setShowType(false);
       setTyped('');
@@ -154,7 +170,7 @@ export default function SpeakScreen() {
       // is reads as the app not listening — and the answer would be attached
       // to no trade. Stay here so they can say it again, in their own words.
       if (understoodSkill(result)) {
-        routeAfterSkill();
+        routeAfterSkill(result);
       } else {
         setAgentMessages((prev) =>
           prev.concat({ role: 'assistant' as const, text: result.reply.text || t.noMatch }),
@@ -196,8 +212,9 @@ export default function SpeakScreen() {
         history: agentMessages,
         autoDetectLanguage: true,
       });
-      const replyLanguage = result.language ?? turnLanguage;
-      if (result.language && result.language !== language) await setLanguage(result.language);
+      // Always speak the reply in the language the beneficiary chose, never one
+      // the server or STT inferred — see the note in the transcription branch.
+      const replyLanguage = turnLanguage;
       setLastResult(result);
       const replyText = result.reply.text || t.agentFallbackReply;
       const withReply = withUser.concat({ role: 'assistant' as const, text: replyText });
@@ -213,7 +230,7 @@ export default function SpeakScreen() {
       setHistory(updated);
       // as above: only move on once we actually understood the skill. The
       // reply is already shown and spoken, so they can simply try again.
-      if (understoodSkill(result)) routeAfterSkill();
+      if (understoodSkill(result)) routeAfterSkill(result);
     } catch (e) {
       Alert.alert(t.tryAgain, String(e));
     } finally {
@@ -233,9 +250,12 @@ export default function SpeakScreen() {
       setTranscribing(true);
       try {
         const result = await transcribeWithSarvam(audioUri, language!);
-        const detectedLanguage = result.languageCode ?? language!;
-        if (result.languageCode && result.languageCode !== language) await setLanguage(result.languageCode);
-        await runAgentTurn(result.transcript, detectedLanguage);
+        // Auto-detection helps STT transcribe accurately, but it must never
+        // change the language we reply in — and `setLanguage` persists, so a
+        // single misdetection (Indian-accented English reads as Hindi very
+        // easily) used to switch the whole app for good. The beneficiary chose
+        // a language; only they get to change it, from the language screen.
+        await runAgentTurn(result.transcript, language!);
       } catch (e) {
         Alert.alert(t.transcriptionError, e instanceof Error ? e.message : String(e));
       } finally {

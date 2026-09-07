@@ -88,6 +88,7 @@ const profileSchema = z.object({
     .enum(["below_10th", "10th", "12th", "iti_diploma", "undergrad", "postgrad"])
     .optional(),
   experienceYears: z.number().int().min(0).max(70).optional(),
+  experienceSkill: z.string().max(60).optional(),
   workPreference: z.enum(["home", "other"]).optional(),
   /** free text as spoken — may be a village the catalogue has no district for */
   preferredLocation: z.string().max(120).optional(),

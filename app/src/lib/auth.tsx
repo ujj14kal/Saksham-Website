@@ -21,6 +21,7 @@ interface AuthValue {
     age?: number;
     education?: Education;
     experienceYears?: number;
+    experienceSkill?: string;
     workPreference?: 'home' | 'other';
     preferredLocation?: string;
     state?: string;

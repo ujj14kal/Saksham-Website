@@ -25,7 +25,7 @@ import { Button, MicOrb, Screen, StepProgress, TypingDots, Txt, type MicState } 
 type ProfileMessage = { id: number; role: 'user' | 'assistant'; text: string };
 
 export default function VoiceProfileStep() {
-  const params = useLocalSearchParams<{ mode?: string; returnTo?: string }>();
+  const params = useLocalSearchParams<{ mode?: string; returnTo?: string; skill?: string }>();
   const { language, guestProfile, setGuestProfile, setLocation } = useStore();
   const { updateProfile, token, user } = useAuth();
   const { c, radius, elevation } = useTheme();
@@ -39,6 +39,9 @@ export default function VoiceProfileStep() {
   const effectiveLanguage = language ?? 'hi';
 
   const mode = params.mode === 'skill' ? 'skill' : 'basic';
+  // which trade these answers are about, so experience is not later credited
+  // to a different skill the beneficiary happens to mention
+  const skillContext = typeof params.skill === 'string' ? params.skill : undefined;
   // Basic onboarding is deliberately short: name, age, qualification. The
   // work-specific questions happen only after the beneficiary has told a skill.
   const knownName = user?.name?.trim() || null;
@@ -119,6 +122,9 @@ export default function VoiceProfileStep() {
   }
 
   async function finish(data: Record<string, string | number>) {
+    // record which trade the experience answer was about, so a later, different
+    // skill triggers the question again instead of inheriting these years
+    if (mode === 'skill' && skillContext) data = { ...data, experienceSkill: skillContext };
     if (token) {
       await updateProfile({ ...data, ...(mode === 'skill' && { onboarded: true }) } as Parameters<typeof updateProfile>[0]);
     } else {
