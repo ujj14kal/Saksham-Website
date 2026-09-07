@@ -25,16 +25,35 @@ export default function ConfirmScreen() {
   const { language, state, district, setLocation } = useStore();
   const { c, radius, elevation } = useTheme();
   const result = getLastResult();
+  const [displayResult, setDisplayResult] = useState(result);
   const [busy, setBusy] = useState<Intent | null>(null);
 
   const t = language ? UI_STRINGS[language] : UI_STRINGS.hi;
-  const known = (result?.mappings ?? [])
+  const known = (displayResult?.mappings ?? [])
     .filter((m) => m.title)
     .filter((m, i, arr) => arr.findIndex((x) => x.qpCode === m.qpCode) === i);
   const skillLabel = known.map((m) => m.title).join(', ');
   const confirmation = skillLabel
     ? t.confirmUnderstood.replace('{skill}', skillLabel)
     : t.noMatch;
+
+  useEffect(() => {
+    const details = getSkillDetails();
+    if (!result?.sessionId || !details) return;
+    reprioritise(result.sessionId, 'guidance', { state, district }, details)
+      .then((ranked) => {
+        if (!ranked) return;
+        const next = {
+          ...result,
+          mappings: ranked.mappings,
+          recommendations: ranked.recommendations,
+          jobs: ranked.jobs ?? result.jobs,
+        };
+        setLastResult(next);
+        setDisplayResult(next);
+      })
+      .catch(() => {});
+  }, [result?.sessionId, state, district]);
 
   useEffect(() => {
     if (language && confirmation) {
@@ -54,7 +73,7 @@ export default function ConfirmScreen() {
   }, []);
 
   if (!language) return <Redirect href="/" />;
-  if (!result) return <Redirect href="/main/speak" />;
+  if (!displayResult) return <Redirect href="/main/speak" />;
 
   async function choose(intent: Intent) {
     if (busy) return;
@@ -123,7 +142,7 @@ export default function ConfirmScreen() {
             </Txt>
             <View style={[styles.bubble, styles.userBubble, { backgroundColor: c.surfaceAlt, borderColor: c.border }]}>
               <Txt variant="bodyLg" style={{ fontStyle: 'italic' }}>
-                {result.transcript}
+            {displayResult.transcript}
               </Txt>
             </View>
           </View>

@@ -154,6 +154,13 @@ function isEarlyChildhoodQualification(title: string): boolean {
   );
 }
 
+function isAcademicTeachingTranscript(transcript: string): boolean {
+  const text = normalizeTitle(transcript);
+  return /\b(teach|teaching|teacher|tutor|tuition|coaching|padhata|padhati|padhana|shikshak|adhyapak)\b/i.test(text) &&
+    /\b(9|10|11|12|9th|10th|11th|12th|class|standard|secondary|senior|higher secondary|board|student|students|math|maths|science|physics|chemistry|biology|accounts|commerce|english|hindi)\b/i.test(text) &&
+    !isCreativeTeachingTranscript(transcript);
+}
+
 function normalizeSectorForFallback(value: string): string {
   return value.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "");
 }
@@ -330,6 +337,29 @@ function unknownMapping(transcript: string): MappingResult {
   };
 }
 
+function academicTutoringMapping(transcript: string, pmajayCourses: CourseRow[]): MappingResult {
+  const course =
+    pmajayCourses.find((c) => lowerKeywords(c.keywords).includes("teaching") && normalizeSectorForFallback(c.sector) === "specialtutoring") ??
+    null;
+  return {
+    rawSkillText: transcript,
+    normalizedSkill: "academic-tutoring",
+    nsqfQualificationId: null,
+    qpCode: course?.subCourseCode ?? null,
+    title: "Academic Tutor / Special Tutoring",
+    sector: "Special Tutoring",
+    nsqfLevel: null,
+    confidence: 0.82,
+    method: "manual",
+    pmajayVerified: Boolean(course),
+    pmajayCourse: course
+      ? { subCourseCode: course.subCourseCode, subCourseName: course.subCourseName, sector: course.sector }
+      : null,
+    nsqfExpired: false,
+    proposedOccupations: ["Tutor", "Tuition Teacher", "Academic Coach"],
+  };
+}
+
 export async function mapTranscriptToNsqf(transcript: string): Promise<MappingResult[]> {
   // Let the LLM interpret natural phrasing first when configured. It is still
   // constrained to known catalogue tokens; keyword and catalogue matching stay
@@ -432,6 +462,7 @@ export async function mapTranscriptToNsqf(transcript: string): Promise<MappingRe
   }
 
   const { quals, expiredQuals, pmajayCourses } = await loadCatalog();
+  if (isAcademicTeachingTranscript(transcript)) return [academicTutoringMapping(transcript, pmajayCourses)];
   const results: MappingResult[] = [];
 
   for (const token of tokens) {

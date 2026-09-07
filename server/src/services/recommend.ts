@@ -106,6 +106,7 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
 
   const matched = mappings.filter((m) => m.normalizedSkill !== "unknown");
   const tokens = [...new Set(matched.map((m) => m.normalizedSkill.toLowerCase()))];
+  const searchTokens = [...new Set(tokens.flatMap((token) => (token === "academic-tutoring" ? ["teaching"] : [token])))];
   const sectors = [...new Set(matched.map((m) => m.sector).filter((s): s is string => Boolean(s)))];
   if (tokens.length === 0 && sectors.length === 0) return [];
 
@@ -113,12 +114,12 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
   // "&"/"and" spellings differ between the two datasets, so widen the SQL filter
   // and settle the real comparison on the normalized form below.
   const sectorVariants = [...new Set(sectors.flatMap((s) => [s, s.replace(/ & /g, " and "), s.replace(/ and /g, " & ")]))];
-  const titleTerms = [...new Set(tokens.flatMap((token) => titleTermsForSkill(token)))];
+  const titleTerms = [...new Set(searchTokens.flatMap((token) => titleTermsForSkill(token)))];
 
   const candidates = await prisma.pmajayCourse.findMany({
     where: {
       OR: [
-        ...(tokens.length ? [{ keywords: { hasSome: tokens } }] : []),
+        ...(searchTokens.length ? [{ keywords: { hasSome: searchTokens } }] : []),
         ...(sectorVariants.length ? [{ sector: { in: sectorVariants } }] : []),
         ...titleTerms.flatMap((term) => [
           { subCourseName: { contains: term, mode: "insensitive" as const } },
@@ -136,7 +137,7 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
 
   const scored = candidates.map((course) => {
     const courseKeywords = course.keywords.map((k) => k.toLowerCase());
-    const hitToken = tokens.find((token) => courseKeywords.includes(token));
+    const hitToken = searchTokens.find((token) => courseKeywords.includes(token));
     // the mapping that produced the hit — carries the NSQF qualification we
     // can show alongside the course, so the match stays auditable
     const source = matched.find((m) => m.normalizedSkill.toLowerCase() === hitToken) ?? matched[0];
@@ -144,7 +145,7 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
     let score = 0;
     const reasons: string[] = [];
     const courseText = normalizeText(`${course.subCourseName} ${course.courseName} ${course.subSector} ${course.keywords.join(" ")}`);
-    const academicTeaching = hitToken === "teaching" && wantsSeniorTeaching(details);
+    const academicTeaching = (tokens.includes("academic-tutoring") || hitToken === "teaching") && wantsSeniorTeaching(details);
     const detailPenalty =
       academicTeaching && (isEarlyChildhoodText(courseText) || !isAcademicTutoringCourse(courseText)) ? -1 : 0;
 

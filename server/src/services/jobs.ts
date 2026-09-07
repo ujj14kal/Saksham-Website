@@ -83,6 +83,7 @@ export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
 
   const matched = mappings.filter((m) => m.normalizedSkill !== "unknown");
   const tokens = [...new Set(matched.map((m) => m.normalizedSkill.toLowerCase()))];
+  const searchTokens = [...new Set(tokens.flatMap((token) => (token === "academic-tutoring" ? ["teaching"] : [token])))];
   if (tokens.length === 0) return [];
 
   // Jobs are keyed on the lexicon's skill tokens, but a mapping can also come
@@ -95,7 +96,7 @@ export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
   const sectors = [...new Set(matched.map((m) => m.sector).filter((x): x is string => !!x))];
 
   let jobs = await prisma.jobPosting.findMany({
-    where: { active: true, skillTokens: { hasSome: tokens } },
+    where: { active: true, skillTokens: { hasSome: searchTokens } },
     take: 200,
   });
   if (jobs.length === 0 && qualificationIds.length > 0) {
@@ -112,8 +113,11 @@ export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
   const beneficiaryDistrict = normalizeLocation(district);
 
   const scored = jobs.map((job) => {
-    const hit = job.skillTokens.find((t) => tokens.includes(t.toLowerCase()));
-    const source = matched.find((m) => m.normalizedSkill.toLowerCase() === hit?.toLowerCase()) ?? matched[0];
+    const hit = job.skillTokens.find((t) => searchTokens.includes(t.toLowerCase()));
+    const source =
+      matched.find((m) => m.normalizedSkill.toLowerCase() === hit?.toLowerCase()) ??
+      matched.find((m) => m.normalizedSkill.toLowerCase() === "academic-tutoring") ??
+      matched[0];
 
     let score = 0;
     if (hit) score += 0.55;
