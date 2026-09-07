@@ -82,6 +82,10 @@ function wantsSeniorTeaching(details: string): boolean {
   return /\b(9|10|11|12|9th|10th|11th|12th|secondary|senior|higher secondary|board|math|maths|science|physics|chemistry|biology|accounts|commerce|english|hindi)\b/.test(details);
 }
 
+function isAcademicTutoringCourse(courseText: string): boolean {
+  return /\b(tutoring|clat|jee|aieee|iti|upsc|neet|exam|competitive)\b/.test(courseText);
+}
+
 /**
  * Recommend real PM-AJAY courses for a beneficiary.
  *
@@ -140,7 +144,9 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
     let score = 0;
     const reasons: string[] = [];
     const courseText = normalizeText(`${course.subCourseName} ${course.courseName} ${course.subSector} ${course.keywords.join(" ")}`);
-    const detailPenalty = wantsSeniorTeaching(details) && isEarlyChildhoodText(courseText) ? -1 : 0;
+    const academicTeaching = hitToken === "teaching" && wantsSeniorTeaching(details);
+    const detailPenalty =
+      academicTeaching && (isEarlyChildhoodText(courseText) || !isAcademicTutoringCourse(courseText)) ? -1 : 0;
 
     if (hitToken) {
       score += 0.5;
@@ -217,6 +223,6 @@ export async function recommendCourses(input: RecommendInput): Promise<CourseRec
     .filter((s) => s.detailPenalty >= 0)
     .filter((s) => s.score > 0)
     .sort((a, b) => b.locationRank - a.locationRank || b.score - a.score)
-    .slice(0, 5)
+    .slice(0, 20)
     .map(({ locationRank: _locationRank, detailPenalty: _detailPenalty, ...recommendation }) => recommendation);
 }

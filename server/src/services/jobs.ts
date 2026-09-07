@@ -79,7 +79,7 @@ function detailScore(job: { title: string; description: string | null; skillToke
  *   0.10  sector matches the mapped qualification's sector
  */
 export async function matchJobs(input: MatchInput): Promise<JobMatch[]> {
-  const { mappings, state, district, skillDetails, limit = 8 } = input;
+  const { mappings, state, district, skillDetails, limit = 20 } = input;
 
   const matched = mappings.filter((m) => m.normalizedSkill !== "unknown");
   const tokens = [...new Set(matched.map((m) => m.normalizedSkill.toLowerCase()))];

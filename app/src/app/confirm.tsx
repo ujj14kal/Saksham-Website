@@ -80,9 +80,10 @@ export default function ConfirmScreen() {
         state: effectiveState,
         district: effectiveDistrict,
       }, getSkillDetails());
-      if (ranked?.recommendations?.length) {
+      if (ranked) {
         setLastResult({
           ...current,
+          mappings: ranked.mappings,
           recommendations: ranked.recommendations,
           jobs: ranked.jobs ?? current.jobs,
         });

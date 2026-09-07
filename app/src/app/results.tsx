@@ -1,5 +1,5 @@
 import { Redirect, router } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,11 +12,15 @@ import { useStore } from '@/lib/store';
 import { useTheme } from '@/theme';
 import { Button, Card, Chip, Meter, Screen, Txt } from '@/ui';
 
+const PAGE_SIZE = 5;
+
 export default function ResultsScreen() {
   const { language } = useStore();
   const { c, radius } = useTheme();
   const result = getLastResult();
   const intent = getIntent();
+  const [jobsPage, setJobsPage] = useState(0);
+  const [recsPage, setRecsPage] = useState(0);
   const t = language ? UI_STRINGS[language] : UI_STRINGS.hi;
   const sectionTitle =
     intent === 'jobs'
@@ -54,6 +58,9 @@ export default function ResultsScreen() {
   const known = result.mappings
     .filter((m) => m.title)
     .filter((m, i, arr) => arr.findIndex((x) => x.qpCode === m.qpCode) === i);
+  const jobs = result.jobs ?? [];
+  const visibleJobs = jobs.slice(jobsPage * PAGE_SIZE, jobsPage * PAGE_SIZE + PAGE_SIZE);
+  const visibleRecommendations = result.recommendations.slice(recsPage * PAGE_SIZE, recsPage * PAGE_SIZE + PAGE_SIZE);
 
   return (
     <Screen edges={['top']}>
@@ -102,24 +109,25 @@ export default function ResultsScreen() {
         )}
 
         {/* jobs — real vacancies matched to the spoken skill */}
-        {(result.jobs?.length ?? 0) > 0 && (
+        {jobs.length > 0 && (
           <View style={{ gap: 12, marginTop: 4 }}>
             <View style={styles.sectionHead}>
               <Ionicons name="briefcase" size={18} color={c.primary} />
               <Txt variant="h2">{t.jobsAvailable}</Txt>
               <View style={[styles.countPill, { backgroundColor: c.primarySoft }]}>
                 <Txt variant="caption" style={{ color: c.primary }}>
-                  {result.jobs!.length}
+                  {jobs.length}
                 </Txt>
               </View>
             </View>
-            {result.jobs!.map((j, i) => (
+            {visibleJobs.map((j, i) => (
               <JobCard key={j.jobPostingId} j={j} t={t} index={i + 2} />
             ))}
+            <Pager total={jobs.length} page={jobsPage} onPage={setJobsPage} />
           </View>
         )}
 
-        {intent === 'jobs' && (result.jobs?.length ?? 0) === 0 && (
+        {intent === 'jobs' && jobs.length === 0 && (
           <Card index={2} style={{ gap: 12 }}>
             <View style={styles.sectionHead}>
               <Ionicons name="briefcase" size={18} color={c.primary} />
@@ -150,9 +158,10 @@ export default function ResultsScreen() {
                 </Txt>
               </View>
             </View>
-            {result.recommendations.map((r, i) => (
-              <CourseCard key={r.pmajayCourseId} r={r} t={t} index={i + 2} best={i === 0} />
+            {visibleRecommendations.map((r, i) => (
+              <CourseCard key={r.pmajayCourseId} r={r} t={t} index={i + 2} best={recsPage === 0 && i === 0} />
             ))}
+            <Pager total={result.recommendations.length} page={recsPage} onPage={setRecsPage} />
           </View>
         )}
 
@@ -175,6 +184,31 @@ export default function ResultsScreen() {
         </View>
       </View>
     </Screen>
+  );
+}
+
+function Pager({ total, page, onPage }: { total: number; page: number; onPage: (page: number) => void }) {
+  const { c } = useTheme();
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  if (totalPages <= 1) return null;
+  return (
+    <View style={styles.pager}>
+      <Pressable
+        disabled={page === 0}
+        onPress={() => onPage(Math.max(0, page - 1))}
+        style={[styles.pageBtn, { backgroundColor: c.surfaceAlt, opacity: page === 0 ? 0.45 : 1 }]}>
+        <Ionicons name="chevron-back" size={18} color={c.text} />
+      </Pressable>
+      <Txt variant="caption" tone="dim">
+        {page + 1} / {totalPages}
+      </Txt>
+      <Pressable
+        disabled={page >= totalPages - 1}
+        onPress={() => onPage(Math.min(totalPages - 1, page + 1))}
+        style={[styles.pageBtn, { backgroundColor: c.surfaceAlt, opacity: page >= totalPages - 1 ? 0.45 : 1 }]}>
+        <Ionicons name="chevron-forward" size={18} color={c.text} />
+      </Pressable>
+    </View>
   );
 }
 
@@ -387,6 +421,8 @@ const styles = StyleSheet.create({
   progHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   schemeBadge: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8 },
   why: { flexDirection: 'row', gap: 8, padding: 12, alignItems: 'flex-start' },
+  pager: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 14, paddingVertical: 4 },
+  pageBtn: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
   footer: {
     flexDirection: 'row',
     gap: 10,

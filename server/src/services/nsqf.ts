@@ -138,6 +138,22 @@ function normalizeTitle(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
+function isSeniorTeachingTranscript(transcript: string): boolean {
+  return /\b(9|10|11|12|9th|10th|11th|12th|secondary|senior|higher secondary|board|math|maths|science|physics|chemistry|biology|accounts|commerce|english|hindi)\b/i.test(
+    normalizeTitle(transcript),
+  );
+}
+
+function isCreativeTeachingTranscript(transcript: string): boolean {
+  return /\b(dance|music|singing|fine art|fine arts|drawing|painting|guitar|tabla|harmonium)\b/i.test(normalizeTitle(transcript));
+}
+
+function isEarlyChildhoodQualification(title: string): boolean {
+  return /\b(play school|playschool|pre school|preschool|anganwadi|childcare|child care|caregiver|creche|nursery|toddler|early childhood|poshak)\b/i.test(
+    normalizeTitle(title),
+  );
+}
+
 function normalizeSectorForFallback(value: string): string {
   return value.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "");
 }
@@ -224,6 +240,15 @@ function qualificationCandidates(quals: QualRow[], token: string): { candidates:
   const terms = titleTermsForSkill(token);
   const titleMatches = quals.filter((q) => titleTermMatches(q.title, terms));
   return { candidates: [...new Map([...titleMatches, ...keywordMatches].map((q) => [q.id, q])).values()], pickToken: terms[0] ?? token };
+}
+
+function filterContextualQualificationCandidates(candidates: QualRow[], token: string, transcript: string): QualRow[] {
+  if (token !== "teaching") return candidates;
+  if (!isCreativeTeachingTranscript(transcript) && isSeniorTeachingTranscript(transcript)) return [];
+  const filtered = isSeniorTeachingTranscript(transcript)
+    ? candidates.filter((q) => !isEarlyChildhoodQualification(q.title))
+    : candidates;
+  return filtered.length > 0 ? filtered : candidates;
 }
 
 function courseCandidates(courses: CourseRow[], token: string): { candidates: CourseRow[]; pickToken: string } {
@@ -417,10 +442,12 @@ export async function mapTranscriptToNsqf(transcript: string): Promise<MappingRe
     // concept, so the qualification actually returned is the most
     // representative one, not just the first row Postgres happened to return.
     const activeQuals = qualificationCandidates(quals, token);
+    activeQuals.candidates = filterContextualQualificationCandidates(activeQuals.candidates, token, transcript);
     let match = pickBestByTitle(activeQuals.candidates, activeQuals.pickToken, (q) => q.title, (q) => q.nsqfLevel);
     let matchExpired = false;
     if (!match) {
       const expired = qualificationCandidates(expiredQuals, token);
+      expired.candidates = filterContextualQualificationCandidates(expired.candidates, token, transcript);
       match = pickBestByTitle(expired.candidates, expired.pickToken, (q) => q.title, (q) => q.nsqfLevel);
       matchExpired = Boolean(match);
     }
