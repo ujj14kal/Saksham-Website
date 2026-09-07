@@ -59,13 +59,19 @@ export function AdminShell({
     <div className="min-h-screen bg-background lg:flex">
       {/* Sidebar (desktop) */}
       <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-surface px-4 py-6 lg:flex">
-        <div className="flex items-center gap-2.5 px-2">
-          <Image src="/icon.png" alt="Saksham" width={32} height={32} className="rounded-lg" />
+        {/* the mark is the way back out to the public site, which is where
+            people expect a logo to take them */}
+        <Link
+          href="/"
+          aria-label="Saksham — go to the public site"
+          className="flex items-center gap-2.5 rounded-lg px-2 py-1 transition hover:bg-surface-alt"
+        >
+          <Image src="/icon.png" alt="" width={32} height={32} className="rounded-lg" />
           <div className="leading-tight">
             <p className="text-sm font-semibold">सक्षम · Admin</p>
             <p className="text-[11px] text-foreground-faint">PM-AJAY · MoSJE</p>
           </div>
-        </div>
+        </Link>
 
         <nav className="mt-8 flex flex-1 flex-col gap-1">
           {NAV.map((n) => {
@@ -98,10 +104,14 @@ export function AdminShell({
       <div className="flex-1">
         {/* Mobile top nav */}
         <div className="flex items-center justify-between border-b border-border bg-surface px-4 py-3 lg:hidden">
-          <div className="flex items-center gap-2">
-            <Image src="/icon.png" alt="Saksham" width={26} height={26} className="rounded-lg" />
+          <Link
+            href="/"
+            aria-label="Saksham — go to the public site"
+            className="flex items-center gap-2 rounded-lg px-1 py-0.5 transition hover:bg-surface-alt"
+          >
+            <Image src="/icon.png" alt="" width={26} height={26} className="rounded-lg" />
             <p className="text-sm font-semibold">सक्षम · Admin</p>
-          </div>
+          </Link>
           <button onClick={signOut} className="text-sm font-medium text-foreground-dim">
             Sign out
           </button>
