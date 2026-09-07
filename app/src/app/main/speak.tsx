@@ -88,8 +88,12 @@ export default function SpeakScreen() {
     const profile = user ?? guestProfile;
     if (!profile) return true;
     if (profile.experienceYears == null || !profile.workPreference) return true;
+    // Ask again if we don't know which trade the saved experience belongs to.
+    // This also avoids carrying forward old local data from before we stored
+    // experienceSkill.
+    if (!skill || !profile.experienceSkill) return true;
     // already answered — but only skip if it was about this same trade
-    return !!skill && profile.experienceSkill !== skill;
+    return profile.experienceSkill !== skill;
   }
 
   /** The normalized skill token this turn resolved to, if any. */
@@ -106,7 +110,9 @@ export default function SpeakScreen() {
   function routeAfterSkill(result: ConverseResponse) {
     const skill = capturedSkill(result);
     router.push(
-      shouldAskSkillQuestions(skill)
+      // Work-profile answers are quick, and re-asking keeps demos honest after
+      // edits or a corrected "months" answer.
+      skill || shouldAskSkillQuestions(skill)
         ? `/onboarding/voice-profile?mode=skill&returnTo=/confirm${skill ? `&skill=${encodeURIComponent(skill)}` : ''}`
         : '/confirm',
     );

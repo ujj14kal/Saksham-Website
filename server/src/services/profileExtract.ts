@@ -172,6 +172,8 @@ function fallbackEducation(answer: string): string | null {
 function fallbackExperience(answer: string): number | null {
   const text = normalizeAnswer(answer);
   if (/\b(no experience|none|fresher|new|naya|nayi|abhi shuru|just started)\b|कोई नहीं|नया|नई|अभी शुरू/u.test(text)) return 0;
+  const monthNumber = durationNumberBeforeUnit(text, MONTH_UNIT_PATTERN);
+  if (monthNumber !== null) return Math.min(70, Math.ceil(monthNumber / 12));
   const match = text.match(/\d{1,2}/);
   if (match) {
     const n = Number(match[0]);
@@ -179,6 +181,22 @@ function fallbackExperience(answer: string): number | null {
   }
   for (const [pattern, value] of [...HINDI_AGE_WORDS, ...URDU_AGE_WORDS]) {
     if (value <= 70 && pattern.test(text)) return value;
+  }
+  return null;
+}
+
+const MONTH_UNIT_PATTERN =
+  /\b(month|months|mahina|mahine|mahino|maheena|maheene)\b|महीना|महीने|माह|মাস|மாத|నెల|महिना|महिने|ತಿಂಗಳು|મહિના|ਮਹੀਨਾ|ਮਹੀਨੇ|ମାସ/u;
+
+function durationNumberBeforeUnit(text: string, unitPattern: RegExp): number | null {
+  const digitMatch = text.match(new RegExp(`(\\d{1,2})\\s*(?:${unitPattern.source})`, "u"));
+  if (digitMatch) {
+    const n = Number(digitMatch[1]);
+    if (n >= 0 && n <= 840) return n;
+  }
+
+  for (const [pattern, value] of [...HINDI_AGE_WORDS, ...URDU_AGE_WORDS]) {
+    if (value <= 70 && pattern.test(text) && unitPattern.test(text)) return value;
   }
   return null;
 }
@@ -217,7 +235,7 @@ export async function extractProfileAnswer(
 
   const instruction =
     field === "experienceYears"
-      ? "Extract how many YEARS the person has been doing their work, as a single integer 0-70. The number may be spoken as a word in any language (Hindi \"do saal\" = 2, \"paanch saal\" = 5, \"das saal\" = 10). If they say they are new, a beginner, or have no experience, reply exactly: 0. Reply with ONLY the integer. If no clear duration is stated, reply exactly: unclear"
+      ? "Extract how many YEARS the person has been doing their work, as a single integer 0-70. The number may be spoken as a word in any language (Hindi \"do saal\" = 2, \"paanch saal\" = 5, \"das saal\" = 10). If they answer in months, convert months to whole years by rounding up, so \"10 months\" = 1 and \"18 months\" = 2. If they say they are new, a beginner, or have no experience, reply exactly: 0. Reply with ONLY the integer. If no clear duration is stated, reply exactly: unclear"
       : field === "workPreference"
         ? "Decide where the person wants to work. Reply exactly \"home\" if they want to work at home, from home, near home, in their own village or their current area. Reply exactly \"other\" if they want to work somewhere else, in another city, town or district, or are willing to relocate. Reply with ONLY one of those two words. If it is not clear, reply exactly: unclear"
       : field === "age"

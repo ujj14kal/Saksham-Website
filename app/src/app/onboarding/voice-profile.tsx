@@ -115,7 +115,8 @@ export default function VoiceProfileStep() {
     if (field === 'name') return t.nameConfirmedGreeting.replace('{name}', String(value));
     if (field === 'age') return `${value} ${t.yearsSuffix}`;
     if (field === 'experienceYears') {
-      return value === 0 ? t.experienceNone : `${value} ${t.yearsSuffix}`;
+      const yearLabel = effectiveLanguage === 'en' && value === 1 ? 'year' : t.yearsSuffix;
+      return value === 0 ? t.experienceNone : `${value} ${yearLabel}`;
     }
     if (field === 'workPreference') return value === 'home' ? t.workNearHome : t.workElsewhere;
     return eduLabel[value as string] ?? String(value);

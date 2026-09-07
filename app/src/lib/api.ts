@@ -481,6 +481,8 @@ function localProfileAnswer(field: ProfileField, answer: string): string | numbe
   }
   if (field === 'experienceYears') {
     if (/\b(no experience|none|fresher|new|naya|nayi|abhi shuru|just started)\b|कोई नहीं|नया|नई|अभी शुरू/u.test(text)) return 0;
+    const monthNumber = durationNumberBeforeUnit(text, MONTH_UNIT_PATTERN);
+    if (monthNumber !== null) return Math.min(70, Math.ceil(monthNumber / 12));
     const match = text.match(/\d{1,2}/);
     if (match) {
       const years = Number(match[0]);
@@ -503,6 +505,22 @@ function localProfileAnswer(field: ProfileField, answer: string): string | numbe
   if (/\b(10th|xth|tenth|matric|secondary|dasvi|dasveen|daswin)\b|दसवीं|१०वीं|10वीं|10 वीं/u.test(text)) return '10th';
   if (/\b(1st|2nd|3rd|4th|5th|6th|7th|8th|9th|primary|middle|below tenth|below 10th|ninth|eighth|seventh|sixth|fifth)\b|पहली|दूसरी|तीसरी|चौथी|पांचवीं|छठी|सातवीं|आठवीं|नौवीं/u.test(text)) return 'below_10th';
   if (/\b(no school|not studied|illiterate|literate|none|nahi padha|nahi padhi)\b|नहीं पढ़ा|नहीं पढ़ी|अनपढ़/u.test(text)) return 'below_10th';
+  return null;
+}
+
+const MONTH_UNIT_PATTERN =
+  /\b(month|months|mahina|mahine|mahino|maheena|maheene)\b|महीना|महीने|माह|মাস|மாத|నెల|महिना|महिने|ತಿಂಗಳು|મહિના|ਮਹੀਨਾ|ਮਹੀਨੇ|ମାସ/u;
+
+function durationNumberBeforeUnit(text: string, unitPattern: RegExp): number | null {
+  const digitMatch = text.match(new RegExp(`(\\d{1,2})\\s*(?:${unitPattern.source})`, 'u'));
+  if (digitMatch) {
+    const n = Number(digitMatch[1]);
+    if (n >= 0 && n <= 840) return n;
+  }
+
+  for (const [pattern, value] of [...HINDI_AGE_WORDS, ...URDU_AGE_WORDS]) {
+    if (value <= 70 && pattern.test(text) && unitPattern.test(text)) return value;
+  }
   return null;
 }
 
