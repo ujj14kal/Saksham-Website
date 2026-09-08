@@ -38,7 +38,7 @@ function Overview() {
 
   if (!stats) {
     return (
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {Array.from({ length: 5 }).map((_, i) => (
           <Card key={i} className="space-y-3">
             <Skeleton className="h-3 w-20" />
@@ -67,7 +67,7 @@ function Overview() {
   const skillTotal = skillSlices.reduce((n, sk) => n + sk.count, 0);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex min-h-[calc(100vh-9rem)] flex-col gap-4">
       {/* headline numbers */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Kpi icon={Mic} label="Voice sessions" value={stats.totals.sessions} tone="brand" />
@@ -78,7 +78,7 @@ function Overview() {
       </div>
 
       {/* part-of-whole: every session has a language, every mapping a skill */}
-      <div className="grid gap-3 lg:grid-cols-2">
+      <div className="grid flex-1 gap-4 lg:grid-cols-2">
         <Donut
           title="Languages spoken"
           slices={languageSlices}
@@ -89,10 +89,28 @@ function Overview() {
       </div>
 
       {/* rankings out of many — length, not slices */}
-      <div className="grid gap-3 lg:grid-cols-3">
-        <RankedBars title="Top NSQF qualifications" rows={stats.topQualifications ?? []} unit="matches" />
-        <RankedBars title="Top PM-AJAY courses" rows={stats.topCourses ?? []} unit="recommendations" />
-        <RankedBars title="Most applied-to jobs" rows={stats.topJobs ?? []} unit="applications" />
+      <div className="grid flex-1 gap-4 lg:grid-cols-3">
+        <RankedBars
+          title="Top NSQF qualifications"
+          rows={stats.topQualifications ?? []}
+          unit="matches"
+          href="/admin/catalog"
+          hrefLabel="View all qualifications"
+        />
+        <RankedBars
+          title="Top PM-AJAY courses"
+          rows={stats.topCourses ?? []}
+          unit="recommendations"
+          href="/admin/programs"
+          hrefLabel="View all programmes"
+        />
+        <RankedBars
+          title="Most applied-to jobs"
+          rows={stats.topJobs ?? []}
+          unit="applications"
+          href="/admin/jobs"
+          hrefLabel="View all job postings"
+        />
       </div>
     </div>
   );

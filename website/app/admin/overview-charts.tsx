@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 
 /**
@@ -58,22 +60,22 @@ export function Donut({
 
   if (total === 0 || data.length === 0) {
     return (
-      <section className="rounded-xl border border-border bg-surface p-4">
+      <section className="flex h-full flex-col rounded-xl border border-border bg-surface p-5">
         <h3 className="text-sm font-semibold">{title}</h3>
-        <p className="mt-6 text-center text-xs text-foreground-faint">No data yet</p>
+        <p className="my-auto text-center text-xs text-foreground-faint">No data yet</p>
       </section>
     );
   }
 
-  const size = 132;
+  const size = 190;
   const cx = size / 2;
   const cy = size / 2;
   let cursor = 0;
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <section className="flex h-full flex-col rounded-xl border border-border bg-surface p-5">
       <h3 className="text-sm font-semibold">{title}</h3>
-      <div className="mt-3 flex items-center gap-4">
+      <div className="mt-4 flex flex-1 items-center gap-5">
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={title}>
           {data.map((s, i) => {
             const sweep = (s.count / total) * 360;
@@ -86,7 +88,7 @@ export function Donut({
             return (
               <path
                 key={s.name}
-                d={arc(cx, cy, hover === i ? 62 : 58, 38, from, Math.max(from, to))}
+                d={arc(cx, cy, hover === i ? 92 : 87, 56, from, Math.max(from, to))}
                 fill={isOther ? OTHER : SERIES[i % SERIES.length]}
                 onMouseEnter={() => setHover(i)}
                 onMouseLeave={() => setHover(null)}
@@ -94,26 +96,26 @@ export function Donut({
               />
             );
           })}
-          <text x={cx} y={cy - 2} textAnchor="middle" className="fill-foreground text-lg font-bold">
+          <text x={cx} y={cy + 1} textAnchor="middle" className="fill-foreground text-2xl font-bold">
             {hover === null ? total : data[hover].count}
           </text>
-          <text x={cx} y={cy + 12} textAnchor="middle" className="fill-foreground-faint text-[9px]">
+          <text x={cx} y={cy + 18} textAnchor="middle" className="fill-foreground-faint text-[10px]">
             {hover === null ? unit : data[hover].name.slice(0, 14)}
           </text>
         </svg>
 
         {/* legend doubles as the direct labels the contrast check requires */}
-        <ul className="min-w-0 flex-1 space-y-1.5">
+        <ul className="min-w-0 flex-1 space-y-2.5">
           {data.map((s, i) => (
             <li
               key={s.name}
               onMouseEnter={() => setHover(i)}
               onMouseLeave={() => setHover(null)}
-              className="flex items-center gap-2 text-xs"
+              className="flex items-center gap-2 text-sm"
             >
               <span
                 aria-hidden
-                className="h-2.5 w-2.5 shrink-0 rounded-sm"
+                className="h-3 w-3 shrink-0 rounded-sm"
                 style={{ background: s.name === "Other" ? OTHER : SERIES[i % SERIES.length] }}
               />
               <span className="min-w-0 flex-1 truncate text-foreground-dim" title={s.name}>
@@ -135,24 +137,37 @@ export function Donut({
  * the same count). A pie of equal slices carries no information; length against
  * a shared baseline still reads correctly when values match.
  */
-export function RankedBars({ title, rows, unit }: { title: string; rows: Slice[]; unit: string }) {
+export function RankedBars({
+  title,
+  rows,
+  unit,
+  href,
+  hrefLabel,
+}: {
+  title: string;
+  rows: Slice[];
+  unit: string;
+  /** where the full list lives — the top 3 is a summary, not the data */
+  href: string;
+  hrefLabel: string;
+}) {
   const max = Math.max(1, ...rows.map((r) => r.count));
   return (
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <section className="flex h-full flex-col rounded-xl border border-border bg-surface p-5">
       <h3 className="text-sm font-semibold">{title}</h3>
       {rows.length === 0 ? (
-        <p className="mt-6 text-center text-xs text-foreground-faint">No data yet</p>
+        <p className="my-auto text-center text-xs text-foreground-faint">No data yet</p>
       ) : (
-        <ul className="mt-3 space-y-2.5">
+        <ul className="mt-4 flex flex-1 flex-col justify-center gap-4">
           {rows.map((r, i) => (
             <li key={r.name} title={`${r.name} — ${r.count} ${unit}`}>
               <div className="flex items-baseline justify-between gap-2">
-                <span className="min-w-0 truncate text-xs text-foreground-dim">{r.name}</span>
-                <span className="shrink-0 text-xs font-semibold tabular-nums">{r.count}</span>
+                <span className="min-w-0 truncate text-sm text-foreground-dim">{r.name}</span>
+                <span className="shrink-0 text-sm font-semibold tabular-nums">{r.count}</span>
               </div>
-              <div className="mt-1 h-2 w-full rounded-full bg-surface-alt">
+              <div className="mt-1.5 h-2.5 w-full rounded-full bg-surface-alt">
                 <div
-                  className="h-2 rounded-full transition-all"
+                  className="h-2.5 rounded-full transition-all"
                   style={{
                     width: `${Math.max(4, (r.count / max) * 100)}%`,
                     background: SERIES[i % SERIES.length],
@@ -163,6 +178,14 @@ export function RankedBars({ title, rows, unit }: { title: string; rows: Slice[]
           ))}
         </ul>
       )}
+
+      <Link
+        href={href}
+        className="mt-4 inline-flex items-center gap-1.5 self-start rounded-md text-xs font-semibold text-emphasis transition hover:underline"
+      >
+        {hrefLabel}
+        <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
     </section>
   );
 }
